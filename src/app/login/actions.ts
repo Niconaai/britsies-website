@@ -1,12 +1,11 @@
-// app/admin/login/actions.ts
+// src/app/login/actions.ts
 'use server'
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { createClient } from '../../../../utils/supabase/server'
+import { createClient } from '../../../utils/supabase/server' 
 
 export async function login(formData: FormData) {
-  // *** MUST AWAIT the async function call ***
   const supabase = await createClient()
 
   const data = {
@@ -14,11 +13,17 @@ export async function login(formData: FormData) {
     password: formData.get('password') as string,
   }
 
+  if (!data.email || !data.password) {
+    console.error('Login error: Email or password missing')
+    redirect('/login?error=Email and password are required')
+    return
+  }
+
   const { error } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
     console.error('Login error:', error.message)
-    redirect('/admin/login?error=Invalid credentials')
+    redirect('/login?error=Invalid credentials')
     return
   }
 
