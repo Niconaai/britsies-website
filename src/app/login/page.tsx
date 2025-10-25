@@ -1,15 +1,29 @@
 // app/admin/login/page.tsx
 'use client'
 
-import { login } from './actions' 
+import { login } from './actions'
+import Image from 'next/image';
 
 export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-        <h1 className="mb-6 text-center text-2xl font-bold text-gray-800">
-          Admin Login
+        <div className="flex mb-8 justify-center"> {/* Container for margin */}
+        <Image
+          src="/wapen.png"
+          alt="Hoërskool Brits Logo"
+          width={150}
+          height={50} 
+          priority 
+          className="h-auto"
+        />
+      </div>
+        <h1 className="mb-2 text-center text-2xl font-bold text-gray-800">
+          Admin Aanteken
         </h1>
+        <p className="mb-8 text-center text-lg font text-gray-800">
+          Webblad bestuur
+        </p>
         {/* We use the `login` server action directly in the form's action prop */}
         <form action={login} className="space-y-4">
           <div>
@@ -17,7 +31,7 @@ export default function LoginPage() {
               htmlFor="email"
               className="mb-1 block text-sm font-medium text-gray-700"
             >
-              Email:
+              Epos:
             </label>
             <input
               id="email"
@@ -33,7 +47,7 @@ export default function LoginPage() {
               htmlFor="password"
               className="mb-1 block text-sm font-medium text-gray-700"
             >
-              Password:
+              Wagwoord:
             </label>
             <input
               id="password"
@@ -46,12 +60,19 @@ export default function LoginPage() {
           </div>
           <button
             type="submit"
-            className="w-full rounded bg-gray-800 py-2 font-medium text-white transition hover:bg-gray-700"
+            className="mb-10 w-full rounded bg-gray-800 py-2 font-medium text-white transition hover:bg-gray-700"
           >
-            Sign In
+            Teken In
           </button>
           {/* Optional: Add a signup button later if needed */}
           {/* <button formAction={signup}>Sign up</button> */}
+
+          <p className="mb-0 text-center text-sm font text-gray-800">
+          © Nick van der Merwe
+        </p>
+        <p className="mb-0 text-center text-sm font text-gray-800">
+          2025
+        </p>
         </form>
       </div>
     </div>
