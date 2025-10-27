@@ -125,6 +125,7 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
             <h3 className="pt-4 text-lg font-medium dark:text-white">LEERDER</h3>
             {/* --- Learner Details Grid --- */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+
                 <InputField label="Volle Voorname" name="learnerFirstNames" value={formData.learnerFirstNames} onChange={handleInputChange} required />
                 <InputField label="Noemnaam" name="learnerNickName" value={formData.learnerNickName} onChange={handleInputChange} required />
                 <InputField label="Van" name="learnerSurname" value={formData.learnerSurname} onChange={handleInputChange} required />
@@ -211,15 +212,16 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
                 </div>
                 {/* --- End Preschool --- */}
 
+
             </div>
 
             {/* --- Next of Kin --- */}
             <h3 className="pt-4 text-lg font-medium dark:text-white">NAASBESTAANDE-INLIGTING</h3>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <InputField label="Naam en Van" name="nextOfKinFullName" value={formData.nextOfKinFullName} onChange={handleInputChange} className="md:col-span-2" required/>
-                <InputField label="Kontaknommer" name="nextOfKinContact" value={formData.nextOfKinContact} onChange={handleInputChange} type="tel" required/>
-                <InputField label="Alternatiewe Kontaknommer" name="nextOfKinContact" value={formData.nextOfKinContactAlt} onChange={handleInputChange} type="tel" required/>
-                <InputField label="Verwantskap" name="nextOfKinRelationship" value={formData.nextOfKinRelationship} onChange={handleInputChange} required/>
+                <InputField label="Naam en Van" name="nextOfKinFullName" value={formData.nextOfKinFullName} onChange={handleInputChange} className="md:col-span-2" required />
+                <InputField label="Kontaknommer" name="nextOfKinContact" value={formData.nextOfKinContact} onChange={handleInputChange} type="tel" required />
+                <InputField label="Alternatiewe Kontaknommer" name="nextOfKinContact" value={formData.nextOfKinContactAlt} onChange={handleInputChange} type="tel" required />
+                <InputField label="Verwantskap" name="nextOfKinRelationship" value={formData.nextOfKinRelationship} onChange={handleInputChange} required />
             </div>
 
             {/* --- Family Info --- */}
