@@ -19,8 +19,8 @@ const InputField = ({ label, name, value, onChange, required = false, type = 'te
     className?: string;
 }) => (
     <div className={className}>
-        <label htmlFor={name} className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            {label} {required && <span className="text-red-500">*</span>}
+        <label htmlFor={name} className="block  text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            {label} {required && <span className="text-red-800">*</span>}
         </label>
         <input
             type={type}
@@ -30,7 +30,7 @@ const InputField = ({ label, name, value, onChange, required = false, type = 'te
             onChange={onChange}
             required={required}
             placeholder={placeholder}
-            className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
+            className="mt-2 mb-1 px-2 py-1 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
         />
     </div>
 );
@@ -45,7 +45,7 @@ const RadioGroup = ({ label, name, options, selectedValue, onChange, required = 
 }) => (
     <div className="">
         <span className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            {label} {required && <span className="text-red-500">*</span>}
+            {label} {required && <span className="text-red-800">*</span>}
         </span>
         <div className="mt-2 space-y-2">
             {options.map(option => (
@@ -66,25 +66,25 @@ const RadioGroup = ({ label, name, options, selectedValue, onChange, required = 
     </div>
 );
 
-const CheckboxField = ({ label, name, checked, onChange, required = false }: {
-    label: string | React.ReactNode;
-    name: string;
-    checked: boolean | undefined;
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    required?: boolean;
-}) => (
-    <label className="flex items-start space-x-2">
-        <input
-            type="checkbox"
-            name={name}
-            checked={!!checked} // Ensure it's a boolean
-            onChange={onChange}
-            required={required}
-            className="form-checkbox mt-1 h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700"
-        />
-        <span className="text-sm text-zinc-700 dark:text-zinc-300">{label}</span>
-    </label>
-);
+// const CheckboxField = ({ label, name, checked, onChange, required = false }: {
+//     label: string | React.ReactNode;
+//     name: string;
+//     checked: boolean | undefined;
+//     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+//     required?: boolean;
+// }) => (
+//     <label className="flex items-start space-x-2">
+//         <input
+//             type="checkbox"
+//             name={name}
+//             checked={!!checked} // Ensure it's a boolean
+//             onChange={onChange}
+//             required={required}
+//             className="form-checkbox mt-1 h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700"
+//         />
+//         <span className="text-sm text-zinc-700 dark:text-zinc-300">{label}</span>
+//     </label>
+// );
 
 export default function Step1LearnerInfo({ onNext, formData, handleInputChange }: StepProps) {
     // Expand validation check for required fields in this step
@@ -135,15 +135,15 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
                 {/* --- Race Dropdown --- */}
                 <div>
                     <label htmlFor="learnerRace" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        Bevolkingsgroep <span className="text-red-500">*</span> {/* Made required */}
+                        Bevolkingsgroep <span className="text-red-800">*</span>
                     </label>
                     <select
                         id="learnerRace"
                         name="learnerRace"
                         value={formData.learnerRace || ''}
                         onChange={handleInputChange}
-                        required // Make it required
-                        className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
+                        required 
+                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
                     >
                         <option value="" disabled>Kies Bevolkingsgroep</option>
                         {raceOptions.map(option => <option key={option} value={option}>{option}</option>)}
@@ -154,17 +154,19 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
                 <InputField label="Nasionaliteit" name="learnerNationality" value={formData.learnerNationality} onChange={handleInputChange} required />
 
                 {/* --- Add Gender --- */}
+                <div className="border-2 dark:border-zinc-500 border-zinc-200 rounded-sm px-3 py-2">
                 <RadioGroup
                     label="Geslag" name="learnerGender" required={true}
                     options={[{ value: 'Male', label: 'Manlik' }, { value: 'Female', label: 'Vroulik' }]} // Add 'Other' if needed
                     selectedValue={formData.learnerGender} onChange={handleInputChange}
                 />
+                </div>
                 {/* --- End Gender --- */}
 
                 {/* --- Home Language Dropdown --- */}
                 <div>
                     <label htmlFor="learnerHomeLanguage" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        Huistaal <span className="text-red-500">*</span> {/* Made required */}
+                        Huistaal <span className="text-red-800">*</span> {/* Made required */}
                     </label>
                     <select
                         id="learnerHomeLanguage"
@@ -172,7 +174,7 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
                         value={formData.learnerHomeLanguage || ''}
                         onChange={handleInputChange}
                         required
-                        className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
+                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
                     >
                         <option value="" disabled>Kies Taal</option>
                         {saLanguages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
@@ -188,10 +190,10 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
 
                 <div>
                     <label htmlFor="learnerLastGradePassed" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        Laaste Graad Behaal <span className="text-red-500">*</span>
+                        Laaste Graad Behaal <span className="text-red-800">*</span>
                     </label>
                     <select id="learnerLastGradePassed" name="learnerLastGradePassed" value={formData.learnerLastGradePassed || ''} onChange={handleInputChange} required
-                        className="mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white">
+                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white">
                         <option value="" disabled>Kies Graad</option>
                         {[8, 9, 10, 11, 12].map(grade => <option key={grade} value={grade}>Graad {grade}</option>)}
                     </select>
@@ -200,7 +202,7 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
                 <InputField label="Jare in bogenoemde graad" name="learnerYearsInGrade" value={formData.learnerYearsInGrade} onChange={handleInputChange} type="number" required />
 
                 {/* --- Preschool --- */}
-                <div>
+                <div className="border-2 dark:border-zinc-500 border-zinc-200 rounded-sm px-3 py-2">
                     <RadioGroup
                         label="Voorskoolse opvoeding bygewoon" name="learnerPreschool" required={true}
                         options={[{ value: 'Formal', label: 'Formeel' }, { value: 'Informal', label: 'Informeel' }, { value: 'Other', label: 'Ander' }]}
@@ -220,15 +222,15 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <InputField label="Naam en Van" name="nextOfKinFullName" value={formData.nextOfKinFullName} onChange={handleInputChange} className="md:col-span-2" required />
                 <InputField label="Kontaknommer" name="nextOfKinContact" value={formData.nextOfKinContact} onChange={handleInputChange} type="tel" required />
-                <InputField label="Alternatiewe Kontaknommer" name="nextOfKinContact" value={formData.nextOfKinContactAlt} onChange={handleInputChange} type="tel" required />
+                <InputField label="Alternatiewe Kontaknommer" name="nextOfKinContactAlt" value={formData.nextOfKinContactAlt} onChange={handleInputChange} type="tel" required />
                 <InputField label="Verwantskap" name="nextOfKinRelationship" value={formData.nextOfKinRelationship} onChange={handleInputChange} required />
             </div>
 
             {/* --- Family Info --- */}
             <h3 className="pt-4 text-lg font-medium dark:text-white">FAMILIE-INLIGTING</h3>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 ">
                 {/* --- Add Family Status --- */}
-                <div className="">
+                <div className="border-2 dark:border-zinc-500 border-zinc-200 rounded-sm px-3 py-2">
                     <RadioGroup
                         label="Gesinstatus" name="familyStatus" required={true}
                         options={[
@@ -251,7 +253,7 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
                 {/* --- End Family Status --- */}
 
                 {/* --- Add Parents Deceased --- */}
-                <div>
+                <div className="border-2 dark:border-zinc-500 border-zinc-200 rounded-sm px-3 py-2">
                     <RadioGroup
                         label="Ouers Oorlede" name="parentsDeceased" required={true}
                         options={[
@@ -265,7 +267,7 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
                 </div>
                 {/* --- End Parents Deceased --- */}
 
-                <div>
+                <div className="border-2 dark:border-zinc-500 border-zinc-200 rounded-sm px-3 py-2">
                     <RadioGroup
                         label="Leerder woon saam met:"
                         name="learnerLivesWith"

@@ -1,5 +1,11 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import type { Metadata } from "next";
+
+export const metadata = {
+  title: "Hoërskool Brits | Admin",
+  description: "Admin Bladsy van Hoërskool Brits",
+};
 
 type Application = {
   id: string;

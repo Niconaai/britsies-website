@@ -82,6 +82,8 @@ export default function AdmissionForm() {
         <form onSubmit={handleSubmit} className="space-y-6 rounded-lg bg-white p-6 shadow-md dark:bg-zinc-800">
             {/* Render the imported step components */}
             {currentStep === 1 && <Step1LearnerInfo onNext={nextStep} formData={formData} handleInputChange={handleInputChange} />}
+            {/*{currentStep === 2 && <Step2Guardian1 onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />} */}
+            {currentStep === 2 && <Step2Guardian1 onNext={nextStep} onBack={prevStep} />} 
             {/*{currentStep === 3 && <Step3Guardian2 onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />} */}
             {currentStep === 3 && <Step3Guardian2 onNext={nextStep} onBack={prevStep} />} 
             {/*{currentStep === 4 && <Step4Payer onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />} */}

@@ -1,6 +1,12 @@
 // src/app/aansoek/page.tsx
+import type { Metadata } from "next";
 import AdmissionForm from './AdmissionForm';
 import Image from 'next/image';
+
+export const metadata: Metadata = {
+  title: "Hoërskool Brits | Aansoek",
+  description: "Word deel van Hoërskool Brits",
+};
 
 export default function ApplicationPage() {
     return (
