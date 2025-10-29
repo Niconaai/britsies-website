@@ -142,10 +142,12 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
             <h2 className="mb-6 text-xl font-semibold dark:text-white">Stap 1: LEERDERINLIGTING</h2>
 
             {/* TODO: Add Photo Upload Field */}
+            <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
             <div className="rounded border border-dashed border-zinc-400 p-4 text-center dark:border-zinc-600">
                 <span className="text-sm text-zinc-500 dark:text-zinc-400">TODO: Foto Oplaai Komponent hier</span>
             </div>
 
+            <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
             <h3 className="pt-4 text-lg font-medium dark:text-white">LEERDER</h3>
             {/* --- Learner Details Grid --- */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -267,6 +269,7 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
             </div>
 
             {/* --- Next of Kin --- */}
+            <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
             <h3 className="pt-4 text-lg font-medium dark:text-white">NAASBESTAANDE-INLIGTING</h3>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <InputField label="Naam en Van" name="nextOfKinFullName" value={formData.nextOfKinFullName} onChange={handleInputChange} className="" required />
@@ -276,6 +279,7 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
             </div>
 
             {/* --- Family Info --- */}
+            <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
             <h3 className="pt-4 text-lg font-medium dark:text-white">FAMILIE-INLIGTING</h3>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3 ">
                 {/* --- Add Family Status --- */}
@@ -356,6 +360,7 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
             </div>
 
             {/* Navigation Button */}
+            <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
             <div className="flex justify-end pt-6">
                 <button
                     type="button"

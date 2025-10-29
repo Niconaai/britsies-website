@@ -147,6 +147,7 @@ export default function Step2Guardian1({ onNext, onBack, formData, handleInputCh
             {!formData.g2NotApplicable && (
                 <React.Fragment>
                     {/* --- Personal Info --- */}
+                    <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
                     <h3 className="text-lg font-medium dark:text-white">PERSOONLIKE INLIGTING</h3>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                         <div>
@@ -219,6 +220,7 @@ export default function Step2Guardian1({ onNext, onBack, formData, handleInputCh
 
                     </div>
 
+                    <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
                     {/* --- Contact Info --- */}
                     <h3 className="pt-4 text-lg font-medium dark:text-white">KONTAKBESONDERHEDE</h3>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -227,6 +229,7 @@ export default function Step2Guardian1({ onNext, onBack, formData, handleInputCh
                     </div>
 
                     {/* --- Residential Address --- */}
+                    <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
                     <h3 className="pt-4 text-lg font-medium dark:text-white">WOONADRES</h3>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <InputField label="Adres Lyn 1" name="g2ResAddressLine1" value={formData.g2ResAddressLine1} onChange={handleInputChange} required className="md:col-span-2" />
@@ -236,6 +239,7 @@ export default function Step2Guardian1({ onNext, onBack, formData, handleInputCh
                     </div>
 
                     {/* --- Postal Address --- */}
+                    <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
                     <h3 className="pt-4 text-lg font-medium dark:text-white">POSADRES</h3>
                     <CheckboxField
                         label="Dieselfde as Woonadres"
@@ -254,6 +258,7 @@ export default function Step2Guardian1({ onNext, onBack, formData, handleInputCh
                     )}
 
                     {/* --- Occupation --- */}
+                    <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
                     <h3 className="pt-4 text-lg font-medium dark:text-white">BEROEPSTATUS</h3>
                     <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div className="">
@@ -276,6 +281,7 @@ export default function Step2Guardian1({ onNext, onBack, formData, handleInputCh
             )}
 
             {/* Navigation Buttons */}
+            <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
             <div className="flex justify-between pt-6">
                 <button
                     type="button"

@@ -108,7 +108,34 @@ export type FormData = {
     g2WorkAddress?: string;
     g2WorkEmail?: string;
 
-    // Add more fields for subsequent steps here later
+    // --- Add Fields for Step 4 (Payer - PDF Page 5 & 6) ---
+    payerType?: 'g1' | 'g2' | 'individual' | 'company' | string; // Radio: Who is paying? G1/G2/Other Individual/Company
+    // Payer Individual/Company Details (Conditional based on payerType)
+    payerFullName?: string; // If 'individual' or 'company' representative
+    payerIdNumber?: string; // If 'individual'
+    payerCompanyRegNo?: string; // If 'company'
+    payerVatNo?: string; // If 'company'
+    payerTelWork?: string;
+    payerTelCell?: string;
+    payerEmail?: string;
+    payerPostalAddressLine1?: string; // Potentially copy from G1/G2 if selected
+    payerPostalAddressLine2?: string;
+    payerPostalAddressCity?: string;
+    payerPostalAddressCode?: string;
+    // Debit Order Details (PDF Page 6)
+    debitBankName?: string;
+    debitBranchCode?: string;
+    debitAccountNumber?: string;
+    debitAccountType?: 'Cheque' | 'Savings' | 'Transmission' | string; // Radio/Select
+    debitAccountHolder?: string;
+    debitDate?: '1' | '15' | '25' | '30' | string; // Radio/Select for day of month
+    debitAgreeTerms?: boolean; // Checkbox for debit order terms
+    // Contract Info (PDF Page 6)
+    contractSignatoryName?: string; // Name of person signing
+    contractSignatoryId?: string; // ID of person signing
+    contractSignatoryCapacity?: string; // e.g., Parent, Guardian
+    contractAgreeTerms?: boolean; // Checkbox for general contract terms
+    // --- End Fields for Step 4 ---
 };
 
 export default function AdmissionForm() {
@@ -143,8 +170,7 @@ export default function AdmissionForm() {
             {currentStep === 1 && <Step1LearnerInfo onNext={nextStep} formData={formData} handleInputChange={handleInputChange} />}
             {currentStep === 2 && <Step2Guardian1 onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
             {currentStep === 3 && <Step3Guardian2 onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
-            {/*{currentStep === 4 && <Step4Payer onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />} */}
-            {currentStep === 4 && <Step4Payer onNext={nextStep} onBack={prevStep} />}
+            {currentStep === 4 && <Step4Payer onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
             {/*{currentStep === 5 && <Step5AdditionalInfo onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />} */}
             {currentStep === 5 && <Step5AdditionalInfo onNext={nextStep} onBack={prevStep} />}
             {/*{currentStep === 6 && <Step6Documents onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />} {/* Also pass to Step 6 */}
