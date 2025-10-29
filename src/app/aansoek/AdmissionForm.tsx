@@ -44,9 +44,9 @@ export type FormData = {
     familyStatusOther?: string;
     parentsDeceased?: string;
     prevSchoolName?: string;
-    agreeRules?: boolean;
-    agreePhotos?: boolean;
-    agreeIndemnity?: boolean;
+    // agreeRules?: boolean;
+    // agreePhotos?: boolean;
+    // agreeIndemnity?: boolean;
     toelatingsDatum?: string;
 
     //Step2 Fields:
@@ -109,7 +109,7 @@ export type FormData = {
     g2WorkEmail?: string;
 
     // --- Add Fields for Step 4 (Payer - PDF Page 5 & 6) ---
-    payerType?: 'g1' | 'g2' | 'individual' | 'company' | string; // Radio: Who is paying? G1/G2/Other Individual/Company
+    payerType?: string; // 
     // Payer Individual/Company Details (Conditional based on payerType)
     payerFullName?: string; // If 'individual' or 'company' representative
     payerIdNumber?: string; // If 'individual'
@@ -126,9 +126,9 @@ export type FormData = {
     debitBankName?: string;
     debitBranchCode?: string;
     debitAccountNumber?: string;
-    debitAccountType?: 'Cheque' | 'Savings' | 'Transmission' | string; // Radio/Select
+    debitAccountType?: string; 
     debitAccountHolder?: string;
-    debitDate?: '1' | '15' | '25' | '30' | string; // Radio/Select for day of month
+    debitDate?: string; // Select for day of month
     debitAgreeTerms?: boolean; // Checkbox for debit order terms
     // Contract Info (PDF Page 6)
     contractSignatoryName?: string; // Name of person signing
@@ -136,6 +136,44 @@ export type FormData = {
     contractSignatoryCapacity?: string; // e.g., Parent, Guardian
     contractAgreeTerms?: boolean; // Checkbox for general contract terms
     // --- End Fields for Step 4 ---
+
+    // --- Add Fields for Step 5 (PDF Page 3 & 8) ---
+    // Health (Page 3)
+    healthAllergies?: string;
+    healthIllnesses?: string;
+    healthDisabilities?: string;
+    healthOperations?: string;
+    healthMedication?: string; // Added from PDF review
+    healthAdditionalInfo?: string; // Added from PDF review
+    // Medical Aid (Page 3)
+    medAidScheme?: string;
+    medAidNumber?: string;
+    medAidMainMember?: string;
+    medAidMemberId?: string;
+    // Doctor (Page 3)
+    doctorName?: string;
+    doctorNumber?: string;
+    // Previous School (Page 3)
+    //prevSchoolName?: string;
+    prevSchoolTown?: string;
+    prevSchoolProvince?: string;
+    prevSchoolTel?: string;
+    prevSchoolReasonForLeaving?: string;
+    // prevSchoolLastGrade? - Captured in Step 1
+    // prevSchoolYearsAttended? - Captured in Step 1
+    // Extracurricular (Page 8)
+    extraCulture?: string[]; // Textarea might be best
+    extraSummerSport?: string[]; // Textarea might be best
+    extraWinterSport?: string[]; // Textarea might be best
+    extraAchievements?: string; // Textarea might be best
+    // --- End Fields for Step 5 ---
+
+    // --- Add Fields for Step 6 (Agreements) ---
+    agreeRules?: boolean;
+    agreePhotos?: boolean;
+    agreeIndemnity?: boolean;
+    agreeFinancial?: boolean; // General financial agreement
+    // --- End Fields for Step 6 ---
 };
 
 export default function AdmissionForm() {
@@ -171,10 +209,8 @@ export default function AdmissionForm() {
             {currentStep === 2 && <Step2Guardian1 onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
             {currentStep === 3 && <Step3Guardian2 onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
             {currentStep === 4 && <Step4Payer onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
-            {/*{currentStep === 5 && <Step5AdditionalInfo onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />} */}
-            {currentStep === 5 && <Step5AdditionalInfo onNext={nextStep} onBack={prevStep} />}
-            {/*{currentStep === 6 && <Step6Documents onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />} {/* Also pass to Step 6 */}
-            {currentStep === 6 && <Step6Documents onBack={prevStep} />} 
+            {currentStep === 5 && <Step5AdditionalInfo onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
+            {currentStep === 6 && <Step6Documents onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />} 
             
              {/* Progress indicator */}
              <div className="mt-6 text-center text-sm text-gray-500">

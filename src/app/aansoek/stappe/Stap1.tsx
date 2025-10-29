@@ -104,10 +104,7 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
     // formData.learnerPreschool &&
     // formData.familyStatus &&
     // formData.parentsDeceased &&
-    // formData.prevSchoolName &&
-    // formData.agreeRules &&
-    // formData.agreePhotos &&
-    // formData.agreeIndemnity;
+    // formData.prevSchoolName 
 
     // --- Define options for dropdowns ---
     const saLanguages = ["Afrikaans", "English", "Ander"];
@@ -230,7 +227,7 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
                     <select id="learnerLastGradePassed" name="learnerLastGradePassed" value={formData.learnerLastGradePassed || ''} onChange={handleInputChange} required
                         className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white">
                         <option value="" disabled>Kies Opsie</option>
-                        {[8, 9, 10, 11, 12].map(grade => <option key={grade} value={grade}>Graad {grade}</option>)}
+                        {[7, 8, 9, 10, 11].map(grade => <option key={grade} value={grade}>Graad {grade}</option>)}
                     </select>
                 </div>
 

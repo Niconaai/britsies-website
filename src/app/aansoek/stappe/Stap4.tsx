@@ -36,40 +36,40 @@ const CheckboxField = ({ label, name, checked, onChange, required = false }: {
 );
 // --- End CheckboxField ---
 
-// --- MultiCheckboxGroup Component ---
-const MultiCheckboxGroup = ({ label, namePrefix, options, selectedValues, onChange, required = false }: {
-    label: string;
-    namePrefix: string;
-    options: { value: string; label: string }[];
-    selectedValues: string[] | undefined; // Array of selected values
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void; // Use standard handler, logic is in parent
-    required?: boolean; // Can add validation logic if needed
-}) => (
-    <div className="border-2 dark:border-zinc-500 border-zinc-200 rounded-sm px-3 py-2">
-        <span className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            {label} {required && <span className="text-red-800">*</span>}
-        </span>
-        <div className="mt-2 space-y-2">
-            {options.map(option => (
-                <label key={option.value} className="flex items-center">
-                    <input
-                        type="checkbox"
-                        // Use a unique name for each checkbox based on prefix and value
-                        name={`${namePrefix}_${option.value}`}
-                        value={option.value} // Value attribute can be useful
-                        // Check if the option's value is in the selectedValues array
-                        checked={selectedValues?.includes(option.value) ?? false}
-                        onChange={onChange} // Parent component needs logic to update the array
-                        // Required validation on group level might need custom logic
-                        className="form-checkbox h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700"
-                    />
-                    <span className="ml-2 text-sm text-zinc-900 dark:text-zinc-100">{option.label}</span>
-                </label>
-            ))}
-        </div>
-    </div>
-);
-// --- End MultiCheckboxGroup ---
+// // --- MultiCheckboxGroup Component ---
+// const MultiCheckboxGroup = ({ label, namePrefix, options, selectedValues, onChange, required = false }: {
+//     label: string;
+//     namePrefix: string;
+//     options: { value: string; label: string }[];
+//     selectedValues: string[] | undefined; // Array of selected values
+//     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void; // Use standard handler, logic is in parent
+//     required?: boolean; // Can add validation logic if needed
+// }) => (
+//     <div className="border-2 dark:border-zinc-500 border-zinc-200 rounded-sm px-3 py-2">
+//         <span className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+//             {label} {required && <span className="text-red-800">*</span>}
+//         </span>
+//         <div className="mt-2 space-y-2">
+//             {options.map(option => (
+//                 <label key={option.value} className="flex items-center">
+//                     <input
+//                         type="checkbox"
+//                         // Use a unique name for each checkbox based on prefix and value
+//                         name={`${namePrefix}_${option.value}`}
+//                         value={option.value} // Value attribute can be useful
+//                         // Check if the option's value is in the selectedValues array
+//                         checked={selectedValues?.includes(option.value) ?? false}
+//                         onChange={onChange} // Parent component needs logic to update the array
+//                         // Required validation on group level might need custom logic
+//                         className="form-checkbox h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700"
+//                     />
+//                     <span className="ml-2 text-sm text-zinc-900 dark:text-zinc-100">{option.label}</span>
+//                 </label>
+//             ))}
+//         </div>
+//     </div>
+// );
+// // --- End MultiCheckboxGroup ---
 
 type StepProps = {
     onNext: () => void;
@@ -117,7 +117,7 @@ export default function Step4Payer({ onNext, onBack, formData, handleInputChange
         formData.contractSignatoryName && formData.contractSignatoryId && formData.contractSignatoryCapacity && formData.contractAgreeTerms
     );
 
-    const canProceed = formData.payerType && requiredPayerDetailsFilled && requiredDebitDetailsFilled && requiredContractDetailsFilled;
+    const canProceed = true;//formData.payerType && requiredPayerDetailsFilled && requiredDebitDetailsFilled && requiredContractDetailsFilled;
     // --- End Validation ---
 
     const payerTypeOptions = [
@@ -134,12 +134,13 @@ export default function Step4Payer({ onNext, onBack, formData, handleInputChange
     return (
         <div className="space-y-6">
             <h2 className="mb-6 text-xl font-semibold dark:text-white">Stap 4: BETALER INLIGTING EN KONTRAK</h2>
+            <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
 
             {/* --- Payer Selection --- */}
             <h3 className="text-lg font-medium dark:text-white">VERANTWOORDELIK VIR BETALING</h3>
             <div>
                 <label htmlFor="payerType" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                    Wie is verantwoordelik vir die betaling van skoolfooie?
+                    Wie is verantwoordelik vir die betaling van skoolfooi?
                 </label>
                 <select
                     id="payerType"
