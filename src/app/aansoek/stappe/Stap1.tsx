@@ -88,30 +88,54 @@ const RadioGroup = ({ label, name, options, selectedValue, onChange, required = 
 
 export default function Step1LearnerInfo({ onNext, formData, handleInputChange }: StepProps) {
     // Expand validation check for required fields in this step
-    const canProceed =
-        formData.learnerSurname &&
-        formData.learnerFirstNames &&
-        formData.learnerIdNumber &&
-        formData.learnerSchoolGrade &&
-        formData.learnerSchoolYear &&
-        formData.learnerLivesWith &&
-        formData.learnerHomeLanguage &&
-        formData.learnerRace &&
-        formData.learnerNationality &&
-        formData.learnerGender &&
-        formData.learnerLastGradePassed &&
-        formData.learnerYearsInGrade &&
-        formData.learnerPreschool &&
-        formData.familyStatus &&
-        formData.parentsDeceased &&
-        formData.prevSchoolName &&
-        formData.agreeRules &&
-        formData.agreePhotos &&
-        formData.agreeIndemnity;
+    const canProceed = true;
+    // formData.learnerSurname &&
+    // formData.learnerFirstNames &&
+    // formData.learnerIdNumber &&
+    // formData.learnerSchoolGrade &&
+    // formData.learnerSchoolYear &&
+    // formData.learnerLivesWith &&
+    // formData.learnerHomeLanguage &&
+    // formData.learnerRace &&
+    // formData.learnerNationality &&
+    // formData.learnerGender &&
+    // formData.learnerLastGradePassed &&
+    // formData.learnerYearsInGrade &&
+    // formData.learnerPreschool &&
+    // formData.familyStatus &&
+    // formData.parentsDeceased &&
+    // formData.prevSchoolName &&
+    // formData.agreeRules &&
+    // formData.agreePhotos &&
+    // formData.agreeIndemnity;
 
     // --- Define options for dropdowns ---
     const saLanguages = ["Afrikaans", "English", "Ander"];
     const raceOptions = ["Blank", "Swart", "Kleurling", "Indiër", "Asieër", "Ander"];
+    const genderOptions = ["Manlik", "Vroulik"];
+    const voorskoolOptions = ["Formeel", "Informeel", "Ander"];
+    const gesinstatusOptions = [
+        { value: 'both_parents', label: 'Beide ouers' },
+        { value: 'single_never_married', label: 'Enkelouer - Nooit Getroud' },
+        { value: 'single_divorced', label: 'Enkelouer - Geskei' },
+        { value: 'reconstituted', label: 'Hersaamgestel' },
+        { value: 'widow_widower', label: 'Weduwee / Wewenaar' },
+        { value: 'foster_care', label: 'Pleegsorg' },
+        { value: 'childrens_home', label: 'Kinderhuis' },
+        { value: 'other', label: 'Ander' },
+    ];
+    const ouersOorledeOptions = [
+        { value: 'mother', label: 'Moeder' },
+        { value: 'father', label: 'Vader' },
+        { value: 'both', label: 'Beide' },
+        { value: 'none', label: 'Geen' },
+    ];
+    const leerderWoonSaamOptions = [
+        { value: 'both_parents', label: 'Albei Ouers' },
+        { value: 'guardian1', label: 'Ouer/Voog 1' },
+        { value: 'guardian2', label: 'Ouer/Voog 2' },
+        { value: 'other', label: 'Ander' }
+    ];
 
     return (
         <div className="space-y-4">
@@ -142,10 +166,10 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
                         name="learnerRace"
                         value={formData.learnerRace || ''}
                         onChange={handleInputChange}
-                        required 
+                        required
                         className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
                     >
-                        <option value="" disabled>Kies Bevolkingsgroep</option>
+                        <option value="" disabled>Kies Opsie</option>
                         {raceOptions.map(option => <option key={option} value={option}>{option}</option>)}
                     </select>
                 </div>
@@ -154,12 +178,21 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
                 <InputField label="Nasionaliteit" name="learnerNationality" value={formData.learnerNationality} onChange={handleInputChange} required />
 
                 {/* --- Add Gender --- */}
-                <div className="border-2 dark:border-zinc-500 border-zinc-200 rounded-sm px-3 py-2">
-                <RadioGroup
-                    label="Geslag" name="learnerGender" required={true}
-                    options={[{ value: 'Male', label: 'Manlik' }, { value: 'Female', label: 'Vroulik' }]} // Add 'Other' if needed
-                    selectedValue={formData.learnerGender} onChange={handleInputChange}
-                />
+                <div>
+                    <label htmlFor="learnerGender" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        Geslag <span className="text-red-800">*</span>
+                    </label>
+                    <select
+                        id="learnerGender"
+                        name="learnerGender"
+                        value={formData.learnerGender || ''}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
+                    >
+                        <option value="" disabled>Kies Opsie</option>
+                        {genderOptions.map(option => <option key={option} value={option}>{option}</option>)}
+                    </select>
                 </div>
                 {/* --- End Gender --- */}
 
@@ -176,7 +209,7 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
                         required
                         className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
                     >
-                        <option value="" disabled>Kies Taal</option>
+                        <option value="" disabled>Kies Opsie</option>
                         {saLanguages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
                     </select>
                 </div>
@@ -194,7 +227,7 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
                     </label>
                     <select id="learnerLastGradePassed" name="learnerLastGradePassed" value={formData.learnerLastGradePassed || ''} onChange={handleInputChange} required
                         className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white">
-                        <option value="" disabled>Kies Graad</option>
+                        <option value="" disabled>Kies Opsie</option>
                         {[8, 9, 10, 11, 12].map(grade => <option key={grade} value={grade}>Graad {grade}</option>)}
                     </select>
                 </div>
@@ -202,14 +235,30 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
                 <InputField label="Jare in bogenoemde graad" name="learnerYearsInGrade" value={formData.learnerYearsInGrade} onChange={handleInputChange} type="number" required />
 
                 {/* --- Preschool --- */}
-                <div className="border-2 dark:border-zinc-500 border-zinc-200 rounded-sm px-3 py-2">
-                    <RadioGroup
-                        label="Voorskoolse opvoeding bygewoon" name="learnerPreschool" required={true}
-                        options={[{ value: 'Formal', label: 'Formeel' }, { value: 'Informal', label: 'Informeel' }, { value: 'Other', label: 'Ander' }]}
-                        selectedValue={formData.learnerPreschool} onChange={handleInputChange}
-                    />
-                    {formData.learnerPreschool === 'Other' && (
-                        <InputField label="Spesifiseer Ander" name="learnerPreschoolOther" value={formData.learnerPreschoolOther} onChange={handleInputChange} required className="mt-2" />
+                <div>
+                    <label htmlFor="learnerPreschool" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        Voorskoolse opvoeding bygewoon <span className="text-red-800">*</span>
+                    </label>
+                    <select
+                        id="learnerPreschool"
+                        name="learnerPreschool"
+                        value={formData.learnerPreschool || ''}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
+                    >
+                        <option value="" disabled>Kies Opsie</option>
+                        {voorskoolOptions.map(option => <option key={option} value={option}>{option}</option>)}
+                    </select>
+                    {formData.learnerPreschool === 'Ander' && (
+                        <InputField
+                            label="Spesifiseer Ander (Voorskool)"
+                            name="learnerPreschoolOther"
+                            value={formData.learnerPreschoolOther}
+                            onChange={handleInputChange}
+                            required
+                            className="mt-2"
+                        />
                     )}
                 </div>
                 {/* --- End Preschool --- */}
@@ -220,70 +269,87 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
             {/* --- Next of Kin --- */}
             <h3 className="pt-4 text-lg font-medium dark:text-white">NAASBESTAANDE-INLIGTING</h3>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <InputField label="Naam en Van" name="nextOfKinFullName" value={formData.nextOfKinFullName} onChange={handleInputChange} className="md:col-span-2" required />
+                <InputField label="Naam en Van" name="nextOfKinFullName" value={formData.nextOfKinFullName} onChange={handleInputChange} className="" required />
+                <InputField label="Verwantskap" name="nextOfKinRelationship" value={formData.nextOfKinRelationship} onChange={handleInputChange} required />
                 <InputField label="Kontaknommer" name="nextOfKinContact" value={formData.nextOfKinContact} onChange={handleInputChange} type="tel" required />
                 <InputField label="Alternatiewe Kontaknommer" name="nextOfKinContactAlt" value={formData.nextOfKinContactAlt} onChange={handleInputChange} type="tel" required />
-                <InputField label="Verwantskap" name="nextOfKinRelationship" value={formData.nextOfKinRelationship} onChange={handleInputChange} required />
             </div>
 
             {/* --- Family Info --- */}
             <h3 className="pt-4 text-lg font-medium dark:text-white">FAMILIE-INLIGTING</h3>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 ">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 ">
                 {/* --- Add Family Status --- */}
-                <div className="border-2 dark:border-zinc-500 border-zinc-200 rounded-sm px-3 py-2">
-                    <RadioGroup
-                        label="Gesinstatus" name="familyStatus" required={true}
-                        options={[
-                            { value: 'both_parents', label: 'Beide ouers' },
-                            { value: 'single_never_married', label: 'Enkelouer - nooit getroud' },
-                            { value: 'single_divorced', label: 'Enkelouer - Geskei' },
-                            { value: 'reconstituted', label: 'Hersaamgestel' },
-                            { value: 'widow_widower', label: 'Weduwee / Wewenaar' },
-                            { value: 'foster_care', label: 'Pleegsorg' },
-                            { value: 'childrens_home', label: 'Kinderhuis' },
-                            { value: 'other', label: 'Ander' },
-                        ]}
-                        selectedValue={formData.familyStatus} onChange={handleInputChange}
-                    />
-                    {/* Consider conditional input if formData.learnerLivesWith === 'other' */}
-                    {formData.familyStatus === 'other' && (
-                        <InputField label="Spesifiseer Ander" name="familyStatusOther" value={formData.familyStatusOther} onChange={handleInputChange} required className="mt-2" />
+                <div>
+                    <label htmlFor="familyStatus" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        Gesinstatus <span className="text-red-800">*</span>
+                    </label>
+                    <select
+                        id="familyStatus"
+                        name="familyStatus"
+                        value={formData.familyStatus || ''}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
+                    >
+                        <option value="" disabled>Kies Opsie</option>
+                        {gesinstatusOptions.map(option => <option key={option.value} value={option.label}>{option.label}</option>)}
+                    </select>
+                    {formData.familyStatus === 'Ander' && (
+                        <InputField
+                            label="Spesifiseer Ander (Gesinstatus)"
+                            name="familyStatusOther"
+                            value={formData.familyStatusOther}
+                            onChange={handleInputChange}
+                            required
+                            className="mt-2"
+                        />
                     )}
                 </div>
                 {/* --- End Family Status --- */}
 
                 {/* --- Add Parents Deceased --- */}
-                <div className="border-2 dark:border-zinc-500 border-zinc-200 rounded-sm px-3 py-2">
-                    <RadioGroup
-                        label="Ouers Oorlede" name="parentsDeceased" required={true}
-                        options={[
-                            { value: 'mother', label: 'Moeder' },
-                            { value: 'father', label: 'Vader' },
-                            { value: 'both', label: 'Beide' },
-                            { value: 'none', label: 'Geen' },
-                        ]}
-                        selectedValue={formData.parentsDeceased} onChange={handleInputChange}
-                    />
+                <div>
+                    <label htmlFor="parentsDeceased" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        Ouers Oorlede <span className="text-red-800">*</span>
+                    </label>
+                    <select
+                        id="parentsDeceased"
+                        name="parentsDeceased"
+                        value={formData.parentsDeceased || ''}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
+                    >
+                        <option value="" disabled>Kies Opsie</option>
+                        {ouersOorledeOptions.map(option => <option key={option.value} value={option.label}>{option.label}</option>)}
+                    </select>
                 </div>
                 {/* --- End Parents Deceased --- */}
 
-                <div className="border-2 dark:border-zinc-500 border-zinc-200 rounded-sm px-3 py-2">
-                    <RadioGroup
-                        label="Leerder woon saam met:"
+                <div>
+                    <label htmlFor="learnerLivesWith" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        Leerder woon saam <span className="text-red-800">*</span>
+                    </label>
+                    <select
+                        id="learnerLivesWith"
                         name="learnerLivesWith"
-                        options={[
-                            { value: 'both_parents', label: 'Albei Ouers' },
-                            { value: 'guardian1', label: 'Ouer/Voog 1' },
-                            { value: 'guardian2', label: 'Ouer/Voog 2' },
-                            { value: 'other', label: 'Ander' }
-                        ]}
-                        selectedValue={formData.learnerLivesWith}
+                        value={formData.learnerLivesWith || ''}
                         onChange={handleInputChange}
-                        required={true}
-                    />
-                    {/* Consider conditional input if formData.learnerLivesWith === 'other' */}
-                    {formData.learnerLivesWith === 'other' && (
-                        <InputField label="Spesifiseer Ander" name="learnerLivesWithOther" value={formData.learnerLivesWithOther} onChange={handleInputChange} required className="mt-2" />
+                        required
+                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
+                    >
+                        <option value="" disabled>Kies Opsie</option>
+                        {leerderWoonSaamOptions.map(option => <option key={option.value} value={option.label}>{option.label}</option>)}
+                    </select>
+                    {formData.learnerLivesWith === 'Ander' && (
+                        <InputField
+                            label="Spesifiseer Ander (Woon saam opsie)"
+                            name="learnerLivesWithOther"
+                            value={formData.learnerLivesWithOther}
+                            onChange={handleInputChange}
+                            required
+                            className="mt-2"
+                        />
                     )}
                 </div>
 
