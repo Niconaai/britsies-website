@@ -81,24 +81,23 @@ type StepProps = {
 // --- Update Component Name ---
 export default function Step2Guardian1({ onNext, onBack, formData, handleInputChange }: StepProps) {
     const isApplicable = !formData.g2NotApplicable;
-    const requiredFieldsFilled = true;
-    //formData.g2NotApplicable || (
-    // formData.g2Relationship &&
-    // formData.g2FirstName &&
-    // formData.g2Surname &&
-    // formData.g2IdNumber &&
-    // formData.g2CellPhone &&
-    // formData.g2Email &&
-    // formData.g2ResAddressLine1 &&
-    // formData.g2ResAddressCity &&
-    // formData.g2ResAddressCode &&
-    // formData.g2PostalAddressLine1 &&
-    // formData.g2PostalAddressCity &&
-    // formData.g2PostalAddressCode &&
-    // formData.g2Nickname &&
-    // formData.g2Huistaal &&
-    // formData.g2KommunikasieVoorkeur &&
-    // formData.g2Beroepstatus )
+    const requiredFieldsFilled = //true;
+        formData.g2NotApplicable || (
+            formData.g2Relationship &&
+            formData.g2FirstName &&
+            formData.g2Surname &&
+            formData.g2Nickname &&
+            formData.g2IdNumber &&
+            formData.g2KommunikasieVoorkeur &&
+            formData.g2CellPhone &&
+            formData.g2Email &&
+            formData.g2ResAddressLine1 &&
+            formData.g2ResAddressCity &&
+            formData.g2ResAddressCode &&
+            ((formData.g2PostalAddressLine1 &&
+                formData.g2PostalAddressCity &&
+                formData.g2PostalAddressCode) || formData.g2PostalSameAsRes) &&
+            formData.g2Beroepstatus)
     ;
     const canProceed = formData.g2NotApplicable || (isApplicable && requiredFieldsFilled);
 

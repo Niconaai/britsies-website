@@ -1,7 +1,7 @@
 // src/app/aansoek/AdmissionForm.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // --- Import the step components ---
 import Step1LearnerInfo from './stappe/Stap1';
 import Step2Guardian1 from './stappe/Stap2';
@@ -12,7 +12,7 @@ import Step6Documents from './stappe/Stap6';
 // --- End Imports ---
 
 // --- Define type for file state ---
-type FileState = {
+export type FileState = {
     learnerPhoto?: File | null;
     docBirthCert?: File | null;
     docG1Id?: File | null;
@@ -50,7 +50,7 @@ export type FormData = {
     learnerLivesWith?: string;
     learnerLivesWithOther?: string;
     learnerNationality?: string;
-    learnerGender?: 'Manlik' | 'Vroulik' | string; 
+    learnerGender?: 'Manlik' | 'Vroulik' | string;
     learnerLastGradePassed?: string;
     learnerYearsInGrade?: string;
     learnerPreschool?: 'Formal' | 'Informal' | 'Other' | string;
@@ -141,7 +141,7 @@ export type FormData = {
     debitBankName?: string;
     debitBranchCode?: string;
     debitAccountNumber?: string;
-    debitAccountType?: string; 
+    debitAccountType?: string;
     debitAccountHolder?: string;
     debitDate?: string; // Select for day of month
     debitAgreeTerms?: boolean; // Checkbox for debit order terms
@@ -188,6 +188,7 @@ export type FormData = {
     agreePhotos?: boolean;
     agreeIndemnity?: boolean;
     agreeFinancial?: boolean; // General financial agreement
+    acceptHandtekening?: string;
     // --- End Fields for Step 6 ---
 };
 
@@ -199,6 +200,13 @@ export default function AdmissionForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
     // --- End File State ---
+
+    useEffect(() => {
+        // Scroll to the top of the page whenever the step changes
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    }, [currentStep]); // Dependency array: only runs when currentStep changes
+    // --- END ADDITION ---
 
     const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 6)); // Ensure step doesn't exceed 6
     const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1)); // Ensure step doesn't go below 1
@@ -212,7 +220,7 @@ export default function AdmissionForm() {
         } else {
             setFormData(prev => ({ ...prev, [name]: value }));
         }
-         console.log('Updated formData:', { ...formData, [name]: value }); // For debugging
+        console.log('Updated formData:', { ...formData, [name]: value }); // For debugging
     };
 
     // --- Update Submit Handler ---
@@ -290,12 +298,12 @@ export default function AdmissionForm() {
             {currentStep === 3 && <Step3Guardian2 onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
             {currentStep === 4 && <Step4Payer onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
             {currentStep === 5 && <Step5AdditionalInfo onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
-            {currentStep === 6 && <Step6Documents onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />} 
-            
-             {/* Progress indicator */}
-             <div className="mt-6 text-center text-sm text-gray-500">
+            {currentStep === 6 && <Step6Documents onBack={prevStep} formData={formData} fileData={fileData} handleInputChange={handleInputChange} handleFileChange={handleFileChange} />}
+
+            {/* Progress indicator */}
+            <div className="mt-6 text-center text-sm text-gray-500">
                 Stap {currentStep} van 6
-             </div>
+            </div>
         </form>
     );
 }

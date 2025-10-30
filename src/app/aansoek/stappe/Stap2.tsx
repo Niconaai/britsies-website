@@ -79,24 +79,23 @@ type StepProps = {
 };
 
 export default function Step2Guardian1({ onNext, onBack, formData, handleInputChange }: StepProps) {
-    const canProceed = true;
-        // formData.g1Relationship &&
-        // formData.g1FirstName &&
-        // formData.g1Surname &&
-        // formData.g1IdNumber &&
-        // formData.g1CellPhone &&
-        // formData.g1Email &&
-        // formData.g1ResAddressLine1 &&
-        // formData.g1ResAddressCity &&
-        // formData.g1ResAddressCode &&
-        // formData.g1PostalAddressLine1 &&
-        // formData.g1PostalAddressCity &&
-        // formData.g1PostalAddressCode &&
-        // formData.g1Nickname &&
-        // formData.g1Huistaal &&
-        // formData.g1KommunikasieVoorkeur &&
-        // formData.g1Beroepstatus 
-        ;
+    const canProceed = //true;
+        formData.g1MaritalStatus &&
+        formData.g1Relationship &&
+        formData.g1FirstName &&
+        formData.g1Surname &&
+        formData.g1Nickname &&
+        formData.g1IdNumber &&
+        formData.g1KommunikasieVoorkeur &&
+        formData.g1CellPhone &&
+        formData.g1Email &&
+        formData.g1ResAddressLine1 &&
+        formData.g1ResAddressCity &&
+        formData.g1ResAddressCode &&
+        ((formData.g1PostalAddressLine1 &&
+            formData.g1PostalAddressCity &&
+            formData.g1PostalAddressCode) || formData.g1PostalSameAsRes) &&
+        formData.g1Beroepstatus;
 
     const maritalStatusOptions = ["Getroud", "Ongetroud", "Geskei", "Weduwee/Wewenaar", "Ander"];
     const relationshipOptions = ["Moeder", "Vader", "Voog", "Ander"];
@@ -139,10 +138,10 @@ export default function Step2Guardian1({ onNext, onBack, formData, handleInputCh
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div>
                     <label htmlFor="g1MaritalStatus" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        Huwelikstatus
+                        Huwelikstatus <span className="text-red-800">*</span>
                     </label>
                     <select id="g1MaritalStatus" name="g1MaritalStatus" value={formData.g1MaritalStatus || ''} onChange={handleInputChange}
-                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white">
+                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white" required>
                         <option value="" >Kies Opsie</option>
                         {maritalStatusOptions.map(option => <option key={option} value={option}>{option}</option>)}
                     </select>
@@ -258,19 +257,19 @@ export default function Step2Guardian1({ onNext, onBack, formData, handleInputCh
                         {beroepOptions.map(option => <option key={option} value={option}>{option}</option>)}
                     </select>
                 </div>
-                <InputField label="Beroep" name="g1Occupation" value={formData.g1Occupation} onChange={handleInputChange} className=""/>
-                <InputField label="Werkgewer" name="g1Employer" value={formData.g1Employer} onChange={handleInputChange} className="md:col-span-2"/>
-                <InputField label="Werk Telefoon" name="g1WorkPhone" value={formData.g1WorkPhone} onChange={handleInputChange} type="tel" className=""/>
-                <InputField label="Werk Epos" name="g1WorkEmail" value={formData.g1WorkEmail} onChange={handleInputChange} type="email" className=""/>
+                <InputField label="Beroep" name="g1Occupation" value={formData.g1Occupation} onChange={handleInputChange} className="" />
+                <InputField label="Werkgewer" name="g1Employer" value={formData.g1Employer} onChange={handleInputChange} className="md:col-span-2" />
+                <InputField label="Werk Telefoon" name="g1WorkPhone" value={formData.g1WorkPhone} onChange={handleInputChange} type="tel" className="" />
+                <InputField label="Werk Epos" name="g1WorkEmail" value={formData.g1WorkEmail} onChange={handleInputChange} type="email" className="" />
                 <InputField label="Werkadres" name="g1WorkAddress" value={formData.g1WorkAddress} onChange={handleInputChange} isTextArea={true} className="md:col-span-2" />
             </div>
 
             {/* Navigation Buttons */}
             <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
             <div className="flex justify-between pt-6">
-                <button 
-                    type="button" 
-                    onClick={onBack} 
+                <button
+                    type="button"
+                    onClick={onBack}
                     className="rounded bg-gray-500 px-6 py-2 text-white hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700"
                 >
                     Terug

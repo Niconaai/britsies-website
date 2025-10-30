@@ -74,27 +74,50 @@ export default function Step5AdditionalInfo({ onNext, onBack, formData, handleIn
     );
     const canProceed = requiredFieldsFilled;
 
-    const winterSportOpsies = [
-        { value: "Rugby", label: "Rugby" },
-        { value: "Netbal", label: "Netbal" },
-        { value: "Hokkie", label: "Hokkie" },
-        { value: "Landloop", label: "Landloop" },
-        { value: "Skaak", label: "Skaak" },
-        { value: "Luggeweerskiet", label: "Luggeweerskiet" },
-        { value: "Gholf", label: "Gholf" },
-        { value: "Swem", label: "Swem" },
-        { value: "Seunshokkie", label: "Seunshokkie" }
-    ];
-    const somerSportOpsies = [
-        { value: "Krieket", label: "Krieket" },
-        { value: "Atletiek", label: "Atletiek" },
-        { value: "Tennis", label: "Tennis" },
-        { value: "Skaak", label: "Skaak" },
-        { value: "Luggeweerskiet", label: "Luggeweerskiet" },
-        { value: "Gholf", label: "Gholf" },
-        { value: "Swem", label: "Swem" },
-        { value: "Sagtebal", label: "Sagtebal" }
-    ];
+    let winterSportOpsies;
+    let somerSportOpsies;
+    if (formData.learnerGender === 'Manlik') {
+        winterSportOpsies = [
+            { value: "Rugby", label: "Rugby" },
+            { value: "Seunshokkie", label: "Seunshokkie" },
+            { value: "Landloop", label: "Landloop" },
+            { value: "Skaak", label: "Skaak" },
+            { value: "Luggeweerskiet", label: "Luggeweerskiet" },
+            { value: "Gholf", label: "Gholf" },
+            { value: "Swem", label: "Swem" }
+        ];
+
+        somerSportOpsies = [
+            { value: "Krieket", label: "Krieket" },
+            { value: "Atletiek", label: "Atletiek" },
+            { value: "Tennis", label: "Tennis" },
+            { value: "Skaak", label: "Skaak" },
+            { value: "Luggeweerskiet", label: "Luggeweerskiet" },
+            { value: "Gholf", label: "Gholf" },
+            { value: "Swem", label: "Swem" }
+        ];
+    } else {
+        winterSportOpsies = [
+            { value: "Rugby", label: "Rugby" },
+            { value: "Netbal", label: "Netbal" },
+            { value: "Hokkie", label: "Hokkie" },
+            { value: "Landloop", label: "Landloop" },
+            { value: "Skaak", label: "Skaak" },
+            { value: "Luggeweerskiet", label: "Luggeweerskiet" },
+            { value: "Gholf", label: "Gholf" },
+            { value: "Swem", label: "Swem" }];
+
+        somerSportOpsies = [
+            { value: "Atletiek", label: "Atletiek" },
+            { value: "Tennis", label: "Tennis" },
+            { value: "Skaak", label: "Skaak" },
+            { value: "Luggeweerskiet", label: "Luggeweerskiet" },
+            { value: "Gholf", label: "Gholf" },
+            { value: "Swem", label: "Swem" },
+            { value: "Sagtebal", label: "Sagtebal" }
+        ];
+    }
+
     const kultuurOpsies = [
         { value: "Koor", label: "Koor" },
         { value: "Redenaars", label: "Redenaars" },

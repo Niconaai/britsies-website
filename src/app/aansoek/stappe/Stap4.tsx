@@ -117,17 +117,42 @@ export default function Step4Payer({ onNext, onBack, formData, handleInputChange
         formData.contractSignatoryName && formData.contractSignatoryId && formData.contractSignatoryCapacity && formData.contractAgreeTerms
     );
 
-    const canProceed = true;//formData.payerType && requiredPayerDetailsFilled && requiredDebitDetailsFilled && requiredContractDetailsFilled;
+    const canProceed =
+        formData.payerType &&
+        requiredPayerDetailsFilled &&
+        requiredDebitDetailsFilled &&
+        requiredContractDetailsFilled;
     // --- End Validation ---
 
-    const payerTypeOptions = [
-        { value: 'g1', label: 'Ouer / Voog 1' },
-        { value: 'g2', label: 'Ouer / Voog 2' },
-        { value: 'individual', label: 'Ander Individu' },
-        { value: 'company', label: 'Maatskappy' },
-        { value: 'closed_corporation', label: 'Beslote Korporasie' },
-        { value: 'trust', label: 'Trust' },
-    ];
+    // const payerTypeOptions = [
+    //     { value: 'g1', label: 'Ouer / Voog 1' },
+    //     { value: 'g2', label: 'Ouer / Voog 2' },
+    //     { value: 'individual', label: 'Ander Individu' },
+    //     { value: 'company', label: 'Maatskappy' },
+    //     { value: 'closed_corporation', label: 'Beslote Korporasie' },
+    //     { value: 'trust', label: 'Trust' },
+    // ];
+
+    let payerTypeOptions;
+    if (!formData.g2NotApplicable) {
+        payerTypeOptions = [
+            { value: 'g1', label: 'Ouer / Voog 1' },
+            { value: 'g2', label: 'Ouer / Voog 2' },
+            { value: 'individual', label: 'Ander Individu' },
+            { value: 'company', label: 'Maatskappy' },
+            { value: 'closed_corporation', label: 'Beslote Korporasie' },
+            { value: 'trust', label: 'Trust' },
+        ];
+    }else{
+        payerTypeOptions = [
+            { value: 'g1', label: 'Ouer / Voog 1' },
+            { value: 'individual', label: 'Ander Individu' },
+            { value: 'company', label: 'Maatskappy' },
+            { value: 'closed_corporation', label: 'Beslote Korporasie' },
+            { value: 'trust', label: 'Trust' },
+        ];
+    }
+
     const accountTypeOptions = ["Tjek", "Spaar", "Transmissie"]; // Check PDF for exact terms
     const debitDateOptions = ["1", "15", "25", "Laaste"]; // Or other specific days
 
@@ -140,7 +165,7 @@ export default function Step4Payer({ onNext, onBack, formData, handleInputChange
             <h3 className="text-lg font-medium dark:text-white">VERANTWOORDELIK VIR BETALING</h3>
             <div>
                 <label htmlFor="payerType" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                    Wie is verantwoordelik vir die betaling van skoolfooi?
+                    Wie is verantwoordelik vir die betaling van skoolfooi? <span className="text-red-800">*</span>
                 </label>
                 <select
                     id="payerType"

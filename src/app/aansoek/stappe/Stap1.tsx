@@ -37,36 +37,36 @@ const InputField = ({ label, name, value, onChange, required = false, type = 'te
     </div>
 );
 
-const RadioGroup = ({ label, name, options, selectedValue, onChange, required = false }: {
-    label: string;
-    name: string;
-    options: { value: string; label: string }[];
-    selectedValue: string | undefined;
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    required?: boolean;
-}) => (
-    <div className="">
-        <span className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            {label} {required && <span className="text-red-800">*</span>}
-        </span>
-        <div className="mt-2 space-y-2">
-            {options.map(option => (
-                <label key={option.value} className="flex items-center">
-                    <input
-                        type="radio"
-                        name={name}
-                        value={option.value}
-                        checked={selectedValue === option.value}
-                        onChange={onChange}
-                        required={required}
-                        className="form-radio h-4 w-4 text-blue-600 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600"
-                    />
-                    <span className="ml-2 text-sm text-zinc-900 dark:text-zinc-100">{option.label}</span>
-                </label>
-            ))}
-        </div>
-    </div>
-);
+// const RadioGroup = ({ label, name, options, selectedValue, onChange, required = false }: {
+//     label: string;
+//     name: string;
+//     options: { value: string; label: string }[];
+//     selectedValue: string | undefined;
+//     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+//     required?: boolean;
+// }) => (
+//     <div className="">
+//         <span className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+//             {label} {required && <span className="text-red-800">*</span>}
+//         </span>
+//         <div className="mt-2 space-y-2">
+//             {options.map(option => (
+//                 <label key={option.value} className="flex items-center">
+//                     <input
+//                         type="radio"
+//                         name={name}
+//                         value={option.value}
+//                         checked={selectedValue === option.value}
+//                         onChange={onChange}
+//                         required={required}
+//                         className="form-radio h-4 w-4 text-blue-600 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600"
+//                     />
+//                     <span className="ml-2 text-sm text-zinc-900 dark:text-zinc-100">{option.label}</span>
+//                 </label>
+//             ))}
+//         </div>
+//     </div>
+// );
 
 // const CheckboxField = ({ label, name, checked, onChange, required = false }: {
 //     label: string | React.ReactNode;
@@ -90,23 +90,27 @@ const RadioGroup = ({ label, name, options, selectedValue, onChange, required = 
 
 export default function Step1LearnerInfo({ onNext, formData, handleInputChange, handleFileChange }: StepProps) {
     // Expand validation check for required fields in this step
-    const canProceed = true;
-    // formData.learnerSurname &&
-    // formData.learnerFirstNames &&
-    // formData.learnerIdNumber &&
-    // formData.learnerSchoolGrade &&
-    // formData.learnerSchoolYear &&
-    // formData.learnerLivesWith &&
-    // formData.learnerHomeLanguage &&
-    // formData.learnerRace &&
-    // formData.learnerNationality &&
-    // formData.learnerGender &&
-    // formData.learnerLastGradePassed &&
-    // formData.learnerYearsInGrade &&
-    // formData.learnerPreschool &&
-    // formData.familyStatus &&
-    // formData.parentsDeceased &&
-    // formData.prevSchoolName 
+    const canProceed = //true;
+        formData.learnerFirstNames &&
+        formData.learnerNickName &&
+        formData.learnerSurname &&
+        formData.learnerDob &&
+        formData.learnerIdNumber &&
+        formData.learnerRace &&
+        formData.learnerNationality &&
+        formData.learnerGender &&
+        formData.learnerHomeLanguage &&
+        formData.learnerLastGradePassed &&
+        formData.learnerYearsInGrade &&
+        formData.learnerLivesWith &&
+        formData.learnerYearsInGrade &&
+        formData.learnerPreschool &&
+        formData.nextOfKinFullName &&
+        formData.nextOfKinRelationship &&
+        formData.nextOfKinContact &&
+        formData.familyStatus &&
+        formData.parentsDeceased &&
+        formData.learnerLivesWith;
 
     // --- Define options for dropdowns ---
     const saLanguages = ["Afrikaans", "English", "Ander"];
@@ -281,7 +285,7 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange, 
                 <InputField label="Naam en Van" name="nextOfKinFullName" value={formData.nextOfKinFullName} onChange={handleInputChange} className="" required />
                 <InputField label="Verwantskap" name="nextOfKinRelationship" value={formData.nextOfKinRelationship} onChange={handleInputChange} required />
                 <InputField label="Kontaknommer" name="nextOfKinContact" value={formData.nextOfKinContact} onChange={handleInputChange} type="tel" required />
-                <InputField label="Alternatiewe Kontaknommer" name="nextOfKinContactAlt" value={formData.nextOfKinContactAlt} onChange={handleInputChange} type="tel" required />
+                <InputField label="Alternatiewe Kontaknommer" name="nextOfKinContactAlt" value={formData.nextOfKinContactAlt} onChange={handleInputChange} type="tel" />
             </div>
 
             {/* --- Family Info --- */}

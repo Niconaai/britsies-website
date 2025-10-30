@@ -1,6 +1,7 @@
 // src/app/aansoek/steps/Step6.tsx
 import React from 'react';
-import { FormData } from '../AdmissionForm'; // Adjust path if needed
+import { FormData, FileState } from '../AdmissionForm';
+import FileInput from './FileInput';
 
 // --- Reusable CheckboxField (Copy or import) ---
 const CheckboxField = ({ label, name, checked, onChange, required = false }: {
@@ -8,65 +9,91 @@ const CheckboxField = ({ label, name, checked, onChange, required = false }: {
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void; required?: boolean;
 }) => (
     <label className="flex items-start space-x-2">
-        <input type="checkbox" name={name} checked={!!checked} onChange={onChange} required={required}
-            className="form-checkbox mt-1 h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700" />
+        <input
+            type="checkbox"
+            name={name}
+            checked={!!checked}
+            onChange={onChange}
+            required={required}
+            className="form-checkbox mt-1 h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 shrink-0"
+        />
         <span className="text-sm text-zinc-700 dark:text-zinc-300">{label}</span>
     </label>
 );
 // --- End CheckboxField ---
 
-// --- Reusable FileInputField (Placeholder UI) ---
-const FileInputField = ({ label, name, required = false, description = '' }: {
+const InputField = ({ label, name, value, onChange, required = false, type = 'text', placeholder = '', className = '' }: {
     label: string;
     name: string;
+    value: string | number | undefined | null;
+    onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
     required?: boolean;
-    description?: string;
+    type?: string;
+    placeholder?: string;
+    className?: string;
 }) => (
-    <div>
-        <label htmlFor={name} className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+    <div className={className}>
+        <label htmlFor={name} className="block  text-sm font-medium text-zinc-700 dark:text-zinc-300">
             {label} {required && <span className="text-red-800">*</span>}
         </label>
-        {/*
-            NOTE: We will replace this with a proper state-managed upload component.
-            Using a standard <input type="file"> here won't work correctly with the
-            parent 'formData' object without a special handler, which we'll add later
-            when we implement the API route submission.
-        */}
-        <div className="mt-2 flex items-center justify-center rounded-sm border-2 border-dashed border-zinc-300 p-6 dark:border-zinc-600">
-            <div className="text-center">
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">TODO: Lêer Oplaai Komponent vir {label}</p>
-                {description && <p className="text-xs text-zinc-400">{description}</p>}
-                {/* <input id={name} name={name} type="file" className="sr-only" /> */}
-            </div>
-        </div>
+        <input
+            type={type}
+            id={name}
+            name={name}
+            value={value || ''}
+            onChange={onChange}
+            required={required}
+            placeholder={placeholder}
+            className="mt-2 mb-1 px-2 py-1 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
+        />
     </div>
 );
-// --- End FileInputField ---
 
 type StepProps = {
     onBack: () => void;
     formData: FormData;
+    fileData: FileState;
     handleInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
-    // We'll need a new handler for files, e.g., handleFileChange
+    handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-export default function Step6Documents({ onBack, formData, handleInputChange }: StepProps) {
+export default function Step6Documents({ onBack, formData, fileData, handleInputChange, handleFileChange }: StepProps) {
 
     // --- Validation logic for Step 6 ---
-    // Check that all required checkboxes are ticked
     const requiredAgreementsMade = !!(
         formData.agreeRules &&
         formData.agreePhotos &&
         formData.agreeIndemnity &&
-        formData.agreeFinancial
+        formData.agreeFinancial &&
+        formData.acceptHandtekening
         // Add checks for required files later
     );
-    const canProceed = requiredAgreementsMade; // Update this when file state is added
-    // --- End Validation ---
 
     const now = new Date();
     const monthIndex = now.getMonth();
     const monthNumber = monthIndex + 1;
+
+    const isGrade8Jan = (formData.learnerLastGradePassed === '7' && monthNumber === 1);
+    const oorplasingRequired = !isGrade8Jan;
+    const portefeuljeRequired = !isGrade8Jan;
+
+    // G2 ID only required if G2 is applicable
+    const g2IdRequired = !formData.g2NotApplicable;
+
+    const requiredFilesUploaded = !!(
+        (oorplasingRequired ? fileData.docOorplasingSert : true) &&
+        fileData.docBirthCert &&
+        fileData.docG1Id &&
+        (g2IdRequired ? fileData.docG2Id : true) &&
+        fileData.docProofOfAddress &&
+        fileData.docMedicalAid &&
+        fileData.docPrevReport &&
+        (portefeuljeRequired ? fileData.docPortefeulje : true) &&
+        fileData.docGedragsverslag
+    );
+    // --- End File Validation ---
+
+    const canProceed = requiredAgreementsMade && requiredFilesUploaded;
 
     return (
         <div className="space-y-6">
@@ -78,24 +105,49 @@ export default function Step6Documents({ onBack, formData, handleInputChange }: 
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
                 Laai asseblief geskandeerde afskrifte of duidelike foto's van die volgende dokumente op (PDF, JPG, PNG).
             </p>
-            <div className="space-y-4 rounded border border-zinc-300 p-4 dark:border-zinc-600">
-                { !(formData.learnerLastGradePassed === '7' && monthNumber === 1) && (
-                    <FileInputField label="Oorplasing Sertifikaat van vorige skool" name="docOorplasingSert" required={true} />
+            <div className="grid grid-cols-1 gap-4 rounded border border-zinc-300 p-4 dark:border-zinc-600">
+                {oorplasingRequired && (
+                    <div className="rounded border border-dashed border-zinc-400 p-4 text-center dark:border-zinc-600">
+                        <FileInput label="Oorplasing Sertifikaat van vorige skool" name="docOorplasingSert" onChange={handleFileChange} required={true} accept="image/*,application/pdf" />
+                    </div>
                 )}
-                <FileInputField label="Leerder ID / Geboortesertifikaat" name="docBirthCert" required={true} />
-                <FileInputField label="Ouer / Voog 1 ID" name="docG1Id" required={true} />
-                {/* Only require G2 ID if G2 is applicable */}
-                {!formData.g2NotApplicable && (
-                    <FileInputField label="Ouer / Voog 2 ID" name="docG2Id" required={true} />
+
+                <div className="rounded border border-dashed border-zinc-400 p-4 text-center dark:border-zinc-600">
+                    <FileInput label="Leerder ID / Geboortesertifikaat" name="docBirthCert" onChange={handleFileChange} required={true} accept="image/*,application/pdf" />
+                </div>
+
+                <div className="rounded border border-dashed border-zinc-400 p-4 text-center dark:border-zinc-600">
+                    <FileInput label="Ouer / Voog 1 ID" name="docG1Id" onChange={handleFileChange} required={true} accept="image/*,application/pdf" />
+                </div>
+
+                {g2IdRequired && (
+                    <div className="rounded border border-dashed border-zinc-400 p-4 text-center dark:border-zinc-600">
+                        <FileInput label="Ouer / Voog 2 ID" name="docG2Id" onChange={handleFileChange} required={true} accept="image/*,application/pdf" />
+                    </div>
                 )}
-                <FileInputField label="Bewys van Woonadres (Munisipale Rekening)" name="docProofOfAddress" required={true} />
-                <FileInputField label="Mediese Fonds Kaart (Voor & Agter)" name="docMedicalAid" required={true} />
-                <FileInputField label="Laaste Skoolrapport" name="docPrevReport" required={true} />
-                { !(formData.learnerLastGradePassed === '7' && monthNumber === 1) && (
-                     <FileInputField label="Volledige Portefeulje: Punte van elke assessering van elke vak." name="docPrevReport" required={true} />
+
+                <div className="rounded border border-dashed border-zinc-400 p-4 text-center dark:border-zinc-600">
+                    <FileInput label="Bewys van Woonadres (Munisipale Rekening)" name="docProofOfAddress" onChange={handleFileChange} required={true} accept="image/*,application/pdf" />
+                </div>
+
+                <div className="rounded border border-dashed border-zinc-400 p-4 text-center dark:border-zinc-600">
+                    <FileInput label="Mediese Fonds Kaart (Voor & Agter)" name="docMedicalAid" onChange={handleFileChange} required={true} accept="image/*,application/pdf" />
+                </div>
+
+                <div className="rounded border border-dashed border-zinc-400 p-4 text-center dark:border-zinc-600">
+                    <FileInput label="Laaste Skoolrapport" name="docPrevReport" onChange={handleFileChange} required={true} accept="image/*,application/pdf" />
+                </div>
+
+                {portefeuljeRequired && (
+                    <div className="rounded border border-dashed border-zinc-400 p-4 text-center dark:border-zinc-600">
+                        <FileInput label="Volledige Portefeulje: Punte van elke assessering van elke vak." name="docPortefeulje" onChange={handleFileChange} required={true} accept="image/*,application/pdf" />
+                    </div>
                 )}
-                <FileInputField label="Nuutste Gedragsverslag" name="docGedragsverslag" required={true} />
-                {/* Add other required file fields from PDF if any */}
+
+                <div className="rounded border border-dashed border-zinc-400 p-4 text-center dark:border-zinc-600">
+                    <FileInput label="Nuutste Gedragsverslag" name="docGedragsverslag" onChange={handleFileChange} required={true} accept="image/*,application/pdf" />
+                </div>
+                
             </div>
 
             {/* --- Agreements (From PDF Page 8 / Page 6) --- */}
@@ -123,10 +175,18 @@ export default function Step6Documents({ onBack, formData, handleInputChange }: 
                     onChange={handleInputChange}
                     required={true}
                 />
-                 <CheckboxField
+                <CheckboxField
                     label={<span>Ek/Ons verklaar hiermee dat al die bogenoemde inligting waar en korrek is, en ek/ons aanvaar die finansiële verpligtinge soos uiteengesit in die <a href="/finansiele-beleid" target="_blank" className="text-blue-600 dark:text-blue-400 hover:underline">Finansiële Beleid</a>.</span>}
                     name="agreeFinancial" // Combines contract and data accuracy
                     checked={formData.agreeFinancial}
+                    onChange={handleInputChange}
+                    required={true}
+                />
+                <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
+                <InputField
+                    label="Skryf jou volle naam en van hier in as handtekening"
+                    name="acceptHandtekening"
+                    value={formData.acceptHandtekening}
                     onChange={handleInputChange}
                     required={true}
                 />
