@@ -69,7 +69,7 @@ function mapDataToSchema(textData: TextData, applicationId: string) {
             return [];
         }
     };
-    
+
     const toBool = (val: string | undefined) => val === 'true';
 
     // 1. Learners Table Data
@@ -120,15 +120,18 @@ function mapDataToSchema(textData: TextData, applicationId: string) {
         prev_school_tel: textData.prevSchoolTel,
         prev_school_reason_leaving: textData.prevSchoolReasonForLeaving,
         // Extracurricular (Stap 5 - JSONB)
-        extra_culture: parseJsonArray(textData.extraCulture),
-        extra_summer_sport: parseJsonArray(textData.extraSummerSport),
-        extra_winter_sport: parseJsonArray(textData.extraWinterSport),
-        extra_achievements: textData.extraAchievements,
+        // Extracurricular (Stap 5 - JSONB)
+        extracurriculars: {
+            culture: parseJsonArray(textData.extraCulture),
+            summer_sport: parseJsonArray(textData.extraSummerSport),
+            winter_sport: parseJsonArray(textData.extraWinterSport),
+            achievements: textData.extraAchievements
+        },
         // Agreements (Stap 6)
         agree_rules: toBool(textData.agreeRules),
         agree_photos: toBool(textData.agreePhotos),
         agree_indemnity: toBool(textData.agreeIndemnity),
-        agree_financial: toBool(textData.agreeFinancial),
+        agree_financial: toBool(textData.agree_financial),
         signature: textData.acceptHandtekening, // The new signature field
     };
 
@@ -238,31 +241,38 @@ export async function POST(request: Request) {
     let applicationId: string | null = null;
 
     try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            return NextResponse.json({ success: false, error: "Not authenticated" }, { status: 401 });
+        }
+        console.log(`Processing application for user: ${user.id}`);
+
         const formData = await request.formData();
         const { textData, fileData } = processFormData(formData);
-        
-        // --- Basic Validation (Example) ---
+
         if (!textData.learnerSurname || !textData.learnerIdNumber) {
             throw new Error("Missing required learner information.");
         }
         if (!fileData.docBirthCert || !fileData.docG1Id) {
             throw new Error("Missing required documents (Birth Cert or G1 ID).");
         }
-        // --- End Validation ---
 
         // 1. Create the Application record to get an ID
         console.log("Creating application record...");
         const { data: appData, error: appError } = await supabase
             .from('applications')
-            .insert({ status: 'pending' }) // Set default status
+            .insert({
+                status: 'pending',
+                user_id: user.id
+            })
             .select()
             .single();
 
         if (appError) throw appError;
-        
+
         applicationId = appData.id;
         console.log(`Application record created: ${applicationId}`);
-        
+
         if (!applicationId) {
             throw new Error("Application ID was not created. Cannot map data.");
         }
@@ -286,7 +296,7 @@ export async function POST(request: Request) {
                     console.error(`Error uploading ${key}:`, storageError);
                     throw new Error(`Failed to upload file: ${file.name}`);
                 }
-                
+
                 console.log(`Uploaded file: ${path}`);
                 // Add to list for Step 4
                 uploadedFilesList.push({
@@ -305,7 +315,7 @@ export async function POST(request: Request) {
         const { learnerData, guardiansData, payerData } = mapDataToSchema(textData, applicationId);
 
         // 4. Insert into Relational Tables
-        
+
         // Insert Learner
         console.log("Inserting learner data...");
         const { error: learnerError } = await supabase.from('learners').insert(learnerData);
@@ -333,10 +343,10 @@ export async function POST(request: Request) {
 
         // 6. Return Success
         console.log(`Successfully processed application ${applicationId}`);
-        return NextResponse.json({ 
-            success: true, 
+        return NextResponse.json({
+            success: true,
             message: "Application received!",
-            applicationId: applicationId 
+            applicationId: applicationId
         });
 
     } catch (error) {

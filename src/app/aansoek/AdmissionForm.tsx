@@ -2,6 +2,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image'
 // --- Import the step components ---
 import Step1LearnerInfo from './stappe/Stap1';
 import Step2Guardian1 from './stappe/Stap2';
@@ -199,6 +201,7 @@ export default function AdmissionForm() {
     const [fileData, setFileData] = useState<FileState>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
+    const router = useRouter();
     // --- End File State ---
 
     useEffect(() => {
@@ -236,7 +239,6 @@ export default function AdmissionForm() {
         // 2. Append all text/checkbox/select data
         Object.entries(formData).forEach(([key, value]) => {
             if (value !== undefined && value !== null) {
-                // Convert arrays (like multicheckbox) to JSON string
                 if (Array.isArray(value)) {
                     apiFormData.append(key, JSON.stringify(value));
                 } else {
@@ -256,7 +258,7 @@ export default function AdmissionForm() {
         try {
             const response = await fetch('/api/apply', {
                 method: 'POST',
-                body: apiFormData, // Send as FormData (multipart/form-data)
+                body: apiFormData,
             });
 
             const result = await response.json();
@@ -266,15 +268,16 @@ export default function AdmissionForm() {
             }
 
             console.log("Submission successful:", result);
-            // TODO: Redirect to a success page
-            alert('Aansoek suksesvol ontvang!');
-            // router.push('/aansoek/sukses'); // Example redirect
+
+            // --- REDIRECT ON SUCCESS ---
+            // This sends the user to the /aansoek page, which will now
+            // act as their portal (as we discussed).
+            window.location.href = '/aansoek';
 
         } catch (error) {
             console.error("Submission error:", error);
             setSubmitError(error instanceof Error ? error.message : "An unknown error occurred.");
-        } finally {
-            setIsSubmitting(false);
+            setIsSubmitting(false); // <-- Stop loading on error
         }
     };
     // --- End Submit Handler ---
@@ -292,18 +295,61 @@ export default function AdmissionForm() {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6 rounded-lg bg-white p-6 shadow-md dark:bg-zinc-800">
-            {/* Render the imported step components */}
-            {currentStep === 1 && <Step1LearnerInfo onNext={nextStep} formData={formData} handleInputChange={handleInputChange} handleFileChange={handleFileChange} />}
-            {currentStep === 2 && <Step2Guardian1 onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
-            {currentStep === 3 && <Step3Guardian2 onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
-            {currentStep === 4 && <Step4Payer onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
-            {currentStep === 5 && <Step5AdditionalInfo onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
-            {currentStep === 6 && <Step6Documents onBack={prevStep} formData={formData} fileData={fileData} handleInputChange={handleInputChange} handleFileChange={handleFileChange} />}
+            
+            {/* --- 1. ERROR STATE --- */}
+            {submitError && (
+                <div className="rounded-md bg-red-100 p-6 text-center">
+                    <h3 className="text-lg font-semibold text-red-800">Fout met Aansoek</h3>
+                    <p className="mt-2 text-red-700">{submitError}</p>
+                    <button 
+                        type="button" 
+                        onClick={() => {
+                            setSubmitError(null); 
+                            // Optional: send them back to the last step
+                            // setCurrentStep(6); 
+                        }} 
+                        className="mt-6 rounded bg-red-600 px-6 py-2 font-semibold text-white shadow-sm hover:bg-red-700"
+                    >
+                        Probeer Weer
+                    </button>
+                </div>
+            )}
 
-            {/* Progress indicator */}
-            <div className="mt-6 text-center text-sm text-gray-500">
-                Stap {currentStep} van 6
-            </div>
+            {/* --- 2. LOADING STATE --- */}
+            {/* Assumes you have a file at /public/loading.gif */}
+            {isSubmitting && (
+                <div className="flex flex-col items-center justify-center p-12">
+                    <Image
+                        src="/CircleLoader.gif" // <-- MAKE SURE THIS FILE EXISTS IN /public
+                        alt="Besig om te laai..."
+                        width={100} // Adjust size as needed
+                        height={100}
+                        unoptimized={true} // Important for GIFs
+                    /> 
+                    <p className="mt-4 text-lg font-semibold dark:text-white">
+                        Besig om jou aansoek te verwerk...
+                    </p>
+                    <p className="dark:text-zinc-400">Moet asseblief nie hierdie bladsy toemaak nie.</p>
+                </div>
+            )}
+
+            {/* --- 3. FORM STATE --- */}
+            {/* Show the form steps only if NOT submitting and NO error */}
+            {!isSubmitting && !submitError && (
+                <>
+                    {currentStep === 1 && <Step1LearnerInfo onNext={nextStep} formData={formData} handleInputChange={handleInputChange} handleFileChange={handleFileChange} />}
+                    {currentStep === 2 && <Step2Guardian1 onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
+                    {currentStep === 3 && <Step3Guardian2 onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
+                    {currentStep === 4 && <Step4Payer onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
+                    {currentStep === 5 && <Step5AdditionalInfo onNext={nextStep} onBack={prevStep} formData={formData} handleInputChange={handleInputChange} />}
+                    {currentStep === 6 && <Step6Documents onBack={prevStep} formData={formData} fileData={fileData} handleInputChange={handleInputChange} handleFileChange={handleFileChange} />} 
+                    
+                    {/* Progress indicator */}
+                    <div className="mt-6 text-center text-sm text-gray-500">
+                        Stap {currentStep} van 6
+                    </div>
+                </>
+            )}
         </form>
     );
 }

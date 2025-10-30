@@ -162,9 +162,9 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange, 
             {/* --- Learner Details Grid --- */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 
-                <InputField label="Volle Voorname" name="learnerFirstNames" value={formData.learnerFirstNames} onChange={handleInputChange} required />
-                <InputField label="Noemnaam" name="learnerNickName" value={formData.learnerNickName} onChange={handleInputChange} required />
+                <InputField label="Volle Name" name="learnerFirstNames" value={formData.learnerFirstNames} onChange={handleInputChange} required />
                 <InputField label="Van" name="learnerSurname" value={formData.learnerSurname} onChange={handleInputChange} required />
+                <InputField label="Noemnaam" name="learnerNickName" value={formData.learnerNickName} onChange={handleInputChange} required />
                 <InputField label="Geboortedatum (YYYY-MM-DD)" name="learnerDob" value={formData.learnerDob} onChange={handleInputChange} type="date" />
                 <InputField label="ID Nommer" name="learnerIdNumber" value={formData.learnerIdNumber} onChange={handleInputChange} required />
                 <InputField label="Kerkverband" name="learnerReligion" value={formData.learnerReligion} onChange={handleInputChange} />
