@@ -1,54 +1,75 @@
-// middleware.ts (at root or in src/)
+// middleware.ts
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  console.log(`Middleware running for path: ${request.nextUrl.pathname}`); // Add log
+  console.log(`Middleware running for path: ${request.nextUrl.pathname}`);
 
   let supabaseResponse = NextResponse.next({
     request,
-  })
+  });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, // Check .env.local matches
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
       cookies: {
-        getAll() {
-          return request.cookies.getAll()
+        // --- CORRECTED IMPLEMENTATION ---
+        get(name: string) {
+          return request.cookies.get(name)?.value;
         },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+        set(name: string, value: string, options: CookieOptions) {
+          // If the cookie is set, update the request cookies as well.
+          request.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+          // Update the response to set the cookie
           supabaseResponse = NextResponse.next({
             request,
-          })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
+          });
+          supabaseResponse.cookies.set({
+            name,
+            value,
+            ...options,
+          });
         },
+        remove(name: string, options: CookieOptions) {
+          // If the cookie is removed, update the request cookies as well.
+          request.cookies.set({
+            name,
+            value: '',
+            ...options,
+          });
+          // Update the response to remove the cookie
+          supabaseResponse = NextResponse.next({
+            request,
+          });
+          supabaseResponse.cookies.set({
+            name,
+            value: '',
+            ...options,
+          });
+        },
+        // --- END CORRECTION ---
       },
     }
-  )
+  );
 
   // IMPORTANT: getUser() must be called to refresh session
-  // Let's get the user data first
   const { data: { user } } = await supabase.auth.getUser();
-  console.log('Middleware user check:', user ? `User Found (${user.email})` : 'No User Found'); // Add log
+  console.log('Middleware user check:', user ? `User Found (${user.email})` : 'No User Found');
 
-  // If the user is NOT logged in AND they are trying to access the login page,
-  // skip further checks and just return the basic response.
-  // This might prevent a loop if getUser() interferes with the login page rendering.
+  // This logic is fine, it just ensures the session is refreshed.
+  // The actual route protection happens in the layouts/pages themselves.
   if (!user && request.nextUrl.pathname === '/admin/login') {
-      console.log('Middleware: No user, accessing login page. Skipping further checks.'); // Add log
-      return supabaseResponse; // Return response potentially without updated cookies yet, layout will handle redirect
+      console.log('Middleware: No user, on login page. Allowing.');
+      return supabaseResponse;
   }
 
-  // If we are anywhere else (or if the user IS logged in), ensure the session refresh completes fully.
-  // The layout will handle redirects for protected routes.
-  console.log('Middleware: Refreshing session / allowing request through.'); // Add log
-
-  // Return the response object (might have been updated by setAll cookie handler)
-  return supabaseResponse
+  console.log('Middleware: Refreshing session / allowing request through.');
+  return supabaseResponse;
 }
 
 export const config = {
