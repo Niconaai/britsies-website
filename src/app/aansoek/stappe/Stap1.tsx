@@ -1,11 +1,13 @@
 // src/app/aansoek/stappe/Stap1LeerderInfo.tsx
 import React from 'react';
 import { FormData } from '../AdmissionForm';
+import FileInput from './FileInput';
 
 type StepProps = {
     onNext: () => void;
     formData: FormData;
     handleInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+    handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 const InputField = ({ label, name, value, onChange, required = false, type = 'text', placeholder = '', className = '' }: {
@@ -86,7 +88,7 @@ const RadioGroup = ({ label, name, options, selectedValue, onChange, required = 
 //     </label>
 // );
 
-export default function Step1LearnerInfo({ onNext, formData, handleInputChange }: StepProps) {
+export default function Step1LearnerInfo({ onNext, formData, handleInputChange, handleFileChange }: StepProps) {
     // Expand validation check for required fields in this step
     const canProceed = true;
     // formData.learnerSurname &&
@@ -141,7 +143,14 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange }
             {/* TODO: Add Photo Upload Field */}
             <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
             <div className="rounded border border-dashed border-zinc-400 p-4 text-center dark:border-zinc-600">
-                <span className="text-sm text-zinc-500 dark:text-zinc-400">TODO: Foto Oplaai Komponent hier</span>
+                <FileInput
+                    label="Leerder Foto (Paskop-grootte)"
+                    name="learnerPhoto"
+                    onChange={handleFileChange}
+                    required // Make photo required
+                    accept="image/png, image/jpeg"
+                    description="Laai asseblief 'n duidelike, onlangse paskop-grootte foto op."
+                />
             </div>
 
             <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
