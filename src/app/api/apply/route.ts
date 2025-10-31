@@ -1,19 +1,21 @@
 // src/app/api/apply/route.ts
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
-import { type FileState } from "@/app/aansoek/AdmissionForm"; // Import types from form
+import { type FileState } from "@/app/aansoek/AdmissionForm";
+import { Resend } from 'resend';
+// import { ApplicationConfirmationEmail } from '../../emails/ApplicationConfirmationEmails';
+// import { AdminNotificationEmail } from '../../emails/AdminNotificationEmail';
 
-// Define a type for our flat text data
+import { getParentConfirmationHtml, getAdminNotificationHtml } from '@/utils/emailTemplates';
+
 type TextData = {
     [key: string]: string | undefined;
 };
 
-// Define a type for our file data
 type FileData = {
     [key in keyof FileState]: File | undefined;
 };
 
-// List of all file input names from our form
 const fileKeys: (keyof FileState)[] = [
     'learnerPhoto',
     'docBirthCert',
@@ -27,26 +29,24 @@ const fileKeys: (keyof FileState)[] = [
     'docGedragsverslag'
 ];
 
-/**
- * Helper to parse FormData into separate text and file objects
- */
+function formatDateYYYYMMDD(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0'); 
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}${m}${d}`;
+}
+
 function processFormData(formData: FormData): { textData: TextData, fileData: FileData } {
     const textData: TextData = {};
-    const fileData: Partial<FileData> = {}; // Use Partial for building
-
+    const fileData: Partial<FileData> = {};
     for (const key of fileKeys) {
         const file = formData.get(key) as File | null;
         if (file && file.size > 0) {
             fileData[key] = file;
         }
     }
-
-    // Iterate over all entries to get text data
-    // This is safer than accessing keys one by one
     formData.forEach((value, key) => {
-        // If it's not a file key, add it as text
         if (!fileKeys.includes(key as keyof FileState)) {
-            // Handle boolean 'on'/'off' from checkboxes
             if (value === 'on') {
                 textData[key] = 'true';
             } else if (typeof value === 'string') {
@@ -54,19 +54,18 @@ function processFormData(formData: FormData): { textData: TextData, fileData: Fi
             }
         }
     });
-
     return { textData, fileData: fileData as FileData };
 }
 
-/**
- * Helper to map flat textData to our normalized DB schema
- */
 function mapDataToSchema(textData: TextData, applicationId: string) {
     const parseJsonArray = (field: string | undefined): any[] => {
         try {
+            if (field && field.startsWith('[') && field.endsWith(']')) {
+                 return JSON.parse(field);
+            }
             return field ? JSON.parse(field) : [];
         } catch {
-            return [];
+            return field ? [field] : [];
         }
     };
 
@@ -234,17 +233,24 @@ function mapDataToSchema(textData: TextData, applicationId: string) {
     return { learnerData, guardiansData, payerData };
 }
 
+const resend = new Resend(process.env.BRITSIES_RESEND_API_KEY);
+
 // --- Main POST Handler ---
 export async function POST(request: Request) {
     console.log("POST /api/apply received");
     const supabase = await createClient();
-    let applicationId: string | null = null;
+    let db_application_uuid: string | null = null;
+    let human_friendly_id: string | null = null; 
+    let userEmail: string | null = null;
+    let learnerName: string | null = null;
+    let learnerGrade: string | null = null;
 
     try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) {
             return NextResponse.json({ success: false, error: "Not authenticated" }, { status: 401 });
         }
+        userEmail = user.email || null;
         console.log(`Processing application for user: ${user.id}`);
 
         const formData = await request.formData();
@@ -261,20 +267,35 @@ export async function POST(request: Request) {
         console.log("Creating application record...");
         const { data: appData, error: appError } = await supabase
             .from('applications')
-            .insert({
-                status: 'pending',
-                user_id: user.id
-            })
-            .select()
+            .insert({ status: 'pending', user_id: user.id })
+            .select('id, application_number, created_at') // <-- VRA VIR DIE NUWE KOLOMME
             .single();
 
         if (appError) throw appError;
 
-        applicationId = appData.id;
-        console.log(`Application record created: ${applicationId}`);
+        db_application_uuid = appData.id; 
+        const appNumber = appData.application_number;
+        const appDate = new Date(appData.created_at);
 
-        if (!applicationId) {
-            throw new Error("Application ID was not created. Cannot map data.");
+        if (!db_application_uuid || typeof appNumber !== 'number') {
+            throw new Error("Application ID or Number was not created.");
+        }
+
+        const paddedAppNumber = String(appNumber).padStart(6, '0');
+        const formattedDate = formatDateYYYYMMDD(appDate);
+        human_friendly_id = `BRI-${formattedDate}-${paddedAppNumber}`; // Bv. BRI-20251031-000001
+        
+        console.log(`Generated Friendly ID: ${human_friendly_id} for UUID: ${db_application_uuid}`);
+
+        // STOOR DIE MENS-LEESBARE ID TERUG IN DIE DB
+        // 'n Beter metode is om 'await' te gebruik en die fout te hanteer
+        const { error: updateError } = await supabase
+          .from('applications')
+          .update({ human_readable_id: human_friendly_id })
+          .eq('id', db_application_uuid);
+
+        if (updateError) {
+          console.warn(`Could not save friendly_id: ${updateError.message}`);
         }
 
         // 2. Upload Files to Storage
@@ -286,7 +307,7 @@ export async function POST(request: Request) {
                 // Use a clean file name or add a hash if needed
                 const fileExt = file.name.split('.').pop();
                 const cleanFileName = `${key}.${fileExt}`;
-                const path = `applications/${applicationId}/${cleanFileName}`;
+                const path = `applications/${db_application_uuid}/${cleanFileName}`;
 
                 const { error: storageError } = await supabase.storage
                     .from('application-uploads') // Bucket name from FSD
@@ -300,7 +321,7 @@ export async function POST(request: Request) {
                 console.log(`Uploaded file: ${path}`);
                 // Add to list for Step 4
                 uploadedFilesList.push({
-                    application_id: applicationId,
+                    application_id: db_application_uuid,
                     file_type: key,
                     storage_path: path,
                     original_filename: file.name,
@@ -312,7 +333,10 @@ export async function POST(request: Request) {
 
         // 3. Map Text Data to DB Schema
         console.log("Mapping text data to schema...");
-        const { learnerData, guardiansData, payerData } = mapDataToSchema(textData, applicationId);
+        const { learnerData, guardiansData, payerData } = mapDataToSchema(textData, db_application_uuid);
+
+        learnerName = `${learnerData.first_names || ''} ${learnerData.surname || ''}`.trim();
+        learnerGrade = learnerData.last_grade_passed || null;
 
         // 4. Insert into Relational Tables
 
@@ -337,16 +361,74 @@ export async function POST(request: Request) {
         if (fileTableError) throw fileTableError;
 
 
-        // 5. TODO: Send confirmation emails (Resend)
-        console.log("TODO: Implement Resend email confirmation.");
+        // 5.1 Send confirmation email to parent
+        console.log("Sending confirmation email to applicant via Resend...");
+        if (!process.env.BRITSIES_RESEND_API_KEY) {
+            console.warn("Skipping parent email.");
+        } else if (!userEmail || !learnerName || !human_friendly_id) {
+             console.warn("Missing data for email. Skipping parent email.");
+        } else {
+            try {
+                // +++ FINALE KODE +++
+                // 1. Bou die HTML-string
+                const parentEmailHtml = getParentConfirmationHtml({
+                    learnerName: learnerName,
+                    humanReadableId: human_friendly_id
+                });
+                
+                // 2. Stuur die HTML string
+                await resend.emails.send({
+                    from: 'Hoërskool Brits Aansoeke <info@nicolabsdigital.co.za>',
+                    to: [userEmail],
+                    subject: `Hoërskool Brits: Aansoek Ontvang (${learnerName})`,
+                    html: parentEmailHtml 
+                });
+                console.log(`Successfully sent confirmation email to ${userEmail}`);
+            } catch (emailError) {
+                console.error("Resend email failed:", emailError);
+            }
+        }
 
+        // 5.2 Stuur aan ADMIN
+        console.log("Sending notification email to admin via Resend...");
+        const adminEmail = process.env.ADMIN_EMAIL_RECIPIENT;
+
+        if (!process.env.BRITSIES_RESEND_API_KEY) {
+            console.warn("Skipping admin email.");
+        } else if (!adminEmail) {
+            console.warn("ADMIN_EMAIL_RECIPIENT is not set. Skipping admin email.");
+        } else if (!learnerName || !human_friendly_id || !learnerGrade) {
+            console.warn("Missing data for admin email. Skipping admin email.");
+        } else {
+             try {
+                // +++ FINALE KODE +++
+                // 1. Bou die HTML-string
+                const adminEmailHtml = getAdminNotificationHtml({
+                    learnerName: learnerName,
+                    learnerGrade: learnerGrade,
+                    parentEmail: userEmail,
+                    humanReadableId: human_friendly_id
+                });
+                
+                // 2. Stuur die HTML string
+                await resend.emails.send({
+                    from: 'Aanlyn Hoërskool Brits Aansoeke <info@nicolabsdigital.co.za>',
+                    to: [adminEmail],
+                    subject: `NUWE AANSOEK: ${learnerName} (Graad ${learnerGrade})`,
+                    html: adminEmailHtml
+                });
+                console.log(`Successfully sent admin notification to ${adminEmail}`);
+            } catch (emailError) {
+                console.error("Resend admin email failed:", emailError);
+            }
+        }
 
         // 6. Return Success
-        console.log(`Successfully processed application ${applicationId}`);
+        console.log(`Successfully processed application ${db_application_uuid}`);
         return NextResponse.json({
             success: true,
             message: "Application received!",
-            applicationId: applicationId
+            applicationId: db_application_uuid
         });
 
     } catch (error) {
@@ -356,16 +438,11 @@ export async function POST(request: Request) {
             errorMessage = error.message;
         }
 
-        // --- Optional Rollback Logic (Advanced) ---
-        // If an error happened *after* the application record was created,
-        // we could try to delete it to prevent orphaned data.
-        if (applicationId) {
-            console.warn(`Attempting to clean up orphaned application record: ${applicationId}`);
-            // Note: This does not roll back storage uploads.
-            // A more robust solution would use database transactions or a cleanup queue.
-            await supabase.from('applications').delete().eq('id', applicationId);
+        if (db_application_uuid) {
+            console.warn(`Attempting to clean up orphaned application record: ${db_application_uuid}`);
+            await supabase.from('applications').delete().eq('id', db_application_uuid);
+            //have to maybe implement upload rollbacks
         }
-        // --- End Rollback ---
 
         return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
     }
