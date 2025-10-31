@@ -21,11 +21,21 @@ export default async function AdminDashboard() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    console.log('AdminDashboard Page: No user found, redirecting to /login');
     return redirect('/login');
   }
 
-  console.log('AdminDashboard Page: User found, fetching applications.');
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  // If the user don't have an admin role, kick it out.
+  if (profile?.role !== 'admin') {
+    return redirect('/'); // or to /aansoek if you prefer
+  }
+
+  console.log('AdminDashboard Page: User is an ADMIN, fetching applications.');
 
   // --- Fetch Applications from Supabase ---
   const { data: applications, error: fetchError } = await supabase

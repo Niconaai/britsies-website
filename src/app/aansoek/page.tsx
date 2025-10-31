@@ -1,6 +1,5 @@
 // src/app/aansoek/page.tsx
 import type { Metadata } from "next";
-import Image from 'next/image';
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link"; 
@@ -29,6 +28,18 @@ export default async function ApplicationPage() {
 
     if (!user) {
         redirect('/aansoek/begin');
+    }
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    // If a user is logged in but is NOT a parent,
+    // they are probably an admin. Send them to the admin dashboard.
+    if (profile?.role !== 'parent' && profile?.role === 'admin') {
+      return redirect('/admin');
     }
 
     const { data: applications, error: appError } = await supabase

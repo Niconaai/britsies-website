@@ -13,14 +13,40 @@ export async function login(formData: FormData) {
     password: formData.get('password') as string,
   }
 
-  const { error } = await supabase.auth.signInWithPassword(data)
-
-  if (error) {
-    return redirect('/aansoek/begin?error=Invalid credentials')
+  // 1. Sign in the user
+  const { error: signInError } = await supabase.auth.signInWithPassword(data)
+  if (signInError) {
+    return redirect('/aansoek/begin?error=invalid_credentials')
   }
 
-  revalidatePath('/aansoek', 'layout')
-  redirect('/aansoek')
+  // 2. Get the user we just signed in
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return redirect('/aansoek/begin?error=User not found after sign in');
+  }
+
+  // 3. Check their role from our 'profiles' table
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (profileError || !profile) {
+    await supabase.auth.signOut(); // Log them out
+    return redirect('/aansoek/begin?error=Profile not found');
+  }
+
+  // 4. THE CHECK: Are they a parent?
+  if (profile.role === 'parent') {
+    // SUCCESS: They are a parent, proceed to application dashboard
+    revalidatePath('/aansoek', 'layout')
+    return redirect('/aansoek')
+  } else {
+    // FAILURE: They are an admin or have no role
+    await supabase.auth.signOut(); // Log them out immediately
+    return redirect('/aansoek/begin?error=access_denied') // Send "Access Denied" error
+  }
 }
 
 export async function signup(formData: FormData) {
