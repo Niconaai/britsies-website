@@ -2,6 +2,9 @@
 import React from 'react';
 import { FormData } from '../AdmissionForm';
 import FileInput from './FileInput';
+import FloatingLabelInputField from "@/components/ui/FloatingLabelInputField";
+import FloatingLabelSelectField from "@/components/ui/FloatingLabelSelectField";
+import FloatingLabelSelectFieldCustom from "@/components/ui/FloatingLabelSelectFieldCustom";
 
 type StepProps = {
     onNext: () => void;
@@ -9,84 +12,6 @@ type StepProps = {
     handleInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
     handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
-
-const InputField = ({ label, name, value, onChange, required = false, type = 'text', placeholder = '', className = '' }: {
-    label: string;
-    name: string;
-    value: string | number | undefined | null;
-    onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
-    required?: boolean;
-    type?: string;
-    placeholder?: string;
-    className?: string;
-}) => (
-    <div className={className}>
-        <label htmlFor={name} className="block  text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            {label} {required && <span className="text-red-800">*</span>}
-        </label>
-        <input
-            type={type}
-            id={name}
-            name={name}
-            value={value || ''}
-            onChange={onChange}
-            required={required}
-            placeholder={placeholder}
-            className="mt-2 mb-1 px-2 py-1 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
-        />
-    </div>
-);
-
-// const RadioGroup = ({ label, name, options, selectedValue, onChange, required = false }: {
-//     label: string;
-//     name: string;
-//     options: { value: string; label: string }[];
-//     selectedValue: string | undefined;
-//     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-//     required?: boolean;
-// }) => (
-//     <div className="">
-//         <span className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-//             {label} {required && <span className="text-red-800">*</span>}
-//         </span>
-//         <div className="mt-2 space-y-2">
-//             {options.map(option => (
-//                 <label key={option.value} className="flex items-center">
-//                     <input
-//                         type="radio"
-//                         name={name}
-//                         value={option.value}
-//                         checked={selectedValue === option.value}
-//                         onChange={onChange}
-//                         required={required}
-//                         className="form-radio h-4 w-4 text-blue-600 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600"
-//                     />
-//                     <span className="ml-2 text-sm text-zinc-900 dark:text-zinc-100">{option.label}</span>
-//                 </label>
-//             ))}
-//         </div>
-//     </div>
-// );
-
-// const CheckboxField = ({ label, name, checked, onChange, required = false }: {
-//     label: string | React.ReactNode;
-//     name: string;
-//     checked: boolean | undefined;
-//     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-//     required?: boolean;
-// }) => (
-//     <label className="flex items-start space-x-2">
-//         <input
-//             type="checkbox"
-//             name={name}
-//             checked={!!checked} // Ensure it's a boolean
-//             onChange={onChange}
-//             required={required}
-//             className="form-checkbox mt-1 h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700"
-//         />
-//         <span className="text-sm text-zinc-700 dark:text-zinc-300">{label}</span>
-//     </label>
-// );
 
 export default function Step1LearnerInfo({ onNext, formData, handleInputChange, handleFileChange }: StepProps) {
     // Expand validation check for required fields in this step
@@ -139,131 +64,111 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange, 
         { value: 'guardian2', label: 'Ouer/Voog 2' },
         { value: 'other', label: 'Ander' }
     ];
+    const graadOptions = [
+        { value: "7", label: "Graad 7" },
+        { value: "8", label: "Graad 8" },
+        { value: "9", label: "Graad 9" },
+        { value: "10", label: "Graad 10" },
+        { value: "11", label: "Graad 11" },
+    ];
 
     return (
         <div className="space-y-4">
             <h2 className="mb-6 text-xl font-semibold dark:text-white">Stap 1: LEERDERINLIGTING</h2>
 
-            {/* TODO: Add Photo Upload Field */}
             <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
             <div className="rounded border border-dashed border-zinc-400 p-4 text-center dark:border-zinc-600">
                 <FileInput
                     label="Leerder Foto (Paskop-grootte)"
                     name="learnerPhoto"
                     onChange={handleFileChange}
-                    required // Make photo required
+                    required 
                     accept="image/png, image/jpeg"
                     description="Laai asseblief 'n duidelike, onlangse paskop-grootte foto op."
                 />
             </div>
 
             <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
-            <h3 className="pt-4 text-lg font-medium dark:text-white">LEERDER</h3>
+            <h3 className="pt-4 pb-4 text-lg font-medium dark:text-white">LEERDER</h3>
             {/* --- Learner Details Grid --- */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 
-                <InputField label="Volle Name" name="learnerFirstNames" value={formData.learnerFirstNames} onChange={handleInputChange} required />
-                <InputField label="Van" name="learnerSurname" value={formData.learnerSurname} onChange={handleInputChange} required />
-                <InputField label="Noemnaam" name="learnerNickName" value={formData.learnerNickName} onChange={handleInputChange} required />
-                <InputField label="Geboortedatum (YYYY-MM-DD)" name="learnerDob" value={formData.learnerDob} onChange={handleInputChange} type="date" />
-                <InputField label="ID Nommer" name="learnerIdNumber" value={formData.learnerIdNumber} onChange={handleInputChange} required />
-                <InputField label="Kerkverband" name="learnerReligion" value={formData.learnerReligion} onChange={handleInputChange} />
+                <FloatingLabelInputField
+                    label="Volle Name"
+                    name="learnerFirstNames"
+                    value={formData.learnerFirstNames}
+                    onChange={handleInputChange}
+                    required
+                />
+                <FloatingLabelInputField label="Van" name="learnerSurname" value={formData.learnerSurname} onChange={handleInputChange} required />
+                <FloatingLabelInputField label="Noemnaam" name="learnerNickName" value={formData.learnerNickName} onChange={handleInputChange} required />
+                <FloatingLabelInputField label="Geboortedatum" name="learnerDob" value={formData.learnerDob} onChange={handleInputChange} type="date" required />
+                <FloatingLabelInputField label="ID Nommer" name="learnerIdNumber" value={formData.learnerIdNumber} onChange={handleInputChange} required />
+                <FloatingLabelInputField label="Kerkverband" name="learnerReligion" value={formData.learnerReligion} onChange={handleInputChange} />
                 {/* --- Race Dropdown --- */}
-                <div>
-                    <label htmlFor="learnerRace" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        Bevolkingsgroep <span className="text-red-800">*</span>
-                    </label>
-                    <select
-                        id="learnerRace"
-                        name="learnerRace"
-                        value={formData.learnerRace || ''}
-                        onChange={handleInputChange}
-                        required
-                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
-                    >
-                        <option value="" disabled>Kies Opsie</option>
-                        {raceOptions.map(option => <option key={option} value={option}>{option}</option>)}
-                    </select>
-                </div>
+                <FloatingLabelSelectField
+                    label="Bevolkingsgroep"
+                    name="learnerRace"
+                    value={formData.learnerRace}
+                    onChange={handleInputChange}
+                    options={raceOptions}
+                    required
+                />
                 {/* --- End Race Dropdown --- */}
 
-                <InputField label="Nasionaliteit" name="learnerNationality" value={formData.learnerNationality} onChange={handleInputChange} required />
+                <FloatingLabelInputField label="Nasionaliteit" name="learnerNationality" value={formData.learnerNationality} onChange={handleInputChange} required />
 
                 {/* --- Add Gender --- */}
-                <div>
-                    <label htmlFor="learnerGender" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        Geslag <span className="text-red-800">*</span>
-                    </label>
-                    <select
-                        id="learnerGender"
-                        name="learnerGender"
-                        value={formData.learnerGender || ''}
-                        onChange={handleInputChange}
-                        required
-                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
-                    >
-                        <option value="" disabled>Kies Opsie</option>
-                        {genderOptions.map(option => <option key={option} value={option}>{option}</option>)}
-                    </select>
-                </div>
+                <FloatingLabelSelectField
+                    label="Geslag"
+                    name="learnerGender"
+                    value={formData.learnerGender}
+                    onChange={handleInputChange}
+                    options={genderOptions}
+                    required
+                />
                 {/* --- End Gender --- */}
 
                 {/* --- Home Language Dropdown --- */}
-                <div>
-                    <label htmlFor="learnerHomeLanguage" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        Huistaal <span className="text-red-800">*</span> {/* Made required */}
-                    </label>
-                    <select
-                        id="learnerHomeLanguage"
-                        name="learnerHomeLanguage"
-                        value={formData.learnerHomeLanguage || ''}
-                        onChange={handleInputChange}
-                        required
-                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
-                    >
-                        <option value="" disabled>Kies Opsie</option>
-                        {saLanguages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
-                    </select>
-                </div>
+                <FloatingLabelSelectField
+                    label="Huistaal"
+                    name="learnerHomeLanguage"
+                    value={formData.learnerHomeLanguage || ''}
+                    onChange={handleInputChange}
+                    options={saLanguages}
+                    required
+                />
                 {/* --- End Home Language Dropdown --- */}
 
-                <InputField label="Leerder Selfoonnommer" name="learnerCellPhone" value={formData.learnerCellPhone} onChange={handleInputChange} type="tel" />
-                <InputField label="Leerder e-posadres" name="learnerEmail" value={formData.learnerEmail} onChange={handleInputChange} type="email" />
-                <InputField label="Tolatingsdatum" name="toelatingsDatum" value={formData.toelatingsDatum} onChange={handleInputChange} type="date" />
+                <FloatingLabelInputField label="Leerder Selfoonnommer" name="learnerCellPhone" value={formData.learnerCellPhone} onChange={handleInputChange} type="tel" />
+                <FloatingLabelInputField label="Leerder E-posadres" name="learnerEmail" value={formData.learnerEmail} onChange={handleInputChange} type="email" />
+                <FloatingLabelInputField label="Tolatingsdatum" name="toelatingsDatum" value={formData.toelatingsDatum} onChange={handleInputChange} type="date" />
 
                 {/* Grade and Year Selection */}
 
-                <div>
-                    <label htmlFor="learnerLastGradePassed" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        Laaste Graad Behaal <span className="text-red-800">*</span>
-                    </label>
-                    <select id="learnerLastGradePassed" name="learnerLastGradePassed" value={formData.learnerLastGradePassed || ''} onChange={handleInputChange} required
-                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white">
-                        <option value="" disabled>Kies Opsie</option>
-                        {[7, 8, 9, 10, 11].map(grade => <option key={grade} value={grade}>Graad {grade}</option>)}
-                    </select>
-                </div>
+                <FloatingLabelSelectFieldCustom
+                    label="Hoogste Graad Geslaag"
+                    name="learnerLastGradePassed"
+                    value={formData.learnerLastGradePassed}
+                    onChange={handleInputChange}
+                    options={graadOptions}
+                    required={true}
+                />
 
-                <InputField label="Jare in bogenoemde graad" name="learnerYearsInGrade" value={formData.learnerYearsInGrade} onChange={handleInputChange} type="number" required />
+                <FloatingLabelInputField label="Jare in bogenoemde graad" name="learnerYearsInGrade" value={formData.learnerYearsInGrade} onChange={handleInputChange} type="number" required />
 
                 {/* --- Preschool --- */}
                 <div>
-                    <label htmlFor="learnerPreschool" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        Voorskoolse opvoeding bygewoon <span className="text-red-800">*</span>
-                    </label>
-                    <select
-                        id="learnerPreschool"
+                    <FloatingLabelSelectField
+                        label="Voorskool"
                         name="learnerPreschool"
                         value={formData.learnerPreschool || ''}
                         onChange={handleInputChange}
+                        options={voorskoolOptions}
                         required
-                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
-                    >
-                        <option value="" disabled>Kies Opsie</option>
-                        {voorskoolOptions.map(option => <option key={option} value={option}>{option}</option>)}
-                    </select>
+                    />
                     {formData.learnerPreschool === 'Ander' && (
-                        <InputField
+                        <FloatingLabelInputField
                             label="Spesifiseer Ander (Voorskool)"
                             name="learnerPreschoolOther"
                             value={formData.learnerPreschoolOther}
@@ -282,10 +187,10 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange, 
             <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
             <h3 className="pt-4 text-lg font-medium dark:text-white">NAASBESTAANDE-INLIGTING</h3>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <InputField label="Naam en Van" name="nextOfKinFullName" value={formData.nextOfKinFullName} onChange={handleInputChange} className="" required />
-                <InputField label="Verwantskap" name="nextOfKinRelationship" value={formData.nextOfKinRelationship} onChange={handleInputChange} required />
-                <InputField label="Kontaknommer" name="nextOfKinContact" value={formData.nextOfKinContact} onChange={handleInputChange} type="tel" required />
-                <InputField label="Alternatiewe Kontaknommer" name="nextOfKinContactAlt" value={formData.nextOfKinContactAlt} onChange={handleInputChange} type="tel" />
+                <FloatingLabelInputField label="Naam en Van" name="nextOfKinFullName" value={formData.nextOfKinFullName} onChange={handleInputChange} className="" required />
+                <FloatingLabelInputField label="Verwantskap" name="nextOfKinRelationship" value={formData.nextOfKinRelationship} onChange={handleInputChange} required />
+                <FloatingLabelInputField label="Kontaknommer" name="nextOfKinContact" value={formData.nextOfKinContact} onChange={handleInputChange} type="tel" required />
+                <FloatingLabelInputField label="Alternatiewe Kontaknommer" name="nextOfKinContactAlt" value={formData.nextOfKinContactAlt} onChange={handleInputChange} type="tel" />
             </div>
 
             {/* --- Family Info --- */}
@@ -294,23 +199,17 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange, 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3 ">
                 {/* --- Add Family Status --- */}
                 <div>
-                    <label htmlFor="familyStatus" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        Gesinstatus <span className="text-red-800">*</span>
-                    </label>
-                    <select
-                        id="familyStatus"
+                    <FloatingLabelSelectFieldCustom
+                        label="Gesin Samestelling"
                         name="familyStatus"
-                        value={formData.familyStatus || ''}
+                        value={formData.familyStatus}
                         onChange={handleInputChange}
-                        required
-                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
-                    >
-                        <option value="" disabled>Kies Opsie</option>
-                        {gesinstatusOptions.map(option => <option key={option.value} value={option.label}>{option.label}</option>)}
-                    </select>
-                    {formData.familyStatus === 'Ander' && (
-                        <InputField
-                            label="Spesifiseer Ander (Gesinstatus)"
+                        options={gesinstatusOptions}
+                        required={true}
+                    />
+                    {formData.familyStatus === 'other' && (
+                        <FloatingLabelInputField
+                            label="Spesifiseer Ander"
                             name="familyStatusOther"
                             value={formData.familyStatusOther}
                             onChange={handleInputChange}
@@ -323,41 +222,28 @@ export default function Step1LearnerInfo({ onNext, formData, handleInputChange, 
 
                 {/* --- Add Parents Deceased --- */}
                 <div>
-                    <label htmlFor="parentsDeceased" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        Ouers Oorlede <span className="text-red-800">*</span>
-                    </label>
-                    <select
-                        id="parentsDeceased"
+                    <FloatingLabelSelectFieldCustom
+                        label="Ouers Oorlede"
                         name="parentsDeceased"
-                        value={formData.parentsDeceased || ''}
+                        value={formData.parentsDeceased}
                         onChange={handleInputChange}
-                        required
-                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
-                    >
-                        <option value="" disabled>Kies Opsie</option>
-                        {ouersOorledeOptions.map(option => <option key={option.value} value={option.label}>{option.label}</option>)}
-                    </select>
+                        options={ouersOorledeOptions}
+                        required={true}
+                    />
                 </div>
                 {/* --- End Parents Deceased --- */}
-
                 <div>
-                    <label htmlFor="learnerLivesWith" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        Leerder woon saam <span className="text-red-800">*</span>
-                    </label>
-                    <select
-                        id="learnerLivesWith"
+                    <FloatingLabelSelectFieldCustom
+                        label="Leerder woon by"
                         name="learnerLivesWith"
-                        value={formData.learnerLivesWith || ''}
+                        value={formData.learnerLivesWith}
                         onChange={handleInputChange}
-                        required
-                        className="mt-2 px-1 py-1.5 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
-                    >
-                        <option value="" disabled>Kies Opsie</option>
-                        {leerderWoonSaamOptions.map(option => <option key={option.value} value={option.label}>{option.label}</option>)}
-                    </select>
-                    {formData.learnerLivesWith === 'Ander' && (
-                        <InputField
-                            label="Spesifiseer Ander (Woon saam opsie)"
+                        options={leerderWoonSaamOptions}
+                        required={true}
+                    />
+                    {formData.learnerLivesWith === 'other' && (
+                        <FloatingLabelInputField
+                            label="Spesifiseer Ander"
                             name="learnerLivesWithOther"
                             value={formData.learnerLivesWithOther}
                             onChange={handleInputChange}

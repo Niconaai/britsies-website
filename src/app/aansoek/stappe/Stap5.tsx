@@ -1,27 +1,7 @@
 // src/app/aansoek/steps/Step5.tsx
 import React from 'react';
 import { FormData } from '../AdmissionForm';
-
-// --- Reusable InputField Component
-const InputField = ({ label, name, value, onChange, required = false, type = 'text', placeholder = '', className = '', isTextArea = false }: {
-    label: string; name: string; value: string | number | undefined | null;
-    onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
-    required?: boolean; type?: string; placeholder?: string; className?: string; isTextArea?: boolean;
-}) => (
-    <div className={className}>
-        <label htmlFor={name} className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            {label} {required && <span className="text-red-800">*</span>}
-        </label>
-        {isTextArea ? (
-            <textarea id={name} name={name} value={value || ''} onChange={onChange} required={required} placeholder={placeholder} rows={3}
-                className="mt-2 mb-1 px-2 py-1 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white" />
-        ) : (
-            <input type={type} id={name} name={name} value={value || ''} onChange={onChange} required={required} placeholder={placeholder}
-                className="mt-2 mb-1 px-2 py-1 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white" />
-        )}
-    </div>
-);
-// --- End InputField ---
+import FloatingLabelInputField from "@/components/ui/FloatingLabelInputField";
 
 // --- MultiCheckboxGroup Component ---
 const MultiCheckboxGroup = ({ label, namePrefix, options, selectedValues, onChange, required = false }: {
@@ -170,31 +150,31 @@ export default function Step5AdditionalInfo({ onNext, onBack, formData, handleIn
 
             {/* --- Health Info (PDF Page 3) --- */}
             <h3 className="text-lg font-medium dark:text-white">GESONDHEID</h3>
-            <div className="space-y-4 rounded border border-zinc-300 p-4 dark:border-zinc-600">
-                <InputField label="Allergieë" name="healthAllergies" value={formData.healthAllergies} onChange={handleInputChange} isTextArea />
-                <InputField label="Siektetoestande / Ernstige Siektes / Mediese Toestande" name="healthIllnesses" value={formData.healthIllnesses} onChange={handleInputChange} isTextArea />
-                <InputField label="Gebreke / Gestremdhede" name="healthDisabilities" value={formData.healthDisabilities} onChange={handleInputChange} isTextArea />
-                <InputField label="Operasies Ondergaan" name="healthOperations" value={formData.healthOperations} onChange={handleInputChange} isTextArea />
-                <InputField label="Medikasie wat gereeld gebruik word" name="healthMedication" value={formData.healthMedication} onChange={handleInputChange} isTextArea />
-                <InputField label="Enige ander belangrike mediese inligting" name="healthAdditionalInfo" value={formData.healthAdditionalInfo} onChange={handleInputChange} isTextArea />
+            <div className="space-y-4">
+                <FloatingLabelInputField label="Allergieë" name="healthAllergies" value={formData.healthAllergies} onChange={handleInputChange} />
+                <FloatingLabelInputField label="Siektetoestande / Ernstige Siektes / Mediese Toestande" name="healthIllnesses" value={formData.healthIllnesses} onChange={handleInputChange}  />
+                <FloatingLabelInputField label="Gebreke / Gestremdhede" name="healthDisabilities" value={formData.healthDisabilities} onChange={handleInputChange}  />
+                <FloatingLabelInputField label="Operasies Ondergaan" name="healthOperations" value={formData.healthOperations} onChange={handleInputChange}  />
+                <FloatingLabelInputField label="Medikasie wat gereeld gebruik word" name="healthMedication" value={formData.healthMedication} onChange={handleInputChange}  />
+                <FloatingLabelInputField label="Enige ander belangrike mediese inligting" name="healthAdditionalInfo" value={formData.healthAdditionalInfo} onChange={handleInputChange}  />
             </div>
 
             {/* --- Medical Aid Info (PDF Page 3) --- */}
             <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
             <h3 className="pt-4 text-lg font-medium dark:text-white">MEDIESE FONDS</h3>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <InputField label="Naam van Skema" name="medAidScheme" value={formData.medAidScheme} onChange={handleInputChange} />
-                <InputField label="Nommer" name="medAidNumber" value={formData.medAidNumber} onChange={handleInputChange} />
-                <InputField label="Hooflid Naam & Van" name="medAidMainMember" value={formData.medAidMainMember} onChange={handleInputChange} />
-                <InputField label="Hooflid ID Nommer" name="medAidMemberId" value={formData.medAidMemberId} onChange={handleInputChange} />
+                <FloatingLabelInputField label="Naam van Skema" name="medAidScheme" value={formData.medAidScheme} onChange={handleInputChange} />
+                <FloatingLabelInputField label="Nommer" name="medAidNumber" value={formData.medAidNumber} onChange={handleInputChange} />
+                <FloatingLabelInputField label="Hooflid Naam & Van" name="medAidMainMember" value={formData.medAidMainMember} onChange={handleInputChange} />
+                <FloatingLabelInputField label="Hooflid ID Nommer" name="medAidMemberId" value={formData.medAidMemberId} onChange={handleInputChange} />
             </div>
 
             {/* --- Doctor Info (PDF Page 3) --- */}
             <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
             <h3 className="pt-4 text-lg font-medium dark:text-white">HUISDOKTER</h3>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <InputField label="Naam" name="doctorName" value={formData.doctorName} onChange={handleInputChange} />
-                <InputField label="Telefoonnommer" name="doctorNumber" value={formData.doctorNumber} onChange={handleInputChange} type="tel" />
+                <FloatingLabelInputField label="Naam" name="doctorName" value={formData.doctorName} onChange={handleInputChange} />
+                <FloatingLabelInputField label="Telefoonnommer" name="doctorNumber" value={formData.doctorNumber} onChange={handleInputChange} type="tel" />
             </div>
 
             {/* --- Previous School Info (PDF Page 3) - Conditional --- */}
@@ -204,11 +184,11 @@ export default function Step5AdditionalInfo({ onNext, onBack, formData, handleIn
                     <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
                     <h3 className="pt-4 text-lg font-medium dark:text-white">VORIGE SKOOL</h3>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <InputField label="Naam van Skool" name="prevSchoolName" value={formData.prevSchoolName} onChange={handleInputChange} required className="md:col-span-2" />
-                        <InputField label="Dorp / Stad" name="prevSchoolTown" value={formData.prevSchoolTown} onChange={handleInputChange} />
-                        <InputField label="Provinsie" name="prevSchoolProvince" value={formData.prevSchoolProvince} onChange={handleInputChange} />
-                        <InputField label="Telefoon" name="prevSchoolTel" value={formData.prevSchoolTel} onChange={handleInputChange} type="tel" />
-                        <InputField label="Rede vir Skoolverlating" name="prevSchoolReasonForLeaving" value={formData.prevSchoolReasonForLeaving} onChange={handleInputChange} isTextArea={true} className="md:col-span-2" />
+                        <FloatingLabelInputField label="Naam van Skool" name="prevSchoolName" value={formData.prevSchoolName} onChange={handleInputChange} required className="md:col-span-2" />
+                        <FloatingLabelInputField label="Dorp / Stad" name="prevSchoolTown" value={formData.prevSchoolTown} onChange={handleInputChange} />
+                        <FloatingLabelInputField label="Provinsie" name="prevSchoolProvince" value={formData.prevSchoolProvince} onChange={handleInputChange} />
+                        <FloatingLabelInputField label="Telefoon" name="prevSchoolTel" value={formData.prevSchoolTel} onChange={handleInputChange} type="tel" />
+                        <FloatingLabelInputField label="Rede vir Skoolverlating" name="prevSchoolReasonForLeaving" value={formData.prevSchoolReasonForLeaving} onChange={handleInputChange} className="md:col-span-2" />
                     </div>
                 </React.Fragment>
             )}
@@ -249,7 +229,7 @@ export default function Step5AdditionalInfo({ onNext, onBack, formData, handleIn
                 </div>
 
             </div>
-            <InputField label="Ander prestasies (bv. Leierskap, Akademies, Provinsiale Span-insluiting van Sport)" name="extraAchievements" value={formData.extraAchievements} onChange={handleInputChange} isTextArea />
+            <FloatingLabelInputField label="Ander prestasies (bv. Leierskap, Akademies, Provinsiale Span-insluiting van Sport)" name="extraAchievements" value={formData.extraAchievements} onChange={handleInputChange}  />
 
 
             {/* Navigation Buttons */}

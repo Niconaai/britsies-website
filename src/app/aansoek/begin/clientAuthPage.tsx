@@ -4,7 +4,8 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { login, signup } from './actions';
-import SubmitButton from '../../admin/SubmitButton';
+import SubmitButton from '../../../components/ui/SubmitButton';
+import FloatingLabelInput from "@/components/ui/FloatingLabelInput";
 
 const AuthMessage = ({ message, type }: { message: string, type: 'success' | 'error' }) => {
     const baseClasses = "w-full p-4 rounded-md mb-6 text-center";
@@ -67,43 +68,27 @@ export default function ClientAuthPage({ initialMessage }: { initialMessage: Aut
                 )}
 
                 <form className="space-y-4">
-                    <div>
-                        <label
-                            htmlFor="email"
-                            className="mb-1 block text-sm font-medium text-gray-700 dark:text-zinc-300"
-                        >
-                            E-pos:
-                        </label>
-                        <input
-                            id="email"
-                            name="email"
-                            type="email"
-                            required
-                            className="w-full rounded border border-gray-300 p-2 text-gray-900 focus:border-gray-800 focus:outline-none focus:ring-1 focus:ring-gray-800 dark:bg-neutral-500 dark:text-zinc-200"
-                        />
-                    </div>
-                    <div>
-                        <label
-                            htmlFor="password"
-                            className="mb-1 block text-sm font-medium text-gray-700 dark:text-zinc-300"
-                        >
-                            Wagwoord:
-                        </label>
-                        <input
-                            id="password"
-                            name="password"
-                            type="password"
-                            required
-                            className="w-full rounded border border-gray-300 p-2 text-gray-900 focus:border-gray-800 focus:outline-none focus:ring-1 focus:ring-gray-800 dark:bg-neutral-500 dark:text-zinc-200"
-                        />
-                    </div>
-                    <div className="text-right text-xs">
+                    <FloatingLabelInput
+                        id="email"
+                        name="email"
+                        label="E-pos"
+                        type="email"
+                        required
+                    />
+                    <FloatingLabelInput
+                        id="password"
+                        name="password"
+                        label="Wagwoord"
+                        type="password"
+                        required
+                    />
+                    <div className="text-right text-xs dark:hover:text-amber-100 hover:text-rose-950 hover:underline hover:text-sm pt-2">
                         <a href="">Wagwoord Vergeet?</a>
                     </div>
 
                     <div className="flex gap-4 md:pt-2">
                         <SubmitButton
-                            formAction={login} // <--- BELANGRIK: 'formAction' skuif hierheen
+                            formAction={login} 
                             defaultText="Teken In"
                             loadingText="Teken in..."
                             className="w-full rounded bg-rose-950 py-2 font-medium text-white transition hover:bg-rose-900"

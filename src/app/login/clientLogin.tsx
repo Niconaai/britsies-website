@@ -3,7 +3,8 @@
 import { login } from './actions'
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import SubmitButton from '../admin/SubmitButton'; // <-- 1. VOER IN (Pad is reg)
+import SubmitButton from '../../components/ui/SubmitButton';
+import FloatingLabelInput from "@/components/ui/FloatingLabelInput";
 
 const AuthMessage = ({ message }: { message: string }) => {
   return (
@@ -52,46 +53,26 @@ export default function ClientPage({ errorMessage }: { errorMessage: string | nu
         {isVisible && errorMessage && <AuthMessage message={errorMessage} />}
 
         <form action={login} className="space-y-4">
-          <div>
-            <label
-              htmlFor="email"
-              className="mb-1 block text-sm font-medium text-gray-700  dark:text-zinc-300"
-            >
-              Epos:
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              className="w-full rounded border border-gray-300 p-2 text-gray-900 focus:border-gray-800 focus:outline-none focus:ring-1 focus:ring-gray-800 dark:bg-neutral-500 dark:text-zinc-200"
-              placeholder="admin@hsbrits.co.za"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="password"
-              className="mb-1 block text-sm font-medium text-gray-700  dark:text-zinc-300"
-            >
-              Wagwoord:
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              className="w-full rounded border border-gray-300 p-2 text-gray-900 focus:border-gray-800 focus:outline-none focus:ring-1 focus:ring-gray-800 dark:bg-neutral-500 dark:text-zinc-200"
-              placeholder="••••••••"
-            />
-          </div>
+          <FloatingLabelInput
+            id="email"
+            name="email"
+            label="E-pos"
+            type="email"
+            required
+          />
+          <FloatingLabelInput
+            id="password"
+            name="password"
+            label="Wagwoord"
+            type="password"
+            required
+          />
 
           <SubmitButton
             defaultText="Teken In"
             loadingText="Teken in..."
             className="mb-10 w-full rounded bg-gray-500 py-2 font-medium text-white transition hover:bg-gray-700"
           />
-          {/* Optional: Add a signup button later if needed */}
-          {/* <button formAction={signup}>Sign up</button> */}
 
           <p className="mb-0 text-center text-xs font text-gray-800  dark:text-zinc-300">
             Nick van der Merwe

@@ -2,8 +2,8 @@
 import React from 'react';
 import { FormData, FileState } from '../AdmissionForm';
 import FileInput from './FileInput';
+import FloatingLabelInputField from "@/components/ui/FloatingLabelInputField";
 
-// --- Reusable CheckboxField (Copy or import) ---
 const CheckboxField = ({ label, name, checked, onChange, required = false }: {
     label: string | React.ReactNode; name: string; checked: boolean | undefined;
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void; required?: boolean;
@@ -19,34 +19,6 @@ const CheckboxField = ({ label, name, checked, onChange, required = false }: {
         />
         <span className="text-sm text-zinc-700 dark:text-zinc-300">{label}</span>
     </label>
-);
-// --- End CheckboxField ---
-
-const InputField = ({ label, name, value, onChange, required = false, type = 'text', placeholder = '', className = '' }: {
-    label: string;
-    name: string;
-    value: string | number | undefined | null;
-    onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
-    required?: boolean;
-    type?: string;
-    placeholder?: string;
-    className?: string;
-}) => (
-    <div className={className}>
-        <label htmlFor={name} className="block  text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            {label} {required && <span className="text-red-800">*</span>}
-        </label>
-        <input
-            type={type}
-            id={name}
-            name={name}
-            value={value || ''}
-            onChange={onChange}
-            required={required}
-            placeholder={placeholder}
-            className="mt-2 mb-1 px-2 py-1 block w-full rounded-sm border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
-        />
-    </div>
 );
 
 type StepProps = {
@@ -183,7 +155,7 @@ export default function Step6Documents({ onBack, formData, fileData, handleInput
                     required={true}
                 />
                 <hr className="my-6 border-zinc-300 dark:border-zinc-600" />
-                <InputField
+                <FloatingLabelInputField
                     label="Skryf jou volle naam en van hier in as handtekening"
                     name="acceptHandtekening"
                     value={formData.acceptHandtekening}

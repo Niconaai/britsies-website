@@ -4,14 +4,12 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link"; 
 import ApplicationList from "./ApplicationList"; 
-//import { type ApplicationWithLearner } from "./page"; 
 
 export const metadata: Metadata = {
   title: "Hoërskool Brits | Aansoek Portaal",
   description: "Bestuur jou aansoeke by Hoërskool Brits",
 };
 
-// 3. EXPORT THE TYPE (as we did in Step 1)
 export type ApplicationWithLearner = {
     id: string;
     created_at: string;
@@ -36,8 +34,6 @@ export default async function ApplicationPage() {
       .eq('id', user.id)
       .single();
 
-    // If a user is logged in but is NOT a parent,
-    // they are probably an admin. Send them to the admin dashboard.
     if (profile?.role !== 'parent' && profile?.role === 'admin') {
       return redirect('/admin');
     }

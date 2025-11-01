@@ -17,20 +17,22 @@ export default function SubmitButton({
   className,
   formAction 
 }: SubmitButtonProps) {
-  const { pending } = useFormStatus();
+  const { pending, action } = useFormStatus();
+
+  const isPending = pending && action === formAction;
 
   const defaultClasses = "rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2";
   const disabledClasses = "cursor-not-allowed opacity-70";
 
   return (
     <button
-      type="submit"
-      disabled={pending}
-      // +++ GEE DIE formAction DEUR NA DIE KNOPPIE +++
       formAction={formAction}
+      type="submit"
+      aria-disabled={isPending}
+      disabled={isPending}
       className={`${className || defaultClasses} ${pending ? disabledClasses : ''} flex min-h-[38px] items-center justify-center gap-2`}
     >
-      {pending ? (
+      {isPending ? (
         <>
           <Image
             src="/CircleLoader.gif"
@@ -42,7 +44,7 @@ export default function SubmitButton({
           {loadingText}
         </>
       ) : (
-        defaultText
+        isPending ? loadingText : defaultText
       )}
     </button>
   );
