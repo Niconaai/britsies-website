@@ -1,40 +1,30 @@
 // src/app/admin/layout.tsx
-// NO auth checks here anymore
 import { PropsWithChildren } from "react";
 import Image from 'next/image';
+import AdminSidebarNav from './AdminSidebarNav'; // <-- VOER ONS NUWE KOMPONENT IN
 
 export default function AdminLayout({ children }: PropsWithChildren) {
-  console.log('AdminLayout: Rendering structure only.'); // Add log
-
   return (
     <div className="flex min-h-screen">
-      <aside className="w-64 bg-zinc-800 p-4 text-white">
-        <div className="mb-6 flex justify-center"> {/* Container for margin + centering */}
+      
+      {/* --- SY-SPYSKAART --- */}
+      <aside className="flex w-64 flex-col bg-zinc-800 p-4 text-white">
+        <div className="mb-6 flex justify-center">
           <Image
-            src="/wapen.png" // Replace with your logo path in /public
+            src="/wapen.png" 
             alt="Hoërskool Brits Logo"
-            width={100} // Adjust width for sidebar
-            height={100} // Adjust height for sidebar
-            className="h-auto" // Maintain aspect ratio
+            width={100}
+            height={100}
+            className="h-auto"
           />
         </div>
-          <h2 className="mb-4 text-xl font-bold">Admin Paneel</h2>
-          <nav>
-            <ul>
-              <li className="mb-2">
-                <a href="/admin" className="hover:text-blue-300">
-                  Paneelblad
-                </a>
-              </li>
-              <li className="mb-2">
-                <a href="/admin/news" className="hover:text-blue-300">
-                  Nuus Bestuur (CMS)
-                </a>
-              </li>
-              {/* Add more admin links here */}
-            </ul>
-          </nav>
+        
+        {/* --- GEBRUIK DIE NUWE NAVIGASIE KOMPONENT --- */}
+        <AdminSidebarNav />
+
       </aside>
+
+      {/* --- HOOF INHOUD --- */}
       <main className="flex-1 bg-zinc-100 p-6 dark:bg-zinc-900">
         {children}
       </main>

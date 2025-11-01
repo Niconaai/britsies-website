@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { login, signup } from './actions';
+import SubmitButton from '../../admin/SubmitButton';
 
 const AuthMessage = ({ message, type }: { message: string, type: 'success' | 'error' }) => {
     const baseClasses = "w-full p-4 rounded-md mb-6 text-center";
@@ -34,12 +35,12 @@ export default function ClientAuthPage({ initialMessage }: { initialMessage: Aut
 
         if (initialMessage) {
             const timer = setTimeout(() => {
-                setIsVisible(false); 
+                setIsVisible(false);
                 window.history.replaceState(null, '', '/aansoek/begin');
             }, 5000);
-            return () => clearTimeout(timer); 
+            return () => clearTimeout(timer);
         }
-    }, [initialMessage]); 
+    }, [initialMessage]);
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-zinc-100 p-4 dark:bg-zinc-900">
@@ -101,12 +102,12 @@ export default function ClientAuthPage({ initialMessage }: { initialMessage: Aut
                     </div>
 
                     <div className="flex gap-4 md:pt-2">
-                        <button
-                            formAction={login}
+                        <SubmitButton
+                            formAction={login} // <--- BELANGRIK: 'formAction' skuif hierheen
+                            defaultText="Teken In"
+                            loadingText="Teken in..."
                             className="w-full rounded bg-rose-950 py-2 font-medium text-white transition hover:bg-rose-900"
-                        >
-                            Teken In
-                        </button>
+                        />
                     </div>
 
                     <hr className="my-8  border-zinc-300 dark:border-zinc-600" />
@@ -117,12 +118,12 @@ export default function ClientAuthPage({ initialMessage }: { initialMessage: Aut
                         </p>
 
                         <div>
-                            <button
-                                formAction={signup}
+                            <SubmitButton
+                                formAction={signup} // <--- BELANGRIK: 'formAction' skuif hierheen
+                                defaultText="Skep Rekening"
+                                loadingText="Besig..."
                                 className="w-full rounded bg-yellow-600 py-2 text-sm md:font-medium text-white transition hover:bg-yellow-700"
-                            >
-                                Skep Rekening
-                            </button>
+                            />
                         </div>
                     </div>
 

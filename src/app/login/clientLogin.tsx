@@ -3,6 +3,7 @@
 import { login } from './actions'
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import SubmitButton from '../admin/SubmitButton'; // <-- 1. VOER IN (Pad is reg)
 
 const AuthMessage = ({ message }: { message: string }) => {
   return (
@@ -83,12 +84,12 @@ export default function ClientPage({ errorMessage }: { errorMessage: string | nu
               placeholder="••••••••"
             />
           </div>
-          <button
-            type="submit"
-            className="mb-10 w-full rounded bg-gray-500 py-2 font-medium text-white transition hover:bg-gray-700  "
-          >
-            Teken In
-          </button>
+
+          <SubmitButton
+            defaultText="Teken In"
+            loadingText="Teken in..."
+            className="mb-10 w-full rounded bg-gray-500 py-2 font-medium text-white transition hover:bg-gray-700"
+          />
           {/* Optional: Add a signup button later if needed */}
           {/* <button formAction={signup}>Sign up</button> */}
 
