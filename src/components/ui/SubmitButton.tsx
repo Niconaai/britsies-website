@@ -35,7 +35,7 @@ export default function SubmitButton({
       {isPending ? (
         <>
           <Image
-            src="/CircleLoader.gif"
+            src="./CircleLoader.gif"
             alt="Besig..."
             width={20}
             height={20}

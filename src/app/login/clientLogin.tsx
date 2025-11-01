@@ -69,6 +69,7 @@ export default function ClientPage({ errorMessage }: { errorMessage: string | nu
           />
 
           <SubmitButton
+            formAction={login}
             defaultText="Teken In"
             loadingText="Teken in..."
             className="mb-10 w-full rounded bg-gray-500 py-2 font-medium text-white transition hover:bg-gray-700"
