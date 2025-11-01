@@ -14,7 +14,7 @@ export default function FileListItem({ file }: { file: DbUploadedFile }) {
 
   const handleView = async () => {
     if (!file.storage_path) return;
-    setIsViewLoading(true); // <-- Stel net hierdie een
+    setIsViewLoading(true);
     setError(null);
     try {
       const url = await getSecureFileViewUrl(file.storage_path);
@@ -22,12 +22,12 @@ export default function FileListItem({ file }: { file: DbUploadedFile }) {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kon nie skakel kry nie.");
     }
-    setIsViewLoading(false); // <-- Stel net hierdie een terug
+    setIsViewLoading(false); 
   };
 
   const handleDownload = async () => {
     if (!file.storage_path) return;
-    setIsDownloadLoading(true); // <-- Stel net hierdie een
+    setIsDownloadLoading(true); 
     setError(null);
     try {
       const url = await getSecureFileDownloadUrl(file.storage_path);
@@ -35,7 +35,7 @@ export default function FileListItem({ file }: { file: DbUploadedFile }) {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kon nie skakel kry nie.");
     }
-    setIsDownloadLoading(false); // <-- Stel net hierdie een terug
+    setIsDownloadLoading(false); 
   };
 
   const getFileIcon = (path: string | null) => {
@@ -45,12 +45,11 @@ export default function FileListItem({ file }: { file: DbUploadedFile }) {
     return '📄';
   };
   
-  // 'n Klein laaier komponent
   const MiniLoader = () => (
     <Image
-      src="/CircleLoader.gif" //
+      src="/CircleLoader.gif" 
       alt="Besig..."
-      width={16} // Kleiner vir hierdie knoppies
+      width={16}
       height={16}
       unoptimized={true}
     />

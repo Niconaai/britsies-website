@@ -147,7 +147,6 @@ export type DbUploadedFile = {
   created_at: string;
 };
 
-// Die finale saamgestelde tipe wat ons van die 'join'-navraag kry
 export type FullApplicationData = DbApplication & {
   learners: DbLearner[];
   guardians: DbGuardian[];
@@ -156,15 +155,85 @@ export type FullApplicationData = DbApplication & {
 };
 
 export type RawApplicationData = DbApplication & {
-  learners: DbLearner[];     // <-- Kry as 'n skikking
-  guardians: DbGuardian[];   // <-- Kry as 'n skikking
-  payers: DbPayer[];         // <-- Kry as 'n skikking
+  learners: DbLearner[];
+  guardians: DbGuardian[];
+  payers: DbPayer[];
   uploaded_files: DbUploadedFile[];
 };
 
 export type CleanApplicationData = DbApplication & {
-  learner: DbLearner | null;      // <-- Verander na enkel item
-  guardians: DbGuardian[];   // (bly skikking, want ons verwag Ouer 1 & 2)
-  payer: DbPayer | null;        // <-- Verander na enkel item
-  uploaded_files: DbUploadedFile[]; // (bly skikking)
+  learner: DbLearner | null;
+  guardians: DbGuardian[];
+  payer: DbPayer | null;
+  uploaded_files: DbUploadedFile[];
 };
+
+//WINKEL begin
+export type DbShopCategory = {
+  id: string;
+  created_at: string;
+  name: string;
+  description: string | null;
+};
+
+export type DbShopProduct = {
+  id: string;
+  created_at: string;
+  category_id: string | null;
+  name: string;
+  description: string | null;
+  price: number;
+  stock_level: number;
+  image_url: string | null;
+  options: any | null; // jsonb
+  is_active: boolean;
+  weight_kg: number | null;
+  length_cm: number | null;
+  width_cm: number | null;
+  height_cm: number | null;
+};
+
+export type DbShopOrder = {
+  id: string;
+  created_at: string;
+  order_number: number;
+  human_readable_id: string | null;
+  user_id: string | null;
+  guest_name: string | null;
+  guest_email: string | null;
+  guest_phone: string | null;
+  status: string; // 'pending_payment', 'processing', 'ready_for_collection', 'completed', 'cancelled'
+  total_amount: number;
+  yoco_charge_id: string | null;
+  shipping_address_line1: string | null;
+  shipping_address_line2: string | null;
+  shipping_city: string | null;
+  shipping_province: string | null;
+  shipping_code: string | null;
+};
+
+export type DbShopOrderItem = {
+  id: string;
+  order_id: string;
+  product_id: string | null;
+  product_name: string;
+  quantity: number;
+  price_at_purchase: number;
+  selected_options: any | null;
+};
+
+export type ProductWithCategory = DbShopProduct & {
+  shop_categories: {
+    name: string | null;
+  } | null;
+};
+
+export type DbShopOrderWithItems = DbShopOrder & {
+  shop_order_items: DbShopOrderItem[];
+  profiles: { 
+    full_name: string | null;
+    email: string | null;
+    cell_phone: string | null;
+  } | null;
+};
+//WINKEL END

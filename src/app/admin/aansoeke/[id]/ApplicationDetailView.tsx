@@ -1,5 +1,6 @@
 // src/app/admin/aansoeke/[id]/ApplicationDetailView.tsx
 'use client';
+import FloatingLabelSelectField from "@/components/ui/FloatingLabelSelectField";
 
 // --- GEBRUIK ONS NUWE "SKOON" TIPE ---
 import type { 
@@ -11,7 +12,8 @@ import type {
 import { updateApplicationStatus } from './action';
 import FileListItem from './FileListItem'; 
 
-// Hulp-komponent om data netjies te vertoon
+const voorskoolOptions = ["Hangende (Pending)", "Goedgekeur (Approved)", "Verwerp (Rejected)", "Waglys (Waitlisted)"];
+
 const InfoField = ({ label, value, colSpan = 1 }: { 
   label: string; 
   value: string | number | boolean | null | undefined | string[];
@@ -238,7 +240,7 @@ export default function ApplicationDetailView({ application }: { application: Cl
             <select 
               name="status"
               defaultValue={application.status || 'pending'}
-              className="rounded-md border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
+              className="rounded-md border-zinc-300 shadow-sm hover:bg-zinc-600 px-2 py-2 focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
             >
               <option value="pending">Hangende (Pending)</option>
               <option value="approved">Goedgekeur (Approved)</option>

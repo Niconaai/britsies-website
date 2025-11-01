@@ -60,7 +60,6 @@ export default function ClientAuthPage({ initialMessage }: { initialMessage: Aut
   return (
       <div className="flex min-h-screen items-center justify-center bg-zinc-100 p-4 dark:bg-zinc-900">
           <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md dark:bg-zinc-800">
-              {/* ... (Logo en Titels bly dieselfde) ... */}
               <div className="flex mb-8 justify-center">
                   <Image src="/wapen.png" alt="Hoërskool Brits Logo" width={150} height={50} priority className="h-auto" />
               </div>

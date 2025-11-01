@@ -8,6 +8,9 @@ type FloatingLabelInputProps = {
   type?: string;
   required?: boolean;
   children?: React.ReactNode;
+  defaultValue?: React.ReactNode;
+  className?: React.ReactNode;
+  step?: React.ReactNode;
 };
 
 export default function FloatingLabelInput({
@@ -17,6 +20,10 @@ export default function FloatingLabelInput({
   type = "text",
   required = false,
   children,
+  defaultValue,
+  className,   
+  step,
+  ...props
 }: FloatingLabelInputProps) {
   return (
     <div className="relative w-full">
