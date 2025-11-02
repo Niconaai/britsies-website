@@ -44,7 +44,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     return (
         <div>
             <Link
-                href="/winkel"
+                href="/winkel/katalogus"
                 className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 mb-4 inline-block"
             >
                 &larr; Terug na alle produkte

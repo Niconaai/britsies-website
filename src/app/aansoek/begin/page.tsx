@@ -17,7 +17,11 @@ type AuthMessageProps = {
 export default async function ApplicationAuthPage({
   searchParams,
 }: {
-  searchParams: Promise<{ message?: string; error?: string }>;
+  searchParams: Promise<{ 
+    message?: string; 
+    error?: string;
+    redirect_to?: string; 
+  }>;
 }) {
   
   const supabase = await createClient();
@@ -47,5 +51,10 @@ export default async function ApplicationAuthPage({
     authMessage = { message, type: 'success' };
   }
 
-  return <ClientAuthPage initialMessage={authMessage} />;
+  const redirectUrl = resolvedSearchParams.redirect_to || null;
+
+  return <ClientAuthPage 
+    initialMessage={authMessage} 
+    redirectUrl={redirectUrl} 
+  />;
 }

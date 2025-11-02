@@ -12,15 +12,22 @@ export async function login(formData: FormData) {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
   }
+  
+  // --- 1. LEES DIE NUWE VERBORGE VELD ---
+  const redirectTo = formData.get('redirect_to') as string;
 
   const { error: signInError } = await supabase.auth.signInWithPassword(data)
   if (signInError) {
-    return redirect('/aansoek/begin?error=invalid_credentials')
+    const errorParams = new URLSearchParams({ error: 'invalid_credentials' });
+    if (redirectTo) errorParams.set('redirect_to', redirectTo);
+    return redirect(`/aansoek/begin?${errorParams.toString()}`);
   }
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    return redirect('/aansoek/begin?error=User not found after sign in');
+    const errorParams = new URLSearchParams({ error: 'User not found after sign in' });
+    if (redirectTo) errorParams.set('redirect_to', redirectTo);
+    return redirect(`/aansoek/begin?${errorParams.toString()}`);
   }
 
   const { data: profile, error: profileError } = await supabase
@@ -31,20 +38,34 @@ export async function login(formData: FormData) {
 
   if (profileError || !profile) {
     await supabase.auth.signOut();
-    return redirect('/aansoek/begin?error=Profile not found');
+    const errorParams = new URLSearchParams({ error: 'Profile not found' });
+    if (redirectTo) errorParams.set('redirect_to', redirectTo);
+    return redirect(`/aansoek/begin?${errorParams.toString()}`);
   }
 
   if (profile.role === 'parent') {
-    revalidatePath('/aansoek', 'layout')
-    return redirect('/aansoek')
+    // --- 2. GEBRUIK DIE 'redirectTo' WAARDE ---
+    // As 'redirectTo' bestaan en 'n geldige pad is, gebruik dit.
+    // Anders, val terug na die verstek '/aansoek'.
+    const finalRedirect = redirectTo && redirectTo.startsWith('/') ? redirectTo : '/aansoek';
+    revalidatePath(finalRedirect, 'layout')
+    return redirect(finalRedirect)
+    // --- EINDE VAN REGSTELLING ---
   } else {
     await supabase.auth.signOut(); 
-    return redirect('/aansoek/begin?error=access_denied')
+    const errorParams = new URLSearchParams({ error: 'access_denied' });
+    if (redirectTo) errorParams.set('redirect_to', redirectTo);
+    return redirect(`/aansoek/begin?${errorParams.toString()}`);
   }
 }
 
 export async function signup(formData: FormData) {
   const supabase = await createClient()
+
+  // --- 1. LEES DIE NUWE VERBORGE VELD ---
+  const redirectTo = formData.get('redirect_to') as string | null;
+  const redirectParams = new URLSearchParams();
+  if (redirectTo) redirectParams.set('redirect_to', redirectTo);
 
   const password = formData.get('password') as string;
   const passwordConfirm = formData.get('password-confirm') as string;
@@ -60,16 +81,20 @@ export async function signup(formData: FormData) {
     shipping_code: formData.get('shipping_code') as string,
   };
 
+  // --- 2. DATEER ALLE 'redirect' OPROEPE OP ---
   if (password !== passwordConfirm) {
-    return redirect('/aansoek/begin?error=Wagwoorde stem nie ooreen nie');
+    redirectParams.set('error', 'Wagwoorde stem nie ooreen nie');
+    return redirect(`/aansoek/begin?${redirectParams.toString()}`);
   }
   
   if (!email || !password) {
-    return redirect('/aansoek/begin?error=E-pos en wagwoord word vereis');
+    redirectParams.set('error', 'E-pos en wagwoord word vereis');
+    return redirect(`/aansoek/begin?${redirectParams.toString()}`);
   }
   
   if (!profileData.full_name || !profileData.cell_phone || !profileData.shipping_address_line1 || !profileData.shipping_city || !profileData.shipping_province || !profileData.shipping_code) {
-    return redirect('/aansoek/begin?error=Maak asseblief seker al die vereiste velde is ingevul.');
+    redirectParams.set('error', 'Maak asseblief seker al die vereiste velde is ingevul.');
+    return redirect(`/aansoek/begin?${redirectParams.toString()}`);
   }
 
   const { error } = await supabase.auth.signUp({
@@ -85,11 +110,13 @@ export async function signup(formData: FormData) {
 
   if (error) {
     console.error('Signup Error:', error);
-    return redirect(`/aansoek/begin?error=${encodeURIComponent(error.message)}`);
+    redirectParams.set('error', encodeURIComponent(error.message));
+    return redirect(`/aansoek/begin?${redirectParams.toString()}`);
   }
 
-  // E-pos bevestiging word vereis.
-  return redirect('/aansoek/begin?message=rekening_geskep');
+  // --- 3. STUUR 'redirectTo' SAAM MET SUKSES-BOODSKAP ---
+  redirectParams.set('message', 'rekening_geskep');
+  return redirect(`/aansoek/begin?${redirectParams.toString()}`);
 }
 
 export async function signOut() {

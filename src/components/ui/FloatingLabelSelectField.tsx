@@ -9,6 +9,7 @@ type FloatingLabelSelectFieldProps = {
   options: string[];
   required?: boolean;
   className?: string;
+  disabled?: boolean;
 };
 
 const FloatingLabelSelectField = ({
@@ -19,6 +20,7 @@ const FloatingLabelSelectField = ({
   options,
   required = false,
   className = "",
+  disabled = false,
 }: FloatingLabelSelectFieldProps) => {
   return (
     <div className={`relative w-full ${className}`}>
@@ -28,6 +30,7 @@ const FloatingLabelSelectField = ({
         value={value ?? ""}
         onChange={onChange}
         required={required}
+        disabled={disabled}
         className="peer w-full appearance-none rounded-sm border border-zinc-300 bg-transparent px-3.5 pt-4 pb-2 text-zinc-900 
                    invalid:border-zinc-300 dark:invalid:border-zinc-600
                    focus:border-zinc-800 focus:ring-1 focus:ring-zinc-800 focus:outline-none

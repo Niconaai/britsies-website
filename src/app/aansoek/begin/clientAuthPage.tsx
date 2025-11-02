@@ -9,7 +9,7 @@ import FloatingLabelInput from '@/components/ui/FloatingLabelInput';
 import EyeIcon from '@/components/ui/EyeIcon'; 
 import FloatingLabelSelectField from '@/components/ui/FloatingLabelSelectField';
 
-// Boodskap-komponent
+// ... (AuthMessage komponent bly dieselfde)
 const AuthMessage = ({ message, type }: { message: string, type: 'success' | 'error' }) => {
   const baseClasses = "w-full p-4 rounded-md mb-6 text-center";
   const styles = {
@@ -29,34 +29,33 @@ type AuthMessageProps = {
 } | null;
 
 const provinsieOptions = [
-  "Gauteng",
-  "KwaZulu-Natal",
-  "Limpopo",
-  "Mpumalanga",
-  "Noord-Kaap",
-  "Noordwes",
-  "Oos-Kaap",
-  "Vrystaat",
-  "Wes-Kaap"
+  "Gauteng", "KwaZulu-Natal", "Limpopo", "Mpumalanga", 
+  "Noord-Kaap", "Noordwes", "Oos-Kaap", "Vrystaat", "Wes-Kaap"
 ];
 
-export default function ClientAuthPage({ initialMessage }: { initialMessage: AuthMessageProps }) {
+// --- 1. AANVAAR DIE NUWE PROP ---
+export default function ClientAuthPage({ 
+  initialMessage,
+  redirectUrl 
+}: { 
+  initialMessage: AuthMessageProps,
+  redirectUrl: string | null 
+}) {
 
+  // ... (al jou 'useState' hake bly dieselfde)
   const [message, setMessage] = useState(initialMessage);
   const [isVisible, setIsVisible] = useState(!!initialMessage);
   const [isSigningUp, setIsSigningUp] = useState(false);
-
-  // --- STATE VIR WAGWOORD-SIGBAARHEID ---
   const [showLoginPass, setShowLoginPass] = useState(false);
   const [showSignupPass, setShowSignupPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
-
   const [province, setProvince] = useState('');
-
   const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setProvince(e.target.value);
   };
+  // ...
 
+  // useEffect opgedateer om 'redirectUrl' te behou
   useEffect(() => {
     setMessage(initialMessage);
     setIsVisible(!!initialMessage);
@@ -70,15 +69,17 @@ export default function ClientAuthPage({ initialMessage }: { initialMessage: Aut
         }
         const timer = setTimeout(() => {
             setIsVisible(false); 
-            window.history.replaceState(null, '', '/aansoek/begin');
+            const newUrl = redirectUrl ? `/aansoek/begin?redirect_to=${redirectUrl}` : '/aansoek/begin';
+            window.history.replaceState(null, '', newUrl);
         }, 8000); 
         return () => clearTimeout(timer); 
     }
-  }, [initialMessage]); 
+  }, [initialMessage, redirectUrl]); 
 
   return (
       <div className="flex min-h-screen items-center justify-center bg-zinc-100 p-4 dark:bg-zinc-900">
           <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md dark:bg-zinc-800">
+              {/* ... (Logo en Titels) ... */}
               <div className="flex mb-8 justify-center">
                   <Image src="/wapen.png" alt="Hoërskool Brits Logo" width={150} height={50} priority className="h-auto" />
               </div>
@@ -96,6 +97,11 @@ export default function ClientAuthPage({ initialMessage }: { initialMessage: Aut
               {/* --- VORM 1: TEKEN IN --- */}
               <form action={login} className={`space-y-6 ${isSigningUp ? 'hidden' : 'block'}`}>
                   
+                  {/* --- 2. VOEG VERBORGE VELD BY --- */}
+                  {redirectUrl && (
+                    <input type="hidden" name="redirect_to" value={redirectUrl} />
+                  )}
+
                   <FloatingLabelInput
                     name="email"
                     id="email-login"
@@ -103,8 +109,8 @@ export default function ClientAuthPage({ initialMessage }: { initialMessage: Aut
                     type="email"
                     required
                   />
-                  
-                  <FloatingLabelInput
+                  {/* ... (res van 'login' vorm) ... */}
+                   <FloatingLabelInput
                     name="password"
                     id="password-login"
                     label="Wagwoord"
@@ -132,9 +138,7 @@ export default function ClientAuthPage({ initialMessage }: { initialMessage: Aut
                     loadingText="Teken in..."
                     className="w-full rounded bg-rose-950 py-3 font-medium text-white transition hover:bg-rose-900"
                   />
-
                   <hr className="my-8  border-zinc-300 dark:border-zinc-600" />
-
                   <div className="text-center">
                       <p className="text-sm text-gray-800 dark:text-zinc-300">
                           Nog nie 'n rekening?
@@ -151,6 +155,13 @@ export default function ClientAuthPage({ initialMessage }: { initialMessage: Aut
 
               {/* --- VORM 2: SKREEP REKENING --- */}
               <form action={signup} className={`space-y-6 ${isSigningUp ? 'block' : 'hidden'}`}>
+                  
+                  {/* --- 3. VOEG VERBORGE VELD OOK HIER BY --- */}
+                  {redirectUrl && (
+                    <input type="hidden" name="redirect_to" value={redirectUrl} />
+                  )}
+
+                  {/* ... (res van 'signup' vorm) ... */}
                   <FloatingLabelInput name="full_name" id="full_name" label="Volle Naam & Van" required />
                   <FloatingLabelInput name="cell_phone" id="cell_phone" label="Selfoonnommer" type="tel" required />
                   
@@ -159,7 +170,6 @@ export default function ClientAuthPage({ initialMessage }: { initialMessage: Aut
                   <FloatingLabelInput name="shipping_address_line1" id="shipping_address_line1" label="Adres Lyn 1" required />
                   <FloatingLabelInput name="shipping_address_line2" id="shipping_address_line2" label="Adres Lyn 2 (Opsioneel)" />
                   <FloatingLabelInput name="shipping_city" id="shipping_city" label="Stad / Dorp" required />
-                  {/* <FloatingLabelInput name="shipping_province" id="shipping_province" label="Provinsie" required /> */}
                   <FloatingLabelSelectField
                     label="Provinsie"
                     name="shipping_province"
@@ -206,16 +216,13 @@ export default function ClientAuthPage({ initialMessage }: { initialMessage: Aut
                       <EyeIcon isVisible={showConfirmPass} className="h-5 w-5" />
                     </button>
                   </FloatingLabelInput>
-
                   <hr className="my-8  border-zinc-300 dark:border-zinc-600" />
-
                   <SubmitButton
                     formAction={signup}
                     defaultText="Skep Rekening"
                     loadingText="Skep rekening..."
                     className="w-full rounded bg-yellow-600 py-3 font-medium text-white transition hover:bg-yellow-700"
                   />
-
                   <div className="text-center">
                       <button
                         type="button"
@@ -227,6 +234,7 @@ export default function ClientAuthPage({ initialMessage }: { initialMessage: Aut
                   </div>
               </form>
 
+              {/* ... (Footer) ... */}
               <p className="mb-0 mt-8 text-center text-xs font text-gray-800  dark:text-zinc-300">
                   Nick van der Merwe
               </p>

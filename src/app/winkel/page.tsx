@@ -1,50 +1,55 @@
 // src/app/winkel/page.tsx
-import { createClient } from "@/utils/supabase/server";
-import ProductCard from "./ProductCard";
-import type { DbShopProduct } from "@/types/supabase";
+import Image from "next/image";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Hoërskool Brits | Winkel",
-  description: "Aanlyn Winkel van Hoërskool Brits",
+  title: "Hoërskool Brits | Winkel Welkom",
+  description: "Welkom by die Aanlyn Winkel van Hoërskool Brits",
 };
 
-export default async function WinkelPage() {
-  const supabase = await createClient();
-
-  // Haal slegs aktiewe produkte
-  const { data: products, error } = await supabase
-    .from('shop_products')
-    .select('*')
-    .eq('is_active', true)
-    .order('name');
-
-  if (error) {
-    return <p className="text-red-600">Kon nie produkte laai nie: {error.message}</p>
-  }
-
+export default function WinkelWelkomPage() {
   return (
     <div>
-      
-      <p className="text-zinc-600 dark:text-zinc-400 text-center">
-          Welkom by die Britsie-winkel. Hier kan jy al jou gunsteling Britsie klere en items koop. Die items kan by die skool afgehaal word.
-        </p>
+      <Link
+        href="/#"
+        className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 mb-4 inline-block"
+      >
+        &larr; Terug na hoof bladsy
+      </Link>
 
-        <hr className="my-8  border-zinc-300 dark:border-zinc-600" />
-      <h1 className="mb-6 text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
-        Winkel Katalogus
-      </h1>
-      {products.length === 0 ? (
-        <p className="text-zinc-600 dark:text-zinc-400">
-          Daar is tans geen produkte beskikbaar nie. Kom loer binnekort weer in!
-        </p>
-      ) : (
-        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product as DbShopProduct} />
-          ))}
+      <div className="bg-white dark:bg-zinc-800 shadow-lg rounded-lg p-6 md:p-8">
+        <div className="flex flex-col items-center text-center">
+
+          {/* Die kliënt kan hierdie prent-bron later vervang */}
+          <Image
+            src="/wapen.png" // Gebruik een van die nuwe prente as 'n plekhouer
+            alt="Britsie Winkel Welkom"
+            width={600}
+            height={400}
+            priority
+            className="rounded-lg object-cover mb-8 max-h-[400px] w-auto"
+          />
+
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
+            Welkom by die Britsie-Winkel
+          </h1>
+
+          <p className="mt-4 max-w-2xl text-md md:text-lg text-zinc-600 dark:text-zinc-400">
+            Dankie dat jy ons aanlyn winkel besoek. Hier kan jy al jou gunsteling Britsie klere, ondersteuners-items, en meer koop. Alle items is slegs vir afhaal by die skool.
+          </p>
+
+          <hr className="my-8 w-full max-w-md border-zinc-300 dark:border-zinc-600" />
+
+          <Link
+            href="/winkel/katalogus"
+            className="inline-flex items-center justify-center rounded-md bg-blue-600 px-10 py-4 text-lg font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Sien Katalogus
+          </Link>
+
         </div>
-      )}
+      </div>
     </div>
   );
 }

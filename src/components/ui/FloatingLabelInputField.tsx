@@ -14,6 +14,8 @@ type FloatingLabelInputFieldProps = {
   placeholder?: string;
   className?: string;
   children?: React.ReactNode;
+  disabled?: boolean; 
+  step?: string | number;
 };
 
 const FloatingLabelInputField = ({
@@ -25,7 +27,9 @@ const FloatingLabelInputField = ({
   type = "text",
   placeholder = "",
   className = "",
-  children, // <-- ONTVANG DIE PROP
+  children, 
+  disabled = false, 
+  step,
   ...props
 }: FloatingLabelInputFieldProps) => {
   
@@ -62,6 +66,8 @@ const FloatingLabelInputField = ({
         placeholder=" " 
         onFocus={handleFocus}
         onBlur={handleBlur}
+        disabled={disabled}
+        step={step}
         className="peer w-full rounded-sm border border-zinc-300 bg-transparent px-3.5 pt-4 pb-2 text-zinc-900 
                    focus:border-zinc-800 focus:ring-1 focus:ring-zinc-800 focus:outline-none 
                    dark:border-zinc-600 dark:bg-zinc-700 dark:text-white dark:focus:border-white dark:focus:ring-white"

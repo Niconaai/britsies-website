@@ -24,7 +24,7 @@ export default function ProductCard({ product }: { product: DbShopProduct }) {
   };
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+    <div className="group relative flex flex-col overflow-hidden hover:scale-105 rounded-lg border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
       <Link href={`/winkel/${product.id}`}>
         <div className="aspect-h-1 aspect-w-1 bg-zinc-50 sm:aspect-none sm:h-60">
           <Image

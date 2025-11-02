@@ -25,12 +25,13 @@ export default function CartPage() {
   const { cartItems, removeFromCart, updateQuantity, cartTotal, itemCount } = useCart();
 
   return (
-    <div> <Link
-      href="/winkel"
-      className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 mb-4 inline-block"
-    >
-      &larr; Terug na alle produkte
-    </Link>
+    <div>
+      <Link
+        href="/winkel/katalogus"
+        className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 mb-4 inline-block"
+      >
+        &larr; Terug na alle produkte
+      </Link>
       <div className="bg-white dark:bg-zinc-800 shadow-lg rounded-lg p-6 md:p-8">
 
         <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white mb-8">
@@ -40,7 +41,7 @@ export default function CartPage() {
         {cartItems.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-xl text-zinc-600 dark:text-zinc-400">Jou mandjie is leeg.</p>
-            <Link href="/winkel" className="mt-6 inline-block rounded-md bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700">
+            <Link href="/winkel/katalogus" className="mt-6 inline-block rounded-md bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700">
               Begin Inkopies
             </Link>
           </div>
@@ -125,7 +126,7 @@ export default function CartPage() {
                 <div className="mt-6 flex justify-center text-center text-sm text-zinc-500">
                   <p>
                     of&nbsp;
-                    <Link href="/winkel" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+                    <Link href="/winkel/katalogus" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
                       Gaan voort met Inkopies
                       <span aria-hidden="true"> &rarr;</span>
                     </Link>

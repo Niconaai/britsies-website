@@ -237,3 +237,18 @@ export type DbShopOrderWithItems = DbShopOrder & {
   } | null;
 };
 //WINKEL END
+
+//> Vir die checkout bladsy
+export type DbProfile = {
+  id: string;
+  created_at: string;
+  role: 'admin' | 'parent' | null;
+  full_name: string | null;
+  cell_phone: string | null;
+  email: string | null; 
+  shipping_address_line1: string | null;
+  shipping_address_line2: string | null;
+  shipping_city: string | null;
+  shipping_province: string | null;
+  shipping_code: string | null;
+};
