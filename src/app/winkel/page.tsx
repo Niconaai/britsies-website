@@ -2,6 +2,12 @@
 import { createClient } from "@/utils/supabase/server";
 import ProductCard from "./ProductCard";
 import type { DbShopProduct } from "@/types/supabase";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Hoërskool Brits | Winkel",
+  description: "Aanlyn Winkel van Hoërskool Brits",
+};
 
 export default async function WinkelPage() {
   const supabase = await createClient();
@@ -19,10 +25,15 @@ export default async function WinkelPage() {
 
   return (
     <div>
+      
+      <p className="text-zinc-600 dark:text-zinc-400 text-center">
+          Welkom by die Britsie-winkel. Hier kan jy al jou gunsteling Britsie klere en items koop. Die items kan by die skool afgehaal word.
+        </p>
+
+        <hr className="my-8  border-zinc-300 dark:border-zinc-600" />
       <h1 className="mb-6 text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
         Winkel Katalogus
       </h1>
-      
       {products.length === 0 ? (
         <p className="text-zinc-600 dark:text-zinc-400">
           Daar is tans geen produkte beskikbaar nie. Kom loer binnekort weer in!

@@ -3,8 +3,9 @@ import React from "react";
 type FloatingLabelSelectFieldProps = {
   label: string;
   name: string;
-  value: string | undefined | null;
-  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  value?: string | undefined | null;
+  onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  defaultValue?: string;
   options: string[];
   required?: boolean;
   className?: string;

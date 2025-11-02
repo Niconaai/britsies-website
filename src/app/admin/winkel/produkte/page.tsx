@@ -1,9 +1,10 @@
-// src/app/admin/shop/products/page.tsx
+// src/app/admin/winkel/produkte/page.tsx
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
-import { deleteProduct } from './actions';
+// import { deleteProduct } from './actions'; // <-- NIE MEER HIER NODIG NIE
 import type { ProductWithCategory } from '@/types/supabase';
+import DeleteProductButton from './DeleteProductButton'; // <-- 1. IMPORTEER DIE NUWE KOMPONENT
 
 // Hulpfunksie om prys te formateer
 const formatCurrency = (amount: number | null) => {
@@ -53,7 +54,7 @@ export default async function ShopProductsPage() {
                     Produkbestuur
                 </h1>
                 <Link
-                    href="/admin/winkel/produkte/create"
+                    href="/admin/winkel/produkte/create" 
                     className="rounded-md bg-blue-600 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                     Skep Nuwe Produk +
@@ -70,6 +71,7 @@ export default async function ShopProductsPage() {
                 <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-700">
                     <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
                         <thead className="bg-zinc-50 dark:bg-zinc-800">
+                            {/* ... (thead bly dieselfde) ... */}
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-300">Produknaam</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-300">Kategorie</th>
@@ -82,6 +84,7 @@ export default async function ShopProductsPage() {
                         <tbody className="divide-y divide-zinc-200 bg-white dark:divide-zinc-700 dark:bg-zinc-900">
                             {productList.map((product) => (
                                 <tr key={product.id}>
+                                    {/* ... (ander <td> selle bly dieselfde) ... */}
                                     <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-zinc-900 dark:text-white">{product.name}</td>
                                     <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400">{product.shop_categories?.name ?? 'N/A'}</td>
                                     <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400">{formatCurrency(product.price)}</td>
@@ -102,16 +105,10 @@ export default async function ShopProductsPage() {
                                         >
                                             Wysig
                                         </Link>
-                                        <form action={deleteProduct} className="inline">
-                                            <input type="hidden" name="productId" value={product.id} />
-                                            <button
-                                                type="submit"
-                                                className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                                onClick={(e) => !confirm('Is jy seker jy wil hierdie produk skrap?') && e.preventDefault()}
-                                            >
-                                                Skrap
-                                            </button>
-                                        </form>
+                                        
+                                        {/* --- 2. VERVANG DIE VORM MET DIE KOMPONENT --- */}
+                                        <DeleteProductButton productId={product.id} />
+                                        {/* --- EINDE VAN VERVANGING --- */}
                                     </td>
                                 </tr>
                             ))}

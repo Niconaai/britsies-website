@@ -1,11 +1,11 @@
 // src/app/winkel/ProductCard.tsx
-'use client'; // Ons sal dit 'client' maak vir 'Voeg by Mandjie'-interaksies later
+'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
 import type { DbShopProduct } from '@/types/supabase';
+import { useCart } from '@/context/CartContext';
 
-// Hulpfunksie om prys te formateer
 const formatCurrency = (amount: number | null) => {
   if (amount === null) return 'N/A';
   return new Intl.NumberFormat('af-ZA', {
@@ -16,10 +16,11 @@ const formatCurrency = (amount: number | null) => {
 
 export default function ProductCard({ product }: { product: DbShopProduct }) {
   
-  // TODO: Implementeer 'addToCart' funksie
+  const { addToCart } = useCart();
+
   const handleAddToCart = () => {
-    console.log(`Voeg ${product.name} by mandjie...`);
-    // Hier sal ons 'use-shopping-cart' of ons eie context-logika roep
+    addToCart(product, 1);
+    alert(`${product.name} is by jou mandjie gevoeg!`);
   };
 
   return (
@@ -27,7 +28,7 @@ export default function ProductCard({ product }: { product: DbShopProduct }) {
       <Link href={`/winkel/${product.id}`}>
         <div className="aspect-h-1 aspect-w-1 bg-zinc-50 sm:aspect-none sm:h-60">
           <Image
-            src={product.image_url || '/placeholder.png'} // 'n Plekhouer-prent sal goed wees
+            src={product.image_url || '/wapen-copy.png'} 
             alt={product.name}
             width={300}
             height={240}
@@ -57,7 +58,7 @@ export default function ProductCard({ product }: { product: DbShopProduct }) {
             disabled={product.stock_level <= 0}
             className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-zinc-400 dark:disabled:bg-zinc-600"
         >
-            {product.stock_level > 0 ? 'Voeg by Mandjie' : 'Uil voorraad'}
+            {product.stock_level > 0 ? 'Voeg by Mandjie' : 'Uit voorraad'}
         </button>
       </div>
     </div>

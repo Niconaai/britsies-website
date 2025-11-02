@@ -1,9 +1,9 @@
 // src/app/aansoek/page.tsx
-import type { Metadata } from "next";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link"; 
 import ApplicationList from "./ApplicationList"; 
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Hoërskool Brits | Aansoek Portaal",
