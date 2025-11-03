@@ -24,6 +24,10 @@ const shopLinks = [
   { name: 'Produkte', href: '/admin/winkel/produkte' },
 ];
 
+const settingsLinks = [
+  { name: 'Stelsel Instellings', href: '/admin/instellings' },
+];
+
 export default function AdminSidebarNav() {
   const pathname = usePathname();
 
@@ -89,6 +93,21 @@ export default function AdminSidebarNav() {
               </div>
               <ul role="list" className="mt-2 space-y-1">
                 {shopLinks.map((item) => (
+                  <li key={item.name}>
+                    <Link href={item.href} className={getLinkClass(item.href)}>
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </li>
+
+            <li className="mt-6">
+              <div className="text-xs font-semibold leading-6 text-zinc-400">
+                ADMIN
+              </div>
+              <ul role="list" className="mt-2 space-y-1">
+                {settingsLinks.map((item) => (
                   <li key={item.name}>
                     <Link href={item.href} className={getLinkClass(item.href)}>
                       {item.name}

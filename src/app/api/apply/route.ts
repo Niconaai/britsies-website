@@ -6,7 +6,7 @@ import { Resend } from 'resend';
 // import { ApplicationConfirmationEmail } from '../../emails/ApplicationConfirmationEmails';
 // import { AdminNotificationEmail } from '../../emails/AdminNotificationEmail';
 
-import { getParentConfirmationHtml, getAdminNotificationHtml } from '@/utils/emailTemplates';
+import { getApplicationConfirmationHtml, getAdminNotificationHtml } from '@/utils/emailTemplates';
 
 type TextData = {
     [key: string]: string | undefined;
@@ -30,10 +30,10 @@ const fileKeys: (keyof FileState)[] = [
 ];
 
 function formatDateYYYYMMDD(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0'); 
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${y}${m}${d}`;
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}${m}${d}`;
 }
 
 function processFormData(formData: FormData): { textData: TextData, fileData: FileData } {
@@ -61,7 +61,7 @@ function mapDataToSchema(textData: TextData, applicationId: string) {
     const parseJsonArray = (field: string | undefined): any[] => {
         try {
             if (field && field.startsWith('[') && field.endsWith(']')) {
-                 return JSON.parse(field);
+                return JSON.parse(field);
             }
             return field ? JSON.parse(field) : [];
         } catch {
@@ -240,7 +240,7 @@ export async function POST(request: Request) {
     console.log("POST /api/apply received");
     const supabase = await createClient();
     let db_application_uuid: string | null = null;
-    let human_friendly_id: string | null = null; 
+    let human_friendly_id: string | null = null;
     let userEmail: string | null = null;
     let learnerName: string | null = null;
     let learnerGrade: string | null = null;
@@ -273,7 +273,7 @@ export async function POST(request: Request) {
 
         if (appError) throw appError;
 
-        db_application_uuid = appData.id; 
+        db_application_uuid = appData.id;
         const appNumber = appData.application_number;
         const appDate = new Date(appData.created_at);
 
@@ -284,18 +284,18 @@ export async function POST(request: Request) {
         const paddedAppNumber = String(appNumber).padStart(6, '0');
         const formattedDate = formatDateYYYYMMDD(appDate);
         human_friendly_id = `BRI-${formattedDate}-${paddedAppNumber}`; // Bv. BRI-20251031-000001
-        
+
         console.log(`Generated Friendly ID: ${human_friendly_id} for UUID: ${db_application_uuid}`);
 
         // STOOR DIE MENS-LEESBARE ID TERUG IN DIE DB
         // 'n Beter metode is om 'await' te gebruik en die fout te hanteer
         const { error: updateError } = await supabase
-          .from('applications')
-          .update({ human_readable_id: human_friendly_id })
-          .eq('id', db_application_uuid);
+            .from('applications')
+            .update({ human_readable_id: human_friendly_id })
+            .eq('id', db_application_uuid);
 
         if (updateError) {
-          console.warn(`Could not save friendly_id: ${updateError.message}`);
+            console.warn(`Could not save friendly_id: ${updateError.message}`);
         }
 
         // 2. Upload Files to Storage
@@ -366,22 +366,22 @@ export async function POST(request: Request) {
         if (!process.env.BRITSIES_RESEND_API_KEY) {
             console.warn("Skipping parent email.");
         } else if (!userEmail || !learnerName || !human_friendly_id) {
-             console.warn("Missing data for email. Skipping parent email.");
+            console.warn("Missing data for email. Skipping parent email.");
         } else {
             try {
                 // +++ FINALE KODE +++
                 // 1. Bou die HTML-string
-                const parentEmailHtml = getParentConfirmationHtml({
+                const parentEmailHtml = getApplicationConfirmationHtml({
                     learnerName: learnerName,
                     humanReadableId: human_friendly_id
                 });
-                
+
                 // 2. Stuur die HTML string
                 await resend.emails.send({
                     from: 'Hoërskool Brits Aansoeke <info@nicolabsdigital.co.za>',
                     to: [userEmail],
                     subject: `Hoërskool Brits: Aansoek Ontvang (${learnerName})`,
-                    html: parentEmailHtml 
+                    html: parentEmailHtml
                 });
                 console.log(`Successfully sent confirmation email to ${userEmail}`);
             } catch (emailError) {
@@ -391,35 +391,46 @@ export async function POST(request: Request) {
 
         // 5.2 Stuur aan ADMIN
         console.log("Sending notification email to admin via Resend...");
-        const adminEmail = process.env.ADMIN_EMAIL_RECIPIENT;
+        const { data: settingData, error: settingError } = await supabase
+            .from('system_settings')
+            .select('value')
+            .eq('key', 'application_admin_email')
+            .single();
 
-        if (!process.env.BRITSIES_RESEND_API_KEY) {
-            console.warn("Skipping admin email.");
-        } else if (!adminEmail) {
-            console.warn("ADMIN_EMAIL_RECIPIENT is not set. Skipping admin email.");
-        } else if (!learnerName || !human_friendly_id || !learnerGrade) {
-            console.warn("Missing data for admin email. Skipping admin email.");
+        if (settingError || !settingData?.value) {
+            console.error("KON NIE ADMIN E-POS KRY NIE:", settingError?.message);
+            // Gaan voort sonder om admin-epos te stuur
         } else {
-             try {
-                // +++ FINALE KODE +++
-                // 1. Bou die HTML-string
-                const adminEmailHtml = getAdminNotificationHtml({
-                    learnerName: learnerName,
-                    learnerGrade: learnerGrade,
-                    parentEmail: userEmail,
-                    humanReadableId: human_friendly_id
-                });
-                
-                // 2. Stuur die HTML string
-                await resend.emails.send({
-                    from: 'Aanlyn Hoërskool Brits Aansoeke <info@nicolabsdigital.co.za>',
-                    to: [adminEmail],
-                    subject: `NUWE AANSOEK: ${learnerName} (Graad ${learnerGrade})`,
-                    html: adminEmailHtml
-                });
-                console.log(`Successfully sent admin notification to ${adminEmail}`);
-            } catch (emailError) {
-                console.error("Resend admin email failed:", emailError);
+            const adminEmail = settingData.value;
+
+            if (!process.env.BRITSIES_RESEND_API_KEY) {
+                console.warn("Skipping admin email.");
+            } else if (!adminEmail) {
+                console.warn("ADMIN_EMAIL_RECIPIENT is not set. Skipping admin email.");
+            } else if (!learnerName || !human_friendly_id || !learnerGrade) {
+                console.warn("Missing data for admin email. Skipping admin email.");
+            } else {
+                try {
+                    // +++ FINALE KODE +++
+                    // 1. Bou die HTML-string
+                    const adminEmailHtml = getAdminNotificationHtml({
+                        learnerName: learnerName,
+                        learnerGrade: learnerGrade,
+                        parentEmail: userEmail,
+                        humanReadableId: human_friendly_id
+                    });
+
+                    // 2. Stuur die HTML string
+                    await resend.emails.send({
+                        from: 'Aanlyn Hoërskool Brits Aansoeke <info@nicolabsdigital.co.za>',
+                        to: [adminEmail],
+                        subject: `NUWE AANSOEK: ${learnerName} (Graad ${learnerGrade})`,
+                        html: adminEmailHtml
+                    });
+                    console.log(`Successfully sent admin notification to ${adminEmail}`);
+                } catch (emailError) {
+                    console.error("Resend admin email failed:", emailError);
+                }
             }
         }
 

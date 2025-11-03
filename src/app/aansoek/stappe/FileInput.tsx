@@ -8,14 +8,14 @@ type FileInputProps = {
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     required?: boolean;
     description?: string;
-    accept?: string; // e.g., "image/*,application/pdf"
+    accept?: string; 
 };
 
 export default function FileInput({ label, name, onChange, required = false, description, accept }: FileInputProps) {
     const [fileName, setFileName] = useState<string | null>(null);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files.length > 0) {
+        if (event.target.files && event.target.files.length > 0 && event.target.files[0].size < 1000000) { //ons toets vir die max filesize ook, wat op 10mb gestel is
             setFileName(event.target.files[0].name);
         } else {
             setFileName(null);

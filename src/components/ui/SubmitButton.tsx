@@ -1,4 +1,4 @@
-// src/app/admin/SubmitButton.tsx
+// src/components/ui/SubmitButton.tsx
 'use client';
 
 import { useFormStatus } from 'react-dom';
@@ -35,7 +35,7 @@ export default function SubmitButton({
       {isPending ? (
         <>
           <Image
-            src="./CircleLoader.gif"
+            src="/CircleLoader.gif" // <-- REGSTELLING 1: Pad moet absoluut wees (vanaf /public)
             alt="Besig..."
             width={20}
             height={20}
@@ -44,7 +44,7 @@ export default function SubmitButton({
           {loadingText}
         </>
       ) : (
-        isPending ? loadingText : defaultText
+        defaultText // <-- REGSTELLING 2: Vereenvoudigde logika
       )}
     </button>
   );
