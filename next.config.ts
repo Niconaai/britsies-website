@@ -2,9 +2,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   
-  // --- VOEG HIERDIE BLOK BY ---
   images: {
     remotePatterns: [
       {
@@ -15,7 +13,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // --- EINDE VAN NUWE BLOK ---
+ 
 };
 
 export default nextConfig;
