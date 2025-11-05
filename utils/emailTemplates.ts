@@ -339,3 +339,138 @@ export function getShopAdminNotificationHtml(props: ShopAdminEmailProps): string
 </html>
   `;
 }
+
+// ... (aan die einde van utils/emailTemplates.ts)
+
+/**
+ * 5. BESTELLING GEREED VIR AFHAAL (KLIËNT)
+ */
+interface OrderStatusProps {
+  customerName: string;
+  orderRef: string;
+}
+
+export function getOrderReadyForCollectionHtml(props: OrderStatusProps): string {
+  const { customerName, orderRef } = props;
+  const winkelUrl = `${baseUrl}/winkel`;
+
+  return `
+<!DOCTYPE html>
+<html lang="af">
+<head> <meta charset="UTF-8"> <title>Bestelling Gereed</title> </head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+  <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 0 auto;">
+    <tr> <td style="padding: 20px 0;">
+      <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <tr> <td align="center" style="padding: 40px 40px 30px 40px;"> <img src="${logoUrl}" alt="Wapen" width="100" style="display: block; border: 0; margin: 0 auto;"> </td> </tr>
+        <tr>
+          <td style="padding: 0 40px 30px 40px; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #333333;">
+            <p style="margin: 0 0 20px 0;">Goeiedag ${customerName},</p>
+            <p style="margin: 0 0 25px 0; font-size: 18px; font-weight: bold;">
+              Goeie nuus! Jou bestelling <strong>#${orderRef}</strong> is nou gereed vir afhaal.
+            </p>
+            <div style="background-color: #f9f9f9; border: 1px solid #eeeeee; border-radius: 5px; padding: 20px; margin-bottom: 25px;">
+              <p style="margin: 0; padding: 0;">
+                <strong style="display: block; color: #555; font-size: 14px; margin-bottom: 5px;">AFHAALPUNT:</strong>
+                <span style="font-size: 16px; color: #000;">Hoërskool Brits ontvangs (tydens skool-ure)</span>
+              </p>
+              <p style="margin: 15px 0 0 0; padding: 0;">
+                <strong style="display: block; color: #555; font-size: 14px; margin-bottom: 5px;">Verwysing:</strong>
+                <span style="font-size: 16px; color: #000;">Bring asb. hierdie e-pos of jou bestelnommer (#${orderRef}) saam.</span>
+              </p>
+            </div>
+            <p style="margin: 40px 0 0 0;"> Britsiegroete, <br /> Die Britsie-Winkelspan </p>
+          </td>
+        </tr>
+        <tr> <td align="center" style="padding: 20px 40px; font-size: 12px; color: #999999; border-top: 1px solid #eeeeee;"> <p style="margin: 0;">Hoërskool Brits &copy; 2025</p> </td> </tr>
+      </table>
+    </td> </tr>
+  </table>
+</body>
+</html>
+  `;
+}
+
+/**
+ * 6. BESTELLING GEKANSELLEER (KLIËNT)
+ */
+export function getOrderCancelledHtml(props: OrderStatusProps): string {
+  const { customerName, orderRef } = props;
+  const winkelUrl = `${baseUrl}/winkel`;
+
+  return `
+<!DOCTYPE html>
+<html lang="af">
+<head> <meta charset="UTF-8"> <title>Bestelling Gekanselleer</title> </head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+  <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 0 auto;">
+    <tr> <td style="padding: 20px 0;">
+      <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <tr> <td align="center" style="padding: 40px 40px 30px 40px;"> <img src="${logoUrl}" alt="Wapen" width="100" style="display: block; border: 0; margin: 0 auto;"> </td> </tr>
+        <tr>
+          <td style="padding: 0 40px 30px 40px; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #333333;">
+            <p style="margin: 0 0 20px 0;">Goeiedag ${customerName},</p>
+            <p style="margin: 0 0 25px 0;">
+              Jou bestelling <strong>#${orderRef}</strong> is gekanselleer.
+            </p>
+            <p style="margin: 0 0 25px 0;">
+              Indien jy reeds betaal het en 'n terugbetaling verwag, kontak asseblief die skool se finansiële kantoor.
+            </p>
+            <p style="margin: 40px 0 0 0;"> Britsiegroete, <br /> Die Britsie-Winkelspan </p>
+          </td>
+        </tr>
+        <tr> <td align="center" style="padding: 20px 40px; font-size: 12px; color: #999999; border-top: 1px solid #eeeeee;"> <p style="margin: 0;">Hoërskool Brits &copy; 2025</p> </td> </tr>
+      </table>
+    </td> </tr>
+  </table>
+</body>
+</html>
+  `;
+}
+
+/**
+ * 7. BESTELLING VOLTOOI (KLIËNT)
+ */
+interface OrderCompletedProps extends OrderStatusProps {
+  collectorName: string;
+}
+
+export function getOrderCompletedHtml(props: OrderCompletedProps): string {
+  const { customerName, orderRef, collectorName } = props;
+  const winkelUrl = `${baseUrl}/winkel`;
+
+  return `
+<!DOCTYPE html>
+<html lang="af">
+<head> <meta charset="UTF-8"> <title>Bestelling Afgehaal</title> </head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+  <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 0 auto;">
+    <tr> <td style="padding: 20px 0;">
+      <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <tr> <td align="center" style="padding: 40px 40px 30px 40px;"> <img src="${logoUrl}" alt="Wapen" width="100" style="display: block; border: 0; margin: 0 auto;"> </td> </tr>
+        <tr>
+          <td style="padding: 0 40px 30px 40px; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #333333;">
+            <p style="margin: 0 0 20px 0;">Goeiedag ${customerName},</p>
+            <p style="margin: 0 0 25px 0;">
+              Hierdie is 'n bevestiging dat jou bestelling <strong>#${orderRef}</strong> suksesvol afgehaal is.
+            </p>
+            <div style="background-color: #f9f9f9; border: 1px solid #eeeeee; border-radius: 5px; padding: 20px; margin-bottom: 25px;">
+              <p style="margin: 0; padding: 0;">
+                <strong style="display: block; color: #555; font-size: 14px; margin-bottom: 5px;">AFGEHAAL DEUR:</strong>
+                <span style="font-size: 16px; color: #000; font-weight: bold;">${collectorName}</span>
+              </p>
+            </div>
+            <p style="margin: 0 0 25px 0;">
+              Dankie dat jy die Britsie-Winkel ondersteun!
+            </p>
+            <p style="margin: 40px 0 0 0;"> Britsiegroete, <br /> Die Britsie-Winkelspan </p>
+          </td>
+        </tr>
+        <tr> <td align="center" style="padding: 20px 40px; font-size: 12px; color: #999999; border-top: 1px solid #eeeeee;"> <p style="margin: 0;">Hoërskool Brits &copy; 2025</p> </td> </tr>
+      </table>
+    </td> </tr>
+  </table>
+</body>
+</html>
+  `;
+}

@@ -3,13 +3,14 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import Link from 'next/link';
 import type { DbShopOrderWithItems } from "@/types/supabase";
-import { updateOrderStatus } from "./action";
+import UpdateStatusForm from "./UpdateStatusForm"; 
+// REGSTELLING: Voer die admin-kliënt in
+import { createClient as createAdminClient } from '@supabase/supabase-js';
 
 type OrderDetailPageProps = {
   params: Promise<{ orderid: string }>
 };
 
-// Hulpfunksie om prys te formateer
 const formatCurrency = (amount: number | null | undefined) => {
   if (amount === null || amount === undefined) return 'N/A';
   return new Intl.NumberFormat('af-ZA', {
@@ -18,7 +19,6 @@ const formatCurrency = (amount: number | null | undefined) => {
   }).format(amount);
 };
 
-// Hulp-komponent om data netjies te vertoon
 const InfoField = ({ label, value }: { 
   label: string; 
   value: string | number | null | undefined;
@@ -43,10 +43,16 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
     .eq('id', user.id)
     .single();
   if (profile?.role !== 'admin') return redirect('/');
+
+  // --- REGSTELLING: Skep 'n admin-kliënt om die auth-tabel te kan lees ---
+  const supabaseAdmin = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
   // --- Einde van Auth-tjek ---
 
   // --- 2. Gaan Haal Rou Data ---
-  // Ons moet 'profiles' join as user_id bestaan, en 'shop_order_items' join
+  // (Hierdie navraag is nou korrek, dit haal nie 'email' uit 'profiles' nie)
   const { data: rawData, error: fetchError } = await supabase
     .from('shop_orders')
     .select(`
@@ -65,13 +71,36 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
   const order = rawData as DbShopOrderWithItems;
   const items = order.shop_order_items || [];
 
-  // Bepaal kliënt-inligting
+  // --- REGSTELLING: Logika om kliënt-inligting te kry ---
+  let customerEmail: string | null = null;
+  let customerPhone: string | null = null;
+  let customerName: string | null = null;
+  
+  if (order.user_id) {
+    // Ingetekende gebruiker
+    const profile = Array.isArray(order.profiles) ? order.profiles[0] : order.profiles;
+    customerName = profile?.full_name || 'Britsie Kliënt';
+    customerPhone = profile?.cell_phone || null;
+    
+    // Gaan haal e-pos apart deur die admin-kliënt te gebruik
+    const { data: userData } = await supabaseAdmin.auth.admin.getUserById(order.user_id);
+    if (userData && userData.user) {
+        customerEmail = userData.user.email || null;
+    }
+  } else {
+    // Gas
+    customerName = order.guest_name;
+    customerEmail = order.guest_email;
+    customerPhone = order.guest_phone;
+  }
+
   const customer = {
-    name: order.user_id ? order.profiles?.full_name : order.guest_name,
-    email: order.user_id ? order.profiles?.email : order.guest_email,
-    phone: order.user_id ? order.profiles?.cell_phone : order.guest_phone,
-    type: order.user_id ? 'Geregistreer' : 'Gas'
+      name: customerName,
+      email: customerEmail,
+      phone: customerPhone,
+      type: order.user_id ? 'Geregistreer' : 'Gas'
   };
+  // --- EINDE VAN REGSTELLING ---
   
   const statusOptions = [
     'pending_payment',
@@ -84,7 +113,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
     
-      {/* --- BLOK 1: Opskrif en Terug-knoppie --- */}
+      {/* ... (Blok 1: Opskrif) ... */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-zinc-900 dark:text-white">
           Bestelling: {order.human_readable_id || `#${order.order_number}`}
@@ -97,47 +126,28 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         </Link>
       </div>
 
-      {/* --- BLOK 2: Status Bestuur --- */}
+      {/* ... (Blok 2: Status Bestuur) ... */}
       <div className="rounded-lg bg-white p-6 shadow dark:bg-zinc-800">
         <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">Bestuur Status</h2>
-        <form action={updateOrderStatus} className="mt-4 flex items-center gap-2">
-            <input type="hidden" name="orderId" value={order.id} />
-            <select 
-              name="status"
-              defaultValue={order.status}
-              className="rounded-md border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
-            >
-              {statusOptions.map(status => (
-                <option key={status} value={status}>
-                  {status.replace('_', ' ')}
-                </option>
-              ))}
-            </select>
-            <button
-              type="submit"
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              Dateer Status Op
-            </button>
-          </form>
+        <UpdateStatusForm order={order} statusOptions={statusOptions} />
       </div>
 
-      {/* --- BLOK 3: Kliënt & Versending --- */}
+      {/* ... (Blok 3: Kliënt & Versending) ... */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="rounded-lg bg-white p-6 shadow dark:bg-zinc-800">
           <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">Kliënt Inligting</h2>
           <dl className="mt-4 grid grid-cols-1 gap-4">
             <InfoField label="Naam" value={customer.name} />
-            <InfoField label="E-pos" value={customer.email} />
+            {/* HIERDIE SAL NOU KORREK WYS: */}
+            <InfoField label="E-pos" value={customer.email} /> 
             <InfoField label="Telefoon" value={customer.phone} />
             <InfoField label="Rekening Tipe" value={customer.type} />
           </dl>
         </div>
         <div className="rounded-lg bg-white p-6 shadow dark:bg-zinc-800">
-          <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">Versendingsadres</h2>
+          <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">Adres vir Rekords</h2>
            <dl className="mt-4 grid grid-cols-1 gap-4">
             <InfoField label="Adres 1" value={order.shipping_address_line1} />
-            <InfoField label="Adres 2" value={order.shipping_address_line2} />
             <InfoField label="Stad" value={order.shipping_city} />
             <InfoField label="Provinsie" value={order.shipping_province} />
             <InfoField label="Poskode" value={order.shipping_code} />
@@ -145,25 +155,19 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         </div>
       </div>
 
-      {/* --- BLOK 4: Lyn-items --- */}
+      {/* ... (Blok 4: Lyn-items) ... */}
       <div className="rounded-lg bg-white p-6 shadow dark:bg-zinc-800">
         <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">Items in Bestelling</h2>
         <div className="mt-4 flow-root">
           <ul role="list" className="-my-6 divide-y divide-zinc-200 dark:divide-zinc-700">
             {items.map((item) => (
               <li key={item.id} className="flex py-6">
-                {/* Ons kan 'n prent hier byvoeg as ons 'product_id' join na 'shop_products' */}
                 <div className="ml-4 flex flex-1 flex-col">
                   <div>
                     <div className="flex justify-between text-base font-medium text-zinc-900 dark:text-white">
-                      <h3>
-                        {item.product_name}
-                      </h3>
+                      <h3>{item.product_name}</h3>
                       <p className="ml-4">{formatCurrency(item.price_at_purchase * item.quantity)}</p>
                     </div>
-                    <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                      {/* TODO: Wys 'selected_options' hier as dit bestaan */}
-                    </p>
                   </div>
                   <div className="flex flex-1 items-end justify-between text-sm">
                     <p className="text-zinc-500 dark:text-zinc-400">
@@ -176,8 +180,13 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             ))}
           </ul>
         </div>
+        
         <div className="mt-6 border-t border-zinc-200 pt-6 dark:border-zinc-700">
-          <div className="flex justify-between text-base font-medium text-zinc-900 dark:text-white">
+           <div className="flex justify-between text-sm font-medium text-zinc-500 dark:text-zinc-400">
+            <p>Notas (Afgehaal deur):</p>
+            <p className="italic">{order.shipping_address_line2 || 'N/A'}</p>
+          </div>
+          <div className="mt-2 flex justify-between text-base font-medium text-zinc-900 dark:text-white">
             <p>Totaal</p>
             <p>{formatCurrency(order.total_amount)}</p>
           </div>

@@ -15,7 +15,7 @@ export default function SubmitButton({
   defaultText, 
   loadingText, 
   className,
-  formAction 
+  formAction,
 }: SubmitButtonProps) {
   const { pending, action } = useFormStatus();
 
