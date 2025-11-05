@@ -52,7 +52,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
     .select(`
       *,
       shop_order_items(*),
-      profiles ( full_name, email, cell_phone )
+      profiles ( full_name, cell_phone )
     `)
     .eq('id', orderid)
     .single(); 

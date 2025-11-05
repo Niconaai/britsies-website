@@ -18,6 +18,14 @@ type CheckoutPayload = {
   shipping_code: string;
 };
 
+//hulpfunction vir die bestel nommer
+function formatDateYYYYMMDD(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}${m}${d}`;
+}
+
 export async function POST(request: Request) {
   const { 
     cartItems, 
@@ -69,14 +77,27 @@ export async function POST(request: Request) {
     const { data: order, error: orderError } = await supabaseAdmin
       .from('shop_orders')
       .insert(orderData)
-      .select('id, human_readable_id')
+      .select('id, order_number') // <-- VRA VIR DIE AUTO-INCREMENT NOMMER
       .single();
 
     if (orderError) throw new Error(`Databasis-fout (Order): ${orderError.message}`);
-    if (!order) throw new Error("Kon nie bestelling-ID kry nie.");
+    if (!order || !order.order_number) throw new Error("Kon nie bestelling-ID of order_number kry nie.");
 
     orderId = order.id;
-    const humanReadableId = order.human_readable_id || (orderId?.substring(0, 8) || 'IDFOut');
+
+    // --- GENEREER EN STOOR DIE human_readable_id ---
+    const dateStr = formatDateYYYYMMDD(new Date());
+    const paddedOrderNumber = String(order.order_number).padStart(6, '0');
+    const humanReadableId = `BEST-${dateStr}-${paddedOrderNumber}`;
+    
+    const { error: updateIdError } = await supabaseAdmin
+      .from('shop_orders')
+      .update({ human_readable_id: humanReadableId })
+      .eq('id', orderId);
+
+    if (updateIdError) {
+      console.warn(`Kon nie human_readable_id opdateer vir order ${orderId}: ${updateIdError.message}`);
+    }
     console.log(`API: Bestelling ${humanReadableId} (${orderId}) geskep.`);
 
     // --- 2. Skep `shop_order_items` Rekords ---
