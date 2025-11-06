@@ -474,3 +474,135 @@ export function getOrderCompletedHtml(props: OrderCompletedProps): string {
 </html>
   `;
 }
+
+interface ApplicationStatusProps {
+  customerName: string; // Ouer se naam
+  learnerName: string;
+  humanReadableId: string;
+}
+
+/**
+ * 8. AANSOEK GOEDGEKEUR (KLIËNT)
+ */
+export function getApplicationApprovedHtml(props: ApplicationStatusProps): string {
+  const { customerName, learnerName, humanReadableId } = props;
+  return `
+<!DOCTYPE html>
+<html lang="af">
+<head> <meta charset="UTF-8"> <title>Aansoek Suksesvol</title> </head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+  <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 0 auto;">
+    <tr> <td style="padding: 20px 0;">
+      <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <tr> <td align="center" style="padding: 40px 40px 30px 40px;"> <img src="${logoUrl}" alt="Wapen" width="100" style="display: block; border: 0; margin: 0 auto;"> </td> </tr>
+        <tr>
+          <td style="padding: 0 40px 30px 40px; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #333333;">
+            <p style="margin: 0 0 20px 0;">Goeiedag ${customerName},</p>
+            <p style="margin: 0 0 25px 0; font-size: 18px; font-weight: bold; color: #05603A;">
+              Goeie nuus! Jou aansoek vir <strong>${learnerName}</strong> (Verw: #${humanReadableId}) is goedgekeur.
+            </p>
+            <p style="margin: 0 0 25px 0;">
+              Welkom by die Britsies! U kind se inskrywing is dus nou afgehandel. Skakel die skool vir enige verdere navrae.
+            </p>
+            <p style="margin: 0 0 25px 0;">
+              U kan die status ook op die aanlyn portaal besigtig.
+            </p>
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+                <td align="center" style="padding: 10px 0;">
+                  <a href="${portalUrl}" target="_blank" style="display: inline-block; padding: 13px 28px; font-size: 16px; font-weight: bold; color: #ffffff; background-color: ${mainColor}; text-decoration: none; border-radius: 5px;">
+                    Gaan na Aansoek Portaal
+                  </a>
+                </td>
+              </tr>
+            </table>
+            <p style="margin: 40px 0 0 0;"> Britsiegroete, <br /> Hoërskool Brits Administrasie </p>
+          </td>
+        </tr>
+        <tr> <td align="center" style="padding: 20px 40px; font-size: 12px; color: #999999; border-top: 1px solid #eeeeee;"> <p style="margin: 0;">Hoërskool Brits &copy; 2025</p> </td> </tr>
+      </table>
+    </td> </tr>
+  </table>
+</body>
+</html>
+  `;
+}
+
+/**
+ * 9. AANSOEK OP WAGLYS (KLIËNT)
+ */
+export function getApplicationWaitlistedHtml(props: ApplicationStatusProps): string {
+  const { customerName, learnerName, humanReadableId } = props;
+  return `
+<!DOCTYPE html>
+<html lang="af">
+<head> <meta charset="UTF-8"> <title>Aansoek Waglys</title> </head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+  <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 0 auto;">
+    <tr> <td style="padding: 20px 0;">
+      <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <tr> <td align="center" style="padding: 40px 40px 30px 40px;"> <img src="${logoUrl}" alt="Wapen" width="100" style="display: block; border: 0; margin: 0 auto;"> </td> </tr>
+        <tr>
+          <td style="padding: 0 40px 30px 40px; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #333333;">
+            <p style="margin: 0 0 20px 0;">Goeiedag ${customerName},</p>
+            <p style="margin: 0 0 25px 0;">
+              Dankie vir u aansoek. Na hersiening is die aansoek vir <strong>${learnerName}</strong> (Verw: #${humanReadableId}) op die <strong>waglys</strong> geplaas.
+            </p>
+            <p style="margin: 0 0 25px 0;">
+              Indien 'n plek beskikbaar raak, sal ons u onmiddellik in kennis stel. U kan u status op die portaal dophou.
+            </p>
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+                <td align="center" style="padding: 10px 0;">
+                  <a href="${portalUrl}" target="_blank" style="display: inline-block; padding: 13px 28px; font-size: 16px; font-weight: bold; color: #ffffff; background-color: ${mainColor}; text-decoration: none; border-radius: 5px;">
+                    Gaan na Aansoek Portaal
+                  </a>
+                </td>
+              </tr>
+            </table>
+            <p style="margin: 40px 0 0 0;"> Britsiegroete, <br /> Hoërskool Brits Administrasie </p>
+          </td>
+        </tr>
+        <tr> <td align="center" style="padding: 20px 40px; font-size: 12px; color: #999999; border-top: 1px solid #eeeeee;"> <p style="margin: 0;">Hoërskool Brits &copy; 2025</p> </td> </tr>
+      </table>
+    </td> </tr>
+  </table>
+</body>
+</html>
+  `;
+}
+
+/**
+ * 10. AANSOEK AFGEKEUR (KLIËNT)
+ */
+export function getApplicationRejectedHtml(props: ApplicationStatusProps): string {
+  const { customerName, learnerName, humanReadableId } = props;
+  return `
+<!DOCTYPE html>
+<html lang="af">
+<head> <meta charset="UTF-8"> <title>Aansoek Onsuksesvol</title> </head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+  <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 0 auto;">
+    <tr> <td style="padding: 20px 0;">
+      <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <tr> <td align="center" style="padding: 40px 40px 30px 40px;"> <img src="${logoUrl}" alt="Wapen" width="100" style="display: block; border: 0; margin: 0 auto;"> </td> </tr>
+        <tr>
+          <td style="padding: 0 40px 30px 40px; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #333333;">
+            <p style="margin: 0 0 20px 0;">Goeiedag ${customerName},</p>
+            <p style="margin: 0 0 25px 0;">
+              Na 'n deeglike hersieningsproses, moet ons u ongelukkig meedeel dat u aansoek vir <strong>${learnerName}</strong> (Verw: #${humanReadableId}) <strong>onsuksesvol</strong> was.
+            </p>
+            <p style="margin: 0 0 25px 0;">
+              Ons verstaan dat hierdie teleurstellende nuus is en wens u alle sterkte toe met u kind se toekomstige plasing.
+            </p>
+            <p style="margin: 40px 0 0 0;"> Britsiegroete, <br /> Hoërskool Brits Administrasie </p>
+          </td>
+        </tr>
+        <tr> <td align="center" style="padding: 20px 40px; font-size: 12px; color: #999999; border-top: 1px solid #eeeeee;"> <p style="margin: 0;">Hoërskool Brits &copy; 2025</p> </td> </tr>
+      </table>
+    </td> </tr>
+  </table>
+</body>
+</html>
+  `;
+}

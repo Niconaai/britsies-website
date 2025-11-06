@@ -92,12 +92,12 @@ export default async function RejectedApplicationsPage() { // <-- BLADSYNAAM OPG
           Afgekeurde Aansoeke {/* <-- TITEL OPGEDATEER */}
         </h1>
         <form>
-          <button
+          {/* <button
             formAction={logout}
             className="rounded-md bg-red-600 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
           >
             Teken Uit
-          </button>
+          </button> */}
         </form>
       </div>
       <p className="mt-4 text-zinc-700 dark:text-zinc-300">

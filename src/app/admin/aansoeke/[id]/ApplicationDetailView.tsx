@@ -1,8 +1,11 @@
 // src/app/admin/aansoeke/[id]/ApplicationDetailView.tsx
 'use client';
-import FloatingLabelSelectField from "@/components/ui/FloatingLabelSelectField";
 
-// --- GEBRUIK ONS NUWE "SKOON" TIPE ---
+// VOEG HIERDIE IMPORTE BY
+import { useFormStatus } from 'react-dom';
+import Image from 'next/image';
+
+import FloatingLabelSelectField from "@/components/ui/FloatingLabelSelectField";
 import type { 
   CleanApplicationData, 
   DbGuardian, 
@@ -11,9 +14,10 @@ import type {
 } from '@/types/supabase';
 import { updateApplicationStatus } from './action';
 import FileListItem from './FileListItem'; 
+// ONS GEBRUIK NIE MEER DIE SubmitButton HIER NIE
 
-const voorskoolOptions = ["Hangende (Pending)", "Goedgekeur (Approved)", "Verwerp (Rejected)", "Waglys (Waitlisted)"];
-
+// InfoField, LearnerCard, GuardianCard, ens. bly ONOORGERAAK
+// ... (Begin van InfoField)
 const InfoField = ({ label, value, colSpan = 1 }: { 
   label: string; 
   value: string | number | boolean | null | undefined | string[];
@@ -38,8 +42,9 @@ const InfoField = ({ label, value, colSpan = 1 }: {
     </div>
   );
 };
+// ... (Einde van InfoField)
 
-// Kaart vir Leerder-data
+// ... (LearnerCard bly dieselfde)
 const LearnerCard = ({ learner }: { learner: DbLearner | null }) => {
   if (!learner) {
     return (
@@ -75,8 +80,9 @@ const LearnerCard = ({ learner }: { learner: DbLearner | null }) => {
     </div>
   );
 };
+// ... (Einde van LearnerCard)
 
-// Kaart vir Noodkontak
+// ... (NextOfKinCard bly dieselfde)
 const NextOfKinCard = ({ learner }: { learner: DbLearner | null }) => {
   if (!learner) return null;
   return (
@@ -91,8 +97,9 @@ const NextOfKinCard = ({ learner }: { learner: DbLearner | null }) => {
     </div>
   );
 };
+// ... (Einde van NextOfKinCard)
 
-// Kaart vir Voog
+// ... (GuardianCard bly dieselfde)
 const GuardianCard = ({ guardian }: { guardian: DbGuardian }) => (
   <div className="rounded-lg border border-zinc-200 p-6 shadow-md dark:border-zinc-700">
     <h3 className="text-lg font-semibold text-blue-700 dark:text-blue-400">{guardian.guardian_type}</h3>
@@ -117,8 +124,9 @@ const GuardianCard = ({ guardian }: { guardian: DbGuardian }) => (
     </dl>
   </div>
 );
+// ... (Einde van GuardianCard)
 
-// Kaart vir Betaler
+// ... (PayerCard bly dieselfde)
 const PayerCard = ({ payer }: { payer: DbPayer | null }) => {
   if (!payer) {
     return (
@@ -155,8 +163,9 @@ const PayerCard = ({ payer }: { payer: DbPayer | null }) => {
     </div>
   );
 };
+// ... (Einde van PayerCard)
 
-// Kaart vir Gesondheid
+// ... (HealthCard bly dieselfde)
 const HealthCard = ({ learner }: { learner: DbLearner | null }) => {
   if (!learner) return null;
   return (
@@ -181,8 +190,9 @@ const HealthCard = ({ learner }: { learner: DbLearner | null }) => {
     </div>
   );
 };
+// ... (Einde van HealthCard)
 
-// Kaart vir Vorige Skool & Stokperdjies
+// ... (ExtraCard bly dieselfde)
 const ExtraCard = ({ learner }: { learner: DbLearner | null }) => {
   if (!learner) return null;
   return (
@@ -201,17 +211,107 @@ const ExtraCard = ({ learner }: { learner: DbLearner | null }) => {
     </div>
   );
 };
+// ... (Einde van ExtraCard)
+
+
+// --- NUWE SUB-KOMPONENT OM VORM-STATUS TE HANTEER ---
+function StatusUpdateForm({ 
+  applicationId, 
+  currentStatus, 
+  isFinalized 
+}: { 
+  applicationId: string, 
+  currentStatus: string, 
+  isFinalized: boolean 
+}) {
+  
+  // Komponent vir die knoppie-teks
+  const StatusButtonContent = () => {
+    const { pending } = useFormStatus();
+    return (
+      <>
+        {pending ? (
+          <>
+            <Image
+              src="/CircleLoader.gif"
+              alt="Besig..."
+              width={20}
+              height={20}
+              unoptimized={true}
+              className="mr-2"
+            />
+            Dateer op...
+          </>
+        ) : (
+          'Dateer Status Op'
+        )}
+      </>
+    );
+  };
+
+  // Komponent vir die VOLSKERM OORLEG
+  const LoadingOverlay = () => {
+    const { pending } = useFormStatus();
+    if (!pending) return null;
+
+    return (
+      <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div className="flex flex-col items-center justify-center rounded-lg bg-white p-8 shadow-xl dark:bg-zinc-800">
+          <Image
+            src="/CircleLoader.gif"
+            alt="Besig om te laai..."
+            width={80}
+            height={80}
+            unoptimized={true}
+          />
+          <p className="mt-4 text-lg font-semibold text-zinc-900 dark:text-white">
+            Besig om status op te dateer...
+          </p>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">E-pos word ook gestuur. Moet asb. nie herlaai nie.</p>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <form action={updateApplicationStatus} className="flex items-center gap-2">
+      <LoadingOverlay /> {/* Die oorleg luister na die vorm-status */}
+      <input type="hidden" name="applicationId" value={applicationId} />
+      <select 
+        name="status"
+        defaultValue={currentStatus || 'pending'}
+        disabled={isFinalized}
+        className="rounded-md border-zinc-300 shadow-sm px-2 py-2 focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <option value="pending">Hangende (Pending)</option>
+        <option value="approved">Goedgekeur (Approved)</option>
+        <option value="rejected">Verwerp (Rejected)</option>
+        <option value="waitlisted">Waglys (Waitlisted)</option>
+      </select>
+      
+      <button
+        type="submit"
+        disabled={isFinalized}
+        className="flex min-h-[38px] w-40 items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <StatusButtonContent />
+      </button>
+    </form>
+  );
+}
+// --- EINDE VAN NUWE SUB-KOMPONENT ---
+
 
 // HOOF KOMPONENT
 export default function ApplicationDetailView({ application }: { application: CleanApplicationData }) {
   
-  // --- DATA IS NOU BAIE SKONER ---
   const { learner, payer, guardians, uploaded_files: files } = application;
 
-  // Sorteer voogde om Ouer 1 eerste te wys
   const sortedGuardians = [...guardians].sort((a, b) => 
     (a.guardian_type || '').localeCompare(b.guardian_type || '')
   );
+
+  const isFinalized = application.status === 'approved' || application.status === 'rejected';
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
@@ -235,26 +335,24 @@ export default function ApplicationDetailView({ application }: { application: Cl
               </span>
             </p>
           </div>
-          <form action={updateApplicationStatus} className="flex items-center gap-2">
-            <input type="hidden" name="applicationId" value={application.id} />
-            <select 
-              name="status"
-              defaultValue={application.status || 'pending'}
-              className="rounded-md border-zinc-300 shadow-sm hover:bg-zinc-600 px-2 py-2 focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white"
-            >
-              <option value="pending">Hangende (Pending)</option>
-              <option value="approved">Goedgekeur (Approved)</option>
-              <option value="rejected">Verwerp (Rejected)</option>
-              <option value="waitlisted">Waglys (Waitlisted)</option>
-            </select>
-            <button
-              type="submit"
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              Dateer Status Op
-            </button>
-          </form>
+          
+          {/* --- GEBRUIK DIE NUWE SUB-KOMPONENT --- */}
+          <StatusUpdateForm 
+            applicationId={application.id}
+            currentStatus={application.status || 'pending'}
+            isFinalized={isFinalized}
+          />
+          {/* --- EINDE VAN VERANDERING --- */}
+
         </div>
+        
+        {isFinalized && (
+          <div className="mt-4 rounded-md border border-green-300 bg-green-50 p-4 dark:border-green-700 dark:bg-green-900/30">
+            <p className="text-sm font-medium text-green-800 dark:text-green-200">
+              Hierdie aansoek se status is finaal ({application.status}) en kan nie meer verander word nie.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* --- BLOK 5: Opgelaaide Lêers --- */}
