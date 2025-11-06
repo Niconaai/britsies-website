@@ -21,9 +21,8 @@ export default function WinkelWelkomPage() {
       <div className="bg-white dark:bg-zinc-800 shadow-lg rounded-lg p-6 md:p-8">
         <div className="flex flex-col items-center text-center">
 
-          {/* Die kliënt kan hierdie prent-bron later vervang */}
           <Image
-            src="/wapen.png" // Gebruik een van die nuwe prente as 'n plekhouer
+            src="/Pou_pushing_fin.png"
             alt="Britsie Winkel Welkom"
             width={600}
             height={400}
@@ -36,7 +35,7 @@ export default function WinkelWelkomPage() {
           </h1>
 
           <p className="mt-4 max-w-2xl text-md md:text-lg text-zinc-600 dark:text-zinc-400">
-            Dankie dat jy ons aanlyn winkel besoek. Hier kan jy al jou gunsteling Britsie klere, ondersteuners-items, en meer koop. Alle items is slegs vir afhaal by die skool.
+            Dankie dat jy ons aanlyn winkel besoek. Hier kan jy al jou gunsteling Britsie klere, ondersteuners-items, en meer koop. Alle items is tans vir afhaal by die skool.
           </p>
 
           <hr className="my-8 w-full max-w-md border-zinc-300 dark:border-zinc-600" />
