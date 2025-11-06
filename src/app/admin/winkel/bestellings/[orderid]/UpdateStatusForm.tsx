@@ -2,32 +2,25 @@
 'use client';
 
 import { useState } from 'react';
+// --- 1. VOEG useFormStatus EN Image BY ---
 import { useFormStatus } from 'react-dom';
 import Image from 'next/image';
 import { updateOrderStatus } from './action';
 import type { DbShopOrderWithItems } from '@/types/supabase';
 import FloatingLabelInputField from '@/components/ui/FloatingLabelInputField';
-// REGSTELLING: Voer die korrekte dropdown-komponent in
 import FloatingLabelSelectField from '@/components/ui/FloatingLabelSelectField';
 
-// Tipe wat hierdie komponent verwag
 type UpdateStatusFormProps = {
   order: DbShopOrderWithItems;
   statusOptions: string[];
 };
 
-/**
- * 'n Interne knoppie-komponent wat 'useFormStatus' gebruik
- */
-function FormSubmitButton({ isDisabled }: { isDisabled: boolean }) {
+// --- 2. SKEP 'N SUB-KOMPONENT VIR DIE KNOPPIE-TEKS ---
+function StatusButtonContent() {
   const { pending } = useFormStatus();
   
   return (
-    <button
-      type="submit"
-      disabled={isDisabled || pending} // Disable as die vorm ongeldig IS of hangende IS
-      className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 flex items-center justify-center min-w-[140px]"
-    >
+    <>
       {pending ? (
         <>
           <Image
@@ -43,13 +36,37 @@ function FormSubmitButton({ isDisabled }: { isDisabled: boolean }) {
       ) : (
         "Dateer Status Op"
       )}
-    </button>
+    </>
   );
 }
 
+// --- 3. SKEP DIE VOLSKERM-OORLEG KOMPONENT ---
+function LoadingOverlay() {
+  const { pending } = useFormStatus();
+  if (!pending) return null;
+
+  return (
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="flex flex-col items-center justify-center rounded-lg bg-white p-8 shadow-xl dark:bg-zinc-800">
+        <Image
+          src="/CircleLoader.gif"
+          alt="Besig om te laai..."
+          width={80}
+          height={80}
+          unoptimized={true}
+        />
+        <p className="mt-4 text-lg font-semibold text-zinc-900 dark:text-white">
+          Besig om status op te dateer...
+        </p>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">E-pos word ook gestuur. Moet asb. nie herlaai nie.</p>
+      </div>
+    </div>
+  );
+}
+
+
 export default function UpdateStatusForm({ order, statusOptions }: UpdateStatusFormProps) {
   const isPermanentlyCompleted = order.status === 'completed';
-
   const [selectedStatus, setSelectedStatus] = useState(order.status);
   
   const [collectorName, setCollectorName] = useState(
@@ -74,11 +91,12 @@ export default function UpdateStatusForm({ order, statusOptions }: UpdateStatusF
     }
     return true; 
   };
-  
-  // REGSTELLING: Ons het nie meer formattering nodig nie
 
   return (
     <form action={updateOrderStatus} className="mt-4 space-y-4">
+      {/* --- 4. PLAAS DIE OORLEG BINNE-IN DIE VORM --- */}
+      <LoadingOverlay />
+
       <input type="hidden" name="orderId" value={order.id} />
       
       {isPermanentlyCompleted && (
@@ -91,18 +109,24 @@ export default function UpdateStatusForm({ order, statusOptions }: UpdateStatusF
 
       <div className="flex flex-col sm:flex-row items-end gap-4">
         
-        {/* REGSTELLING: Gebruik die 'FloatingLabelSelectField' */}
         <FloatingLabelSelectField
           label="Bestelling Status"
           name="status"
           value={selectedStatus}
           onChange={handleStatusChange}
-          options={statusOptions} // <-- Gebruik die string[] direk
+          options={statusOptions}
           disabled={isPermanentlyCompleted} 
           className="flex-1 w-full"
         />
         
-        <FormSubmitButton isDisabled={!isFormValid() || isPermanentlyCompleted} />
+        {/* --- 5. VERVANG DIE OU KNOPPIE MET 'N GEWONE BUTTON --- */}
+        <button
+          type="submit"
+          disabled={!isFormValid() || isPermanentlyCompleted}
+          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 flex items-center justify-center min-w-[150px] min-h-[42px]" // Maak knoppie bietjie hoër
+        >
+          <StatusButtonContent />
+        </button>
       </div>
 
       {selectedStatus === 'completed' && (

@@ -3,6 +3,8 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+// --- 1. VOEG useFormStatus BY ---
+import { useFormStatus } from 'react-dom'; 
 import { login, signup } from './actions';
 import SubmitButton from '@/components/ui/SubmitButton';
 import FloatingLabelInput from '@/components/ui/FloatingLabelInput';
@@ -33,7 +35,31 @@ const provinsieOptions = [
   "Noord-Kaap", "Noordwes", "Oos-Kaap", "Vrystaat", "Wes-Kaap"
 ];
 
-// --- 1. AANVAAR DIE NUWE PROP ---
+// --- 2. SKEP DIE VOLSKERM-OORLEG KOMPONENT ---
+function LoadingOverlay() {
+  const { pending } = useFormStatus();
+  if (!pending) return null;
+
+  return (
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="flex flex-col items-center justify-center rounded-lg bg-white p-8 shadow-xl dark:bg-zinc-800">
+        <Image
+          src="/CircleLoader.gif"
+          alt="Besig..."
+          width={80}
+          height={80}
+          unoptimized={true}
+        />
+        <p className="mt-4 text-lg font-semibold text-zinc-900 dark:text-white">
+          Besig...
+        </p>
+      </div>
+    </div>
+  );
+}
+// --- EINDE VAN NUWE KOMPONENT ---
+
+
 export default function ClientAuthPage({ 
   initialMessage,
   redirectUrl 
@@ -55,7 +81,6 @@ export default function ClientAuthPage({
   };
   // ...
 
-  // useEffect opgedateer om 'redirectUrl' te behou
   useEffect(() => {
     setMessage(initialMessage);
     setIsVisible(!!initialMessage);
@@ -96,8 +121,9 @@ export default function ClientAuthPage({
 
               {/* --- VORM 1: TEKEN IN --- */}
               <form action={login} className={`space-y-6 ${isSigningUp ? 'hidden' : 'block'}`}>
-                  
-                  {/* --- 2. VOEG VERBORGE VELD BY --- */}
+                  {/* --- 3. VOEG OORLEG HIER BY --- */}
+                  <LoadingOverlay />
+
                   {redirectUrl && (
                     <input type="hidden" name="redirect_to" value={redirectUrl} />
                   )}
@@ -109,7 +135,6 @@ export default function ClientAuthPage({
                     type="email"
                     required
                   />
-                  {/* ... (res van 'login' vorm) ... */}
                    <FloatingLabelInput
                     name="password"
                     id="password-login"
@@ -155,8 +180,9 @@ export default function ClientAuthPage({
 
               {/* --- VORM 2: SKREEP REKENING --- */}
               <form action={signup} className={`space-y-6 ${isSigningUp ? 'block' : 'hidden'}`}>
+                  {/* --- 4. VOEG OORLEG OOK HIER BY --- */}
+                  <LoadingOverlay />
                   
-                  {/* --- 3. VOEG VERBORGE VELD OOK HIER BY --- */}
                   {redirectUrl && (
                     <input type="hidden" name="redirect_to" value={redirectUrl} />
                   )}

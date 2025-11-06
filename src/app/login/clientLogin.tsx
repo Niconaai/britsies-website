@@ -2,8 +2,10 @@
 'use client'
 import { login } from './actions'
 import Image from 'next/image';
+// 1. VOEG useFormStatus BY en VERWYDER SubmitButton
 import { useState, useEffect } from 'react';
-import SubmitButton from '../../components/ui/SubmitButton';
+import { useFormStatus } from 'react-dom';
+// import SubmitButton from '../../components/ui/SubmitButton'; // VERWYDER
 import FloatingLabelInput from "@/components/ui/FloatingLabelInput";
 
 const AuthMessage = ({ message }: { message: string }) => {
@@ -13,6 +15,60 @@ const AuthMessage = ({ message }: { message: string }) => {
     </div>
   );
 };
+
+// 2. SKEP DIE VOLSKERM-OORLEG KOMPONENT
+function LoadingOverlay() {
+  const { pending } = useFormStatus();
+  if (!pending) return null;
+
+  return (
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="flex flex-col items-center justify-center rounded-lg bg-white p-8 shadow-xl dark:bg-zinc-800">
+        <Image
+          src="/CircleLoader.gif"
+          alt="Besig..."
+          width={80}
+          height={80}
+          unoptimized={true}
+        />
+        <p className="mt-4 text-lg font-semibold text-zinc-900 dark:text-white">
+          Teken in...
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// 3. SKEP 'N NUWE KNOPPIE-KOMPONENT
+function LoginButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      type="submit"
+      aria-disabled={pending}
+      disabled={pending}
+      className="mb-10 w-full rounded bg-gray-500 py-2 font-medium text-white transition hover:bg-gray-700 disabled:opacity-50 flex items-center justify-center min-h-[38px]"
+    >
+      {pending ? (
+        <>
+          <Image
+            src="/CircleLoader.gif"
+            alt="Besig..."
+            width={20}
+            height={20}
+            unoptimized={true}
+            className="mr-2"
+          />
+          Teken in...
+        </>
+      ) : (
+        'Teken In'
+      )}
+    </button>
+  );
+}
+
 
 export default function ClientPage({ errorMessage }: { errorMessage: string | null }) {
 
@@ -53,6 +109,9 @@ export default function ClientPage({ errorMessage }: { errorMessage: string | nu
         {isVisible && errorMessage && <AuthMessage message={errorMessage} />}
 
         <form action={login} className="space-y-4">
+          {/* 4. VOEG OORLEG BY BINNE VORM */}
+          <LoadingOverlay />
+
           <FloatingLabelInput
             id="email"
             name="email"
@@ -68,12 +127,8 @@ export default function ClientPage({ errorMessage }: { errorMessage: string | nu
             required
           />
 
-          <SubmitButton
-            formAction={login}
-            defaultText="Teken In"
-            loadingText="Teken in..."
-            className="mb-10 w-full rounded bg-gray-500 py-2 font-medium text-white transition hover:bg-gray-700"
-          />
+          {/* 5. VERVANG OU KNOPPIE MET NUWE KNOPPIE */}
+          <LoginButton />
 
           <p className="mb-0 text-center text-xs font text-gray-800  dark:text-zinc-300">
             Nick van der Merwe

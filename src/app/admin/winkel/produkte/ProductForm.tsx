@@ -2,10 +2,13 @@
 'use client';
 
 import { useState } from 'react';
+// --- 1. VOEG useFormStatus EN Image BY ---
+import { useFormStatus } from 'react-dom';
+import Image from 'next/image';
 import { DbShopProduct, DbShopCategory } from '@/types/supabase';
 import FloatingLabelInputField from '@/components/ui/FloatingLabelInputField';
 import FloatingLabelSelectFieldCustom from '@/components/ui/FloatingLabelSelectFieldCustom';
-import SubmitButton from '@/components/ui/SubmitButton'; 
+// import SubmitButton from '@/components/ui/SubmitButton'; // <-- NIE MEER NODIG NIE
 import ImageUploader from './ImageUploader';
 
 type ProductFormProps = {
@@ -15,7 +18,7 @@ type ProductFormProps = {
   submitButtonText: string;
 };
 
-// 'n Beheerde Textarea komponent (nou binne-in)
+// ... FloatingLabelTextArea bly dieselfde ...
 const FloatingLabelTextArea = ({ label, name, value, onChange, required, rows = 4 }: any) => (
   <div className="relative w-full">
     <textarea
@@ -43,11 +46,64 @@ const FloatingLabelTextArea = ({ label, name, value, onChange, required, rows = 
     </label>
   </div>
 );
+// --- EINDE VAN FloatingLabelTextArea ---
+
+// --- 2. SKEP DIE VOLSKERM-OORLEG KOMPONENT ---
+function LoadingOverlay() {
+  const { pending } = useFormStatus();
+  if (!pending) return null;
+
+  return (
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="flex flex-col items-center justify-center rounded-lg bg-white p-8 shadow-xl dark:bg-zinc-800">
+        <Image
+          src="/CircleLoader.gif"
+          alt="Besig om te laai..."
+          width={80}
+          height={80}
+          unoptimized={true}
+        />
+        <p className="mt-4 text-lg font-semibold text-zinc-900 dark:text-white">
+          Besig om produk te stoor...
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// --- 3. SKEP 'N SUB-KOMPONENT VIR DIE KNOPPIE ---
+function FormSubmitButton({ submitButtonText }: { submitButtonText: string }) {
+  const { pending } = useFormStatus();
+  
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="rounded-md bg-green-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 flex items-center justify-center min-w-[120px] min-h-[38px]"
+    >
+      {pending ? (
+        <>
+          <Image
+            src="/CircleLoader.gif"
+            alt="Besig..."
+            width={20}
+            height={20}
+            unoptimized={true}
+            className="mr-2"
+          />
+          Stoor...
+        </>
+      ) : (
+        submitButtonText
+      )}
+    </button>
+  );
+}
+// --- EINDE VAN NUWE KOMPONENTE ---
 
 
 export default function ProductForm({ product, categories, formAction, submitButtonText }: ProductFormProps) {
   
-  // --- 3. STEL 'STATE' OP VIR DIE VORM ---
   const [formData, setFormData] = useState({
     name: product?.name ?? '',
     description: product?.description ?? '',
@@ -85,13 +141,15 @@ export default function ProductForm({ product, categories, formAction, submitBut
   
   return (
     <form action={formAction} className="space-y-6">
+      {/* --- 4. VOEG DIE OORLEG BY --- */}
+      <LoadingOverlay />
+
       {product && (
         <input type="hidden" name="productId" value={product.id} />
       )}
 
+      {/* ... (res van die vorm-velde bly dieselfde) ... */}
       <input type="hidden" name="image_url" value={formData.image_url} />
-
-      {/* Hoof Inligting */}
       <fieldset className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <div className="md:col-span-2 space-y-6">
             <FloatingLabelInputField
@@ -116,6 +174,7 @@ export default function ProductForm({ product, categories, formAction, submitBut
                 value={formData.price}
                 onChange={handleChange}
                 type="number"
+                step="0.01" // Laat sente toe
                 required
             />
             <FloatingLabelInputField
@@ -124,6 +183,7 @@ export default function ProductForm({ product, categories, formAction, submitBut
                 value={formData.stock_level}
                 onChange={handleChange}
                 type="number"
+                step="1"
                 required
             />
              <FloatingLabelSelectFieldCustom
@@ -136,7 +196,6 @@ export default function ProductForm({ product, categories, formAction, submitBut
         </div>
       </fieldset>
       
-      {/* Prent & Status */}
       <fieldset className="grid grid-cols-1 gap-6 md:grid-cols-3">
          <div className="md:col-span-2">
             <ImageUploader
@@ -159,7 +218,6 @@ export default function ProductForm({ product, categories, formAction, submitBut
         </div>
       </fieldset>
 
-      {/* Dimensies (Vir Koerier) */}
       <fieldset className="rounded-md border border-zinc-300 p-4 dark:border-zinc-600">
         <legend className="px-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">
           Dimensies (vir toekomstige koerier-integrasie)
@@ -171,6 +229,7 @@ export default function ProductForm({ product, categories, formAction, submitBut
                 value={formData.weight_kg}
                 onChange={handleChange}
                 type="number"
+                step="0.01"
             />
             <FloatingLabelInputField
                 label="Lengte (cm)"
@@ -178,6 +237,7 @@ export default function ProductForm({ product, categories, formAction, submitBut
                 value={formData.length_cm}
                 onChange={handleChange}
                 type="number"
+                step="0.1"
             />
             <FloatingLabelInputField
                 label="Breedte (cm)"
@@ -185,6 +245,7 @@ export default function ProductForm({ product, categories, formAction, submitBut
                 value={formData.width_cm}
                 onChange={handleChange}
                 type="number"
+                step="0.1"
             />
             <FloatingLabelInputField
                 label="Hoogte (cm)"
@@ -192,18 +253,14 @@ export default function ProductForm({ product, categories, formAction, submitBut
                 value={formData.height_cm}
                 onChange={handleChange}
                 type="number"
+                step="0.1"
             />
         </div>
       </fieldset>
 
-      {/* Stoor Knoppie */}
+      {/* --- 5. VERVANG DIE SubmitButton MET ONS NUWE KNOPPIE --- */}
       <div className="flex justify-end">
-        <SubmitButton
-          formAction={formAction}
-          defaultText={submitButtonText}
-          loadingText="Stoor..."
-          className="rounded-md bg-green-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-        />
+        <FormSubmitButton submitButtonText={submitButtonText} />
       </div>
     </form>
   );
