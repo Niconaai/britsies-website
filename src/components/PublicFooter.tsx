@@ -1,14 +1,84 @@
 // src/components/PublicFooter.tsx
 import Link from 'next/link';
+import Image from 'next/image';
+
+const FooterLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
+    <li>
+        <Link href={href} className="text-zinc-300 hover:text-white hover:underline">
+            {children}
+        </Link>
+    </li>
+);
 
 export default function PublicFooter() {
     return (
         <footer className="bg-rose-900 text-zinc-300">
-            <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-                <div className="md:flex md:items-center md:justify-between">
+            <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+                {/* Hoof 4-kolom rooster */}
+                <div className="grid grid-cols-1 gap-12 lg:grid-cols-4 lg:gap-8">
+
+                    {/* Kolom 1: Wapen en Kontak */}
+                    <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+                        <Image
+                            src="/wapen.png"
+                            alt="Hoërskool Brits Wapen"
+                            width={80}
+                            height={80}
+                            className="h-20 w-auto"
+                        />
+                        <h3 className="mt-4 text-lg font-semibold text-white">Hoërskool Brits</h3>
+                        <p className="mt-1 text-sm italic text-zinc-400">Koersvas na die Kruin</p>
+                        <div className="mt-6 space-y-2 text-sm">
+                            <p>2 Johan Straat, Brits, 0250</p>
+                            <p>Posbus 446, Brits, 0250</p>
+                            <p>
+                                <a href="tel:0122520154" className="hover:text-white hover:underline">Tel: (012) 252-3228</a>
+                            </p>
+                            <p>
+                                <a href="mailto:hsbrits@hsbrits.co.za" className="hover:text-white hover:underline">E-pos: hsbrits@hsbrits.co.za</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Kolom 2: Die Skool */}
+                    <div className="mt-8 lg:mt-0">
+                        <h4 className="text-sm font-bold uppercase tracking-wider text-amber-400">Die Skool</h4>
+                        <ul role="list" className="mt-4 space-y-3">
+                            <FooterLink href="/">Tuis</FooterLink>
+                            <FooterLink href="/oor-ons">Oor Ons</FooterLink>
+                            <FooterLink href="/akademie">Akademie</FooterLink>
+                            <FooterLink href="/sport">Sport</FooterLink>
+                            <FooterLink href="/kultuur">Kultuur</FooterLink>
+                        </ul>
+                    </div>
+
+                    {/* Kolom 3: Hulpbronne */}
+                    <div className="mt-8 lg:mt-0">
+                        <h4 className="text-sm font-bold uppercase tracking-wider text-amber-400">Hulpbronne</h4>
+                        <ul role="list" className="mt-4 space-y-3">
+                            <FooterLink href="/nuus">Nuus</FooterLink>
+                            <FooterLink href="/kalender">Kalender</FooterLink>
+                            <FooterLink href="/donasies">Maak 'n Donasie</FooterLink>
+                            <FooterLink href="/kontak">Kontak Ons</FooterLink>
+                        </ul>
+                    </div>
+
+                    {/* Kolom 4: Portale */}
+                    <div className="mt-8 lg:mt-0">
+                        <h4 className="text-sm font-bold uppercase tracking-wider text-amber-400">Portale</h4>
+                        <ul role="list" className="mt-4 space-y-3">
+                            <FooterLink href="/aansoek">Aansoek Portaal (Ouers)</FooterLink>
+                            <FooterLink href="/winkel">Aanlyn Winkel</FooterLink>
+                            <FooterLink href="/login">Admin Aanteken</FooterLink>
+                        </ul>
+                    </div>
+
+                </div>
+
+                {/* Onderste balk: Copyright en Sosiale media */}
+                <div className="mt-12 border-t border-rose-800 pt-8 md:flex md:items-center md:justify-between">
                     <div className="flex justify-center space-x-6 md:order-2">
-                        {/* Sosiale Media Skakels */}
-                        <a href="https://www.facebook.com/hskoolbrits/?locale=af_ZA" className="text-zinc-300 hover:text-white">
+                        <a href="#" className="text-zinc-300 hover:text-white">
                             <span className="sr-only">Facebook</span>
                             <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path
@@ -28,7 +98,6 @@ export default function PublicFooter() {
                                 />
                             </svg>
                         </a>
-
                         {/* Voeg nog ikone hier by... */}
                     </div>
                     <div className="mt-8 md:order-1 md:mt-0">
@@ -36,9 +105,9 @@ export default function PublicFooter() {
                             &copy; {new Date().getFullYear()} Hoërskool Brits. Alle regte voorbehou.
                         </p>
                         <p className="text-center text-xs text-zinc-400 mt-2">
-                            Webwerf ontwerp deur{' '}
+                            Webwerf en Britsie-Aanlyn platform onderhou deur{' '}
                             <a
-                                href="https://nicolabsdigital.co.za"
+                                href="https.nicolabsdigital.co.za"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="hover:underline hover:text-white"

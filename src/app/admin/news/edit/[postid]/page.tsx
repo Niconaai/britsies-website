@@ -1,3 +1,4 @@
+// src/app/admin/news/edit/[postid]/page.tsx
 import { createClient } from '@/utils/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -7,16 +8,18 @@ type EditNewsPostPageProps = {
     params: Promise<{ postid: string }>;
 };
 
+// === BEGIN REGSTELLING 1: Dateer die tipe op ===
 type NewsPost = {
     id: string;
     title: string | null;
     slug: string | null;
     content: string | null;
-    image_url: string | null;
+    image_urls: string[] | null; // <-- REGSTELLING (was image_url)
     is_published: boolean | null;
     published_at: string | null;
     created_at: string;
 };
+// === EINDE REGSTELLING 1 ===
 
 export default async function EditNewsPostPage({ params }: EditNewsPostPageProps) {
     console.log("--- EditNewsPostPage START ---");
@@ -37,12 +40,14 @@ export default async function EditNewsPostPage({ params }: EditNewsPostPageProps
 
     console.log(`EditNewsPostPage: Fetching post with valid ID: ${postid}`);
 
-    // Fetch Post Data
+    // === BEGIN REGSTELLING 2: Dateer die 'select'-stelling op ===
+    // Haal die nuwe 'image_urls' kolom, nie die oue nie
     const { data: post, error: fetchError } = await supabase
         .from('news_posts')
-        .select('*')
+        .select('id, title, slug, content, image_urls, is_published, published_at, created_at') // <-- REGSTELLING
         .eq('id', postid)
-        .single<NewsPost>();
+        .single<NewsPost>(); // Gebruik ons opgedateerde tipe
+    // === EINDE REGSTELLING 2 ===
 
     if (fetchError || !post) {
         console.error(`Error fetching post ${postid} or post not found:`, fetchError);

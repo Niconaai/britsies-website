@@ -34,9 +34,8 @@ const NewsCard = ({ post }: { post: NewsPostFeedItem }) => (
       <Image
         src={post.image_url || '/wapen-copy-sonder-boom.png'}
         alt={post.title || 'Nuusberig'}
-        layout="fill"
-        objectFit="cover"
-        className="transition-transform duration-300 group-hover:scale-105"
+        fill 
+        className="object-cover transition-transform duration-300 group-hover:scale-105" 
       />
       <div className="absolute inset-0 bg-amber-500/10"></div>
     </div>
@@ -96,12 +95,11 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
         <Image
           src={HERO_FALLBACK_IMAGE_URL} 
           alt="Hoërskool Brits Kampus"
-          layout="fill"
-          objectFit="cover"
-          className="opacity-50"
+          fill
+          className="object-cover" 
           priority
         />
-        <div className="absolute inset-0 bg-amber-600/10"></div>
+        <div className="absolute inset-0 bg-amber-600/20 z-5"></div>
 
         {showVideo && isDesktop && (
           <video
@@ -110,7 +108,7 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
             autoPlay
             muted
             onEnded={handleVideoEnd}
-            className="absolute z-10 w-full h-full object-cover opacity-30"
+            className="absolute z-10 w-full h-full object-cover" 
           >
             <source src={HERO_VIDEO_URL} type="video/mp4" />
             Jammer, jou blaaier ondersteun nie hierdie video nie.

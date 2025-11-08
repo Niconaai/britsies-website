@@ -1,11 +1,12 @@
 // src/app/admin/news/edit/[postId]/EditNewsForm.tsx
 'use client';
 
-// --- 1. VOEG useFormStatus EN Image BY ---
 import { useFormStatus } from 'react-dom';
 import Image from 'next/image';
 import RichTextEditor from '../../create/RichTextEditor';
 import { updatePost } from './actions';
+import { useState } from 'react'; // <-- 1. IMPORTEER useState
+import NewsImageUploader from '../../NewsImageUploader'; // <-- 2. IMPORTEER ONS NUWE OPLAAIER
 
 // Define the type for the post prop
 type NewsPost = {
@@ -13,13 +14,14 @@ type NewsPost = {
     title: string | null;
     slug: string | null;
     content: string | null;
-    image_url: string | null;
+    // image_url: string | null; // <-- Ou veld
+    image_urls: string[] | null; // <-- 3. GEBRUIK NUWE DATABASIS-VELD
     is_published: boolean | null;
     published_at: string | null;
     created_at: string;
 };
 
-// --- 2. SKEP DIE VOLSKERM-OORLEG KOMPONENT ---
+// ... (LoadingOverlay bly dieselfde) ...
 function LoadingOverlay() {
   const { pending } = useFormStatus();
   if (!pending) return null;
@@ -42,7 +44,7 @@ function LoadingOverlay() {
   );
 }
 
-// --- 3. SKEP 'N SUB-KOMPONENT VIR DIE KNOPPIE ---
+// ... (FormSubmitButton bly dieselfde) ...
 function FormSubmitButton() {
   const { pending } = useFormStatus();
   
@@ -70,19 +72,32 @@ function FormSubmitButton() {
     </button>
   );
 }
-// --- EINDE VAN NUWE KOMPONENTE ---
 
 
 // Client Component for the Form
 export default function EditNewsForm({ post }: { post: NewsPost }) {
 
+    // --- 4. VOEG STATE BY VIR PRENT-URL'S ---
+    // Ons "voor-bevolk" dit met die prente van die 'post'
+    const [imageUrls, setImageUrls] = useState<string[]>(post.image_urls || []);
+
+    const handleUploadComplete = (urls: string[]) => {
+        setImageUrls(urls);
+    };
+
     return (
         // Use the updatePost server action
         <form action={updatePost} className="space-y-6">
-            {/* --- 4. VOEG DIE OORLEG BY --- */}
             <LoadingOverlay />
             
             <input type="hidden" name="postId" value={post.id} />
+            
+            {/* --- 5. VERSTEEKTE VELD OM URL'S TE STUUR --- */}
+            <input 
+              type="hidden" 
+              name="image_urls" 
+              value={JSON.stringify(imageUrls)} 
+            />
 
             {/* Title Field */}
             <div>
@@ -103,13 +118,13 @@ export default function EditNewsForm({ post }: { post: NewsPost }) {
                 <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400"> Unieke identifiseerder vir die URL (bv., /nuus/unieke-berig...). Gebruik slegs kleinletters, syfers en koppeltekens (-). </p>
             </div>
 
-            {/* Image URL Field */}
+            {/* --- 6. VERVANG OU URL-VELD MET NUWE OPLAAIER --- */}
             <div>
-                <label htmlFor="image_url" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"> Hoofbeeld URL (Opsioneel) </label>
-                <input
-                    type="url" name="image_url" id="image_url" defaultValue={post.image_url ?? ''}
-                    className="mt-1 block w-full rounded-md border border-zinc-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 dark:bg-zinc-700 dark:text-white dark:border-zinc-600"
-                />
+              <NewsImageUploader
+                initialImageUrls={post.image_urls}
+                onUploadComplete={handleUploadComplete}
+                maxImages={5}
+              />
             </div>
 
             {/* Content Field (Rich Text Editor) */}
@@ -117,7 +132,7 @@ export default function EditNewsForm({ post }: { post: NewsPost }) {
                 <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"> Inhoud </label>
                 <div className="mt-1">
                     <RichTextEditor initialContent={post.content ?? ''} />
-                    <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400"> Die hoofartikel inhoud. Gebruik die nutsbalk vir formatering. </p>
+                    <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400"> Die hoofartikel inhoud. </p>
                 </div>
             </div>
 
@@ -130,7 +145,6 @@ export default function EditNewsForm({ post }: { post: NewsPost }) {
                 <label htmlFor="is_published" className="ml-2 block text-sm text-zinc-900 dark:text-zinc-300"> Gepubliseer? (Merk om die pos sigbaar te maak op die webwerf) </label>
             </div>
 
-            {/* --- 5. VERVANG DIE SubmitButton MET ONS NUWE KNOPPIE --- */}
             <div className="flex justify-end">
                 <FormSubmitButton />
             </div>

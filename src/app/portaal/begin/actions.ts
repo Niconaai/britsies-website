@@ -1,4 +1,4 @@
-// src/app/aansoek/begin/actions.ts
+// src/app/portaal/begin/actions.ts
 'use server'
 
 import { revalidatePath } from 'next/cache'
@@ -13,21 +13,22 @@ export async function login(formData: FormData) {
     password: formData.get('password') as string,
   }
   
-  // --- 1. LEES DIE NUWE VERBORGE VELD ---
   const redirectTo = formData.get('redirect_to') as string;
 
   const { error: signInError } = await supabase.auth.signInWithPassword(data)
   if (signInError) {
     const errorParams = new URLSearchParams({ error: 'invalid_credentials' });
     if (redirectTo) errorParams.set('redirect_to', redirectTo);
-    return redirect(`/aansoek/begin?${errorParams.toString()}`);
+    // REGSTELLING: Wys na /portaal/begin
+    return redirect(`/portaal/begin?${errorParams.toString()}`);
   }
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     const errorParams = new URLSearchParams({ error: 'User not found after sign in' });
     if (redirectTo) errorParams.set('redirect_to', redirectTo);
-    return redirect(`/aansoek/begin?${errorParams.toString()}`);
+    // REGSTELLING: Wys na /portaal/begin
+    return redirect(`/portaal/begin?${errorParams.toString()}`);
   }
 
   const { data: profile, error: profileError } = await supabase
@@ -40,29 +41,27 @@ export async function login(formData: FormData) {
     await supabase.auth.signOut();
     const errorParams = new URLSearchParams({ error: 'Profile not found' });
     if (redirectTo) errorParams.set('redirect_to', redirectTo);
-    return redirect(`/aansoek/begin?${errorParams.toString()}`);
+    // REGSTELLING: Wys na /portaal/begin
+    return redirect(`/portaal/begin?${errorParams.toString()}`);
   }
 
   if (profile.role === 'parent') {
-    // --- 2. GEBRUIK DIE 'redirectTo' WAARDE ---
-    // As 'redirectTo' bestaan en 'n geldige pad is, gebruik dit.
-    // Anders, val terug na die verstek '/aansoek'.
-    const finalRedirect = redirectTo && redirectTo.startsWith('/') ? redirectTo : '/aansoek';
+    // REGSTELLING: Val terug na /portaal (die dashboard)
+    const finalRedirect = redirectTo && redirectTo.startsWith('/') ? redirectTo : '/portaal';
     revalidatePath(finalRedirect, 'layout')
     return redirect(finalRedirect)
-    // --- EINDE VAN REGSTELLING ---
   } else {
     await supabase.auth.signOut(); 
     const errorParams = new URLSearchParams({ error: 'access_denied' });
     if (redirectTo) errorParams.set('redirect_to', redirectTo);
-    return redirect(`/aansoek/begin?${errorParams.toString()}`);
+    // REGSTELLING: Wys na /portaal/begin
+    return redirect(`/portaal/begin?${errorParams.toString()}`);
   }
 }
 
 export async function signup(formData: FormData) {
   const supabase = await createClient()
 
-  // --- 1. LEES DIE NUWE VERBORGE VELD ---
   const redirectTo = formData.get('redirect_to') as string | null;
   const redirectParams = new URLSearchParams();
   if (redirectTo) redirectParams.set('redirect_to', redirectTo);
@@ -81,20 +80,20 @@ export async function signup(formData: FormData) {
     shipping_code: formData.get('shipping_code') as string,
   };
 
-  // --- 2. DATEER ALLE 'redirect' OPROEPE OP ---
+  // REGSTELLING: Wys alle redirects na /portaal/begin
   if (password !== passwordConfirm) {
     redirectParams.set('error', 'Wagwoorde stem nie ooreen nie');
-    return redirect(`/aansoek/begin?${redirectParams.toString()}`);
+    return redirect(`/portaal/begin?${redirectParams.toString()}`);
   }
   
   if (!email || !password) {
     redirectParams.set('error', 'E-pos en wagwoord word vereis');
-    return redirect(`/aansoek/begin?${redirectParams.toString()}`);
+    return redirect(`/portaal/begin?${redirectParams.toString()}`);
   }
   
   if (!profileData.full_name || !profileData.cell_phone || !profileData.shipping_address_line1 || !profileData.shipping_city || !profileData.shipping_province || !profileData.shipping_code) {
     redirectParams.set('error', 'Maak asseblief seker al die vereiste velde is ingevul.');
-    return redirect(`/aansoek/begin?${redirectParams.toString()}`);
+    return redirect(`/portaal/begin?${redirectParams.toString()}`);
   }
 
   const { error } = await supabase.auth.signUp({
@@ -111,17 +110,17 @@ export async function signup(formData: FormData) {
   if (error) {
     console.error('Signup Error:', error);
     redirectParams.set('error', encodeURIComponent(error.message));
-    return redirect(`/aansoek/begin?${redirectParams.toString()}`);
+    return redirect(`/portaal/begin?${redirectParams.toString()}`);
   }
 
-  // --- 3. STUUR 'redirectTo' SAAM MET SUKSES-BOODSKAP ---
   redirectParams.set('message', 'rekening_geskep');
-  return redirect(`/aansoek/begin?${redirectParams.toString()}`);
+  return redirect(`/portaal/begin?${redirectParams.toString()}`);
 }
 
 export async function signOut() {
   'use server'
   const supabase = await createClient()
   await supabase.auth.signOut()
-  return redirect('/aansoek/begin')
+  // REGSTELLING: Stuur terug na die nuwe aanteken-bladsy
+  return redirect('/portaal/begin')
 }

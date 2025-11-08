@@ -1,64 +1,83 @@
+// src/app/admin/news/edit/[postid]/actions.ts
 'use server';
 
-import { createClient } from '@/utils/supabase/server'; 
+import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 export async function updatePost(formData: FormData) {
   const supabase = await createClient();
 
-  // Get the post ID from the hidden input
+  // 1. Kry die data vanaf die vorm
   const postId = formData.get('postId') as string;
-
-  // Basic validation (can be expanded)
   const title = formData.get('title') as string;
   const slug = formData.get('slug') as string;
-  const content = formData.get('content') as string; 
-  const imageUrl = formData.get('image_url') as string | null;
-  const isPublished = formData.get('is_published') === 'on'; 
+  const content = formData.get('content') as string;
+  const is_published = formData.get('is_published') === 'on';
 
-  // --- Validation ---
+  // === BEGIN VERANDERING ===
+  // Kry die JSON-string van die versteekte veld
+  const imageUrlsString = formData.get('image_urls') as string;
+  
+  let image_urls: string[] = [];
+  try {
+    // "Parse" die string terug na 'n array
+    if (imageUrlsString) {
+      image_urls = JSON.parse(imageUrlsString);
+    }
+  } catch (e) {
+    console.error("Kon nie image_urls parse nie:", e);
+    // Gaan voort sonder prente as dit misluk
+  }
+  // === EINDE VERANDERING ===
+
   if (!postId) {
-    console.error('Update error: Missing postId');
-    return redirect('/admin/news?error=Missing post ID for update.');
+    return redirect(`/admin/news?error=Berig ID word vermis`);
   }
-  if (!title || !slug || !content) {
-    console.error(`Update error for ${postId}: Missing required fields.`);
-    return redirect(`/admin/news/edit/${postId}?error=Title, Slug, and Content are required.`);
+
+  // 2. Gaan die 'slug' na vir uniekheid (maar ignoreer die huidige berig)
+  if (slug) {
+    const { data: existingPost, error: slugError } = await supabase
+      .from('news_posts')
+      .select('id')
+      .eq('slug', slug)
+      .not('id', 'eq', postId) // Belangrik: Ignoreer hierdie berig self
+      .limit(1);
+
+    if (slugError) {
+      console.error('Slug check error:', slugError);
+      return redirect(`/admin/news/edit/${postId}?error=Kon nie slug nagaan nie`);
+    }
+    if (existingPost && existingPost.length > 0) {
+      return redirect(`/admin/news/edit/${postId}?error=Hierdie "slug" (${slug}) word reeds gebruik.`);
+    }
+  } else {
+    return redirect(`/admin/news/edit/${postId}?error=Slug word vereis`);
   }
-  // --- End Validation ---
 
-  // Prepare data for Supabase update, matching FSD schema
-  const updatedData = {
-    title: title,
-    slug: slug,
-    content: content,
-    image_url: imageUrl || null,
-    is_published: isPublished,
-    published_at: isPublished ? new Date().toISOString() : null,
-  };
-
-  console.log(`Attempting to update post ${postId} with:`, updatedData);
-
-  // Update the 'news_posts' table record
+  // 3. Dateer die berig op in die databasis
   const { error } = await supabase
-    .from('news_posts') 
-    .update(updatedData)
-    .eq('id', postId);
+    .from('news_posts')
+    .update({
+      title,
+      slug,
+      content,
+      is_published,
+      // === BEGIN VERANDERING ===
+      image_urls: image_urls, // Stoor die nuwe array
+      // === EINDE VERANDERING ===
+      published_at: is_published ? new Date().toISOString() : null,
+    })
+    .eq('id', postId); // Maak seker ons dateer die korrekte berig op
 
   if (error) {
-    console.error(`Supabase update error for ${postId}:`, error);
+    console.error('Update error:', error);
     return redirect(`/admin/news/edit/${postId}?error=${encodeURIComponent(error.message)}`);
   }
 
-  console.log(`Post ${postId} updated successfully.`);
-
-  revalidatePath('/admin/news'); // Revalidate the list page
-  revalidatePath(`/admin/news/edit/${postId}`); // Revalidate the edit page itself
-  // Optional: Revalidate public news page if needed
-  // revalidatePath('/nuus');
-  // revalidatePath(`/nuus/${slug}`); // If you have individual post pages
-
-  // Redirect back to the news list page on success
-  redirect('/admin/news');
+  // 4. Herlaai die paaie en stuur terug
+  revalidatePath('/admin/news');
+  revalidatePath('/nuus');
+  revalidatePath(`/nuus/${slug}`); // Herlaai die publieke berig-bladsy
+  redirect('/admin/news'); // Stuur terug na die hooflys
 }

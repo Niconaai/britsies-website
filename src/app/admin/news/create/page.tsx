@@ -2,13 +2,14 @@
 'use client'; 
 
 import Link from 'next/link';
-// --- 1. VOEG useFormStatus EN Image BY ---
 import { useFormStatus } from 'react-dom';
 import Image from 'next/image';
 import RichTextEditor from './RichTextEditor'; 
 import { createPost } from './actions';
+import { useState } from 'react'; // <-- 1. IMPORTEER useState
+import NewsImageUploader from '../NewsImageUploader'; // <-- 2. IMPORTEER ONS NUWE OPLAAIER
 
-// --- 2. SKEP DIE VOLSKERM-OORLEG KOMPONENT ---
+// ... (LoadingOverlay bly dieselfde) ...
 function LoadingOverlay() {
   const { pending } = useFormStatus();
   if (!pending) return null;
@@ -31,7 +32,7 @@ function LoadingOverlay() {
   );
 }
 
-// --- 3. SKEP 'N SUB-KOMPONENT VIR DIE KNOPPIE ---
+// ... (FormSubmitButton bly dieselfde) ...
 function FormSubmitButton() {
   const { pending } = useFormStatus();
   
@@ -59,10 +60,17 @@ function FormSubmitButton() {
     </button>
   );
 }
-// --- EINDE VAN NUWE KOMPONENTE ---
 
 
 export default function CreateNewsPostPage() {
+  
+  // --- 3. VOEG STATE BY VIR PRENT-URL'S ---
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+
+  // Hierdie funksie word deur die oplaai-komponent geroep
+  const handleUploadComplete = (urls: string[]) => {
+    setImageUrls(urls);
+  };
   
   return (
     <div className="rounded-lg bg-white p-6 shadow dark:bg-zinc-800">
@@ -79,8 +87,15 @@ export default function CreateNewsPostPage() {
       </div>
 
       <form action={createPost} className="space-y-6">
-        {/* --- 4. VOEG DIE OORLEG BY --- */}
         <LoadingOverlay />
+
+        {/* --- 4. VERSTEEKTE VELD OM URL'S TE STUUR --- */}
+        {/* Ons stuur die lys as 'n JSON-string */}
+        <input 
+          type="hidden" 
+          name="image_urls" 
+          value={JSON.stringify(imageUrls)} 
+        />
 
         {/* Title Field */}
         <div>
@@ -107,14 +122,11 @@ export default function CreateNewsPostPage() {
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400"> Unieke identifiseerder vir die URL (bv., /nuus/unieke-berig...). Gebruik slegs kleinletters, syfers en koppeltekens (-). </p>
         </div>
 
-         {/* Image URL Field */}
+         {/* --- 5. VERVANG OU URL-VELD MET NUWE OPLAAIER --- */}
          <div>
-           <label htmlFor="image_url" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"> Hoofbeeld URL (Opsioneel): </label>
-           <input 
-            className="mt-1 block w-full rounded-md border border-zinc-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 dark:bg-zinc-700 dark:text-white dark:border-zinc-600" 
-            type="url" 
-            name="image_url" 
-            id="image_url" 
+          <NewsImageUploader
+            onUploadComplete={handleUploadComplete}
+            maxImages={5}
           />
          </div>
 
@@ -128,7 +140,7 @@ export default function CreateNewsPostPage() {
           <div className="mt-1">
             <RichTextEditor />
              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                Die hoofartikel inhoud. Gebruik die nutsbalk vir formatering.
+                Die hoofartikel inhoud.
              </p>
           </div>
         </div>
@@ -144,7 +156,6 @@ export default function CreateNewsPostPage() {
           <label htmlFor="is_published" className="ml-2 block text-sm text-zinc-900 dark:text-zinc-300"> Gepubliseer? </label>
         </div>
 
-        {/* --- 5. VERVANG DIE SubmitButton MET ONS NUWE KNOPPIE --- */}
         <div className="flex justify-end">
           <FormSubmitButton />
         </div>
