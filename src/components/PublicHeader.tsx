@@ -20,7 +20,7 @@ const navLinks = [
 // Sekondêre skakels
 const secondaryLinks = [
     { name: 'Winkel', href: '/winkel' },
-    { name: 'Donasies', href: '/donasies' },
+    { name: 'Raak Betrokke', href: '/raak-betrokke' },
 ];
 
 const NavLink = ({ href, children, isSecondary = false }: { href: string; children: React.ReactNode, isSecondary?: boolean }) => {
@@ -28,7 +28,6 @@ const NavLink = ({ href, children, isSecondary = false }: { href: string; childr
   const isActive = pathname === href;
 
   if (isSecondary) {
-      // Sekondêre skakels bly dieselfde (soos bespreek)
       return (
         <Link
             href={href}
@@ -43,8 +42,6 @@ const NavLink = ({ href, children, isSecondary = false }: { href: string; childr
       );
   }
 
-  // --- BEGIN VERANDERING HIER ---
-  // Hoof navigasie skakels
   return (
     <Link
       href={href}
@@ -59,7 +56,6 @@ const NavLink = ({ href, children, isSecondary = false }: { href: string; childr
       {children}
     </Link>
   );
-  // --- EINDE VERANDERING ---
 };
 
 export default function PublicHeader() {
@@ -149,9 +145,9 @@ export default function PublicHeader() {
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`block rounded-md px-3 py-2 text-base font-medium ${
+                className={`block rounded-md px-3 py-2 text-base font-medium text-center ${
                     usePathname() === link.href 
-                    ? 'bg-rose-900 text-white' // Hou die mobiele aansig eenvoudig met 'n soliede agtergrond
+                    ? 'bg-rose-900 text-white' 
                     : 'text-zinc-700 hover:bg-zinc-100'
                 }`}
               >

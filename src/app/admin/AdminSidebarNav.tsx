@@ -15,9 +15,12 @@ const applicationLinks = [
   { name: 'Waglys', href: '/admin/aansoeke/waglys' },
 ];
 
+// --- OPGEDATEER ---
 const contentLinks = [
   { name: 'Nuus Bestuur (CMS)', href: '/admin/news' },
+  { name: 'Personeelbestuur', href: '/admin/personeel' }, // <-- NUWE SKAKEL
 ];
+// --- EINDE VAN OPDATERING ---
 
 const shopLinks = [
   { name: 'Bestellings', href: '/admin/winkel/bestellings' }, 
@@ -72,6 +75,7 @@ export default function AdminSidebarNav() {
               </ul>
             </li>
             
+            {/* --- OPGEDATEER --- */}
             <li className="mt-6">
               <div className="text-xs font-semibold leading-6 text-zinc-400">
                 WEBWERF INHOUD
@@ -86,6 +90,7 @@ export default function AdminSidebarNav() {
                 ))}
               </ul>
             </li>
+            {/* --- EINDE VAN OPDATERING --- */}
 
             <li className="mt-6">
               <div className="text-xs font-semibold leading-6 text-zinc-400">

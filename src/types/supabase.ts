@@ -252,3 +252,30 @@ export type DbProfile = {
   shipping_province: string | null;
   shipping_code: string | null;
 };
+
+// --- BEGIN PERSONEEL MODULE TIPES ---
+export type DbStaffDepartment = {
+  id: string;
+  created_at: string;
+  name: string;
+  description: string | null;
+  sort_order: number | null;
+};
+
+export type DbStaffMember = {
+  id: string;
+  created_at: string;
+  department_id: string | null;
+  full_name: string;
+  title: string | null;
+  image_url: string | null;
+  sort_order: number | null;
+  is_active: boolean | null;
+};
+
+export type StaffMemberWithDept = DbStaffMember & {
+  staff_departments: {
+    name: string;
+  } | null;
+};
+// --- EINDE PERSONEEL MODULE TIPES ---
