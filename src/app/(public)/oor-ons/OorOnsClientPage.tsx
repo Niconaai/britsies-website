@@ -16,7 +16,7 @@ const fadeInUp = {
 // 'n Sub-komponent om 'n personeellid-profielkaart te vertoon
 const StaffProfileCard = ({ person }: { person: StaffMemberWithDept }) => (
     <div className="flex flex-col items-center text-center">
-        <div className="relative h-48 w-40 overflow-hidden rounded-lg shadow-md">
+        <div className="relative h-88 w-66 overflow-hidden rounded-lg shadow-md">
             <Image
                 src={person.image_url || '/wapen.png'}
                 alt={person.full_name}
@@ -111,13 +111,15 @@ export default function OorOnsClientPage({
                             <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
                                 Ontmoet die Skoolbestuur
                             </h2>
-                            <div className="mt-16 grid grid-cols-2 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
+                            <div className="mt-16 grid grid-cols-1 gap-y-12 sm:grid-cols-2 xl:grid-cols-4">
                                 {bestuurPersoneel.map((person) => (
                                     <StaffProfileCard key={person.id} person={person} />
                                 ))}
                             </div>
                         </motion.div>
                     )}
+
+                    <hr className="my-6 mt-16 border-red-800" />
 
                     {/* Afdeling 3b: Beheerliggaam */}
                     {beheerliggaamPersoneel.length > 0 && (
@@ -131,7 +133,7 @@ export default function OorOnsClientPage({
                             <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
                                 Ons Beheerliggaam
                             </h2>
-                            <div className="mt-16 grid grid-cols-2 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
+                            <div className="mt-16 grid grid-cols-1 gap-y-12 sm:grid-cols-2 xl:grid-cols-4">
                                 {beheerliggaamPersoneel.map((person) => (
                                     <StaffProfileCard key={person.id} person={person} />
                                 ))}
