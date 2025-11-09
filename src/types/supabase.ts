@@ -279,3 +279,47 @@ export type StaffMemberWithDept = DbStaffMember & {
   } | null;
 };
 // --- EINDE PERSONEEL MODULE TIPES ---
+
+// --- BEGIN SPORT MODULE TIPES ---
+export type DbSportType = {
+  id: string;
+  created_at: string;
+  name: string;
+  season: string | null;
+  icon_url: string | null;
+  description: string | null;
+  sort_order: number | null;
+  is_active: boolean | null;
+};
+
+export type DbSportCoach = {
+  id: string;
+  created_at: string;
+  sport_type_id: string;
+  staff_member_id: string | null; // Gekoppel aan DbStaffMember
+  external_coach_name: string | null;
+  role: string | null;
+  is_active: boolean | null;
+};
+
+export type DbSportTeam = {
+  id: string;
+  created_at: string;
+  sport_type_id: string;
+  coach_id: string | null; // Gekoppel aan DbSportCoach
+  name: string;
+  age_group: string | null;
+  is_active: boolean | null;
+};
+
+export type DbSportAchievement = {
+  id: string;
+  created_at: string;
+  sport_type_id: string | null;
+  title: string;
+  description: string | null;
+  image_url: string;
+  achievement_date: string | null;
+  is_active: boolean | null;
+};
+// --- EINDE SPORT MODULE TIPES ---

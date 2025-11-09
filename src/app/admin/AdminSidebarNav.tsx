@@ -18,7 +18,8 @@ const applicationLinks = [
 // --- OPGEDATEER ---
 const contentLinks = [
   { name: 'Nuus Bestuur (CMS)', href: '/admin/news' },
-  { name: 'Personeelbestuur', href: '/admin/personeel' }, // <-- NUWE SKAKEL
+  { name: 'Personeelbestuur', href: '/admin/personeel' },
+  { name: 'Sportbestuur', href: '/admin/sport' }, // <-- NUWE SKAKEL
 ];
 // --- EINDE VAN OPDATERING ---
 

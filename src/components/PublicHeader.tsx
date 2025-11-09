@@ -12,6 +12,8 @@ const navLinks = [
   { name: 'Oor Ons', href: '/oor-ons' },
   { name: 'Akademie', href: '/akademie' },
   { name: 'Sport', href: '/sport' },
+  { name: 'Kultuur', href: '/kultuur' },
+  { name: 'Koshuis', href: '/koshuis' },
   { name: 'Nuus', href: '/nuus' },
   { name: 'Kalender', href: '/kalender' },
   { name: 'Aansoeke', href: '/aansoek' },

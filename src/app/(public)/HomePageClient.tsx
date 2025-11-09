@@ -7,17 +7,19 @@ import { motion } from "framer-motion";
 import type { NewsPostFeedItem } from "./page";
 import { useState, useEffect } from "react";
 
+// --- REGSTELLING 1: Voer die nuwe komponent in ---
+import KoshuisPakketAd from "./KoshuisPakketAd";
+
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const HERO_VIDEO_URL = `${SUPABASE_URL}/storage/v1/object/public/public-assets/hero-video.mp4`;
 const HERO_FALLBACK_IMAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/public-assets/hero-fallback.png`;
 
-// ... (QuickLinkCard en NewsCard komponente bly presies dieselfde) ...
+// ... (ArrowIcon, QuickLinkCard, NewsCard bly presies dieselfde) ...
 const ArrowIcon = () => (
   <svg className="h-5 w-5 transition-transform group-hover:translate-x-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
   </svg>
 );
-
 const QuickLinkCard = ({ href, title, description }: { href: string; title: string; description: string }) => (
   <Link href={href} className="group block rounded-lg bg-white p-6 shadow-md transition hover:shadow-lg hover:border-amber-500 border border-transparent">
     <h3 className="text-xl font-bold text-rose-900">{title}</h3>
@@ -27,13 +29,10 @@ const QuickLinkCard = ({ href, title, description }: { href: string; title: stri
     </div>
   </Link>
 );
-
 const NewsCard = ({ post }: { post: NewsPostFeedItem }) => {
-
-  // Kry die hoofprent (die eerste een in die lys)
   const featuredImage = (post.image_urls && post.image_urls.length > 0)
     ? post.image_urls[0]
-    : '/wapen.png'; // Fallback prent
+    : '/wapen.png'; 
 
   return (
     <Link href={`/nuus/${post.slug}`} className="group block overflow-hidden rounded-lg bg-white shadow-md transition hover:shadow-lg">
@@ -68,21 +67,27 @@ const fadeInUp = {
 };
 // --- EINDE VAN SUB-KOMPONENTE ---
 
+// --- REGSTELLING 2: Verwyder die KoshuisPakketAd en CheckIcon definisies van hier ---
+// (Hulle is nou in hul eie lêer)
 
 // --- HOOF TUISBLAD KOMPONENT ---
 export default function HomePageClient({ latestNews }: { latestNews: NewsPostFeedItem[] }) {
 
   const [showVideo, setShowVideo] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [isIntroActive, setIsIntroActive] = useState(true);
 
   useEffect(() => {
-    const isDesktopQuery = window.matchMedia("(min-width: 640px)"); // sm: breakpoint
+    const isDesktopQuery = window.matchMedia("(min-width: 640px)");
     setIsDesktop(isDesktopQuery.matches);
-
     const hasVideoPlayed = sessionStorage.getItem('heroVideoPlayed');
 
     if (isDesktopQuery.matches && !hasVideoPlayed) {
       setShowVideo(true);
+      setIsIntroActive(true);
+    } else {
+      setShowVideo(false);
+      setIsIntroActive(false); 
     }
 
     const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
@@ -93,13 +98,13 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
   const handleVideoEnd = () => {
     sessionStorage.setItem('heroVideoPlayed', 'true');
     setShowVideo(false);
+    setIsIntroActive(false);
   };
 
   return (
     <div className="flex flex-col">
-      {/* --- 1. HERO SEKSIE (Opgedateer met Video-logika) --- */}
+      {/* --- 1. HERO SEKSIE --- */}
       <section className="relative flex h-[60vh] min-h-[400px] w-full items-center justify-center bg-zinc-800 text-white overflow-hidden px-4">
-
         <Image
           src={HERO_FALLBACK_IMAGE_URL}
           alt="Hoërskool Brits Kampus"
@@ -125,9 +130,9 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
 
         <motion.div
           className="relative z-20 mx-auto max-w-4xl text-center"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isIntroActive ? 0 : 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
         >
           <Image
             src="/wapen.png"
@@ -138,18 +143,14 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
             className="mx-auto h-24 w-auto"
             style={{ filter: 'drop-shadow(0px 4px 6px rgba(0,0,0,0.5))' }}
           />
-
           <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl"
             style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}>
             Hoërskool Brits
           </h1>
-
           <p className="mt-6 text-xl text-zinc-100"
             style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>
             Koersvas na die Kruin
           </p>
-
-          {/* === BEGIN VERANDERING HIER === */}
           <div className="mt-10 flex w-full max-w-sm mx-auto flex-col items-center justify-center gap-4 sm:max-w-none sm:flex-row">
             <Link
               href="/aansoek"
@@ -164,12 +165,10 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
               Meer Oor Ons
             </Link>
           </div>
-          {/* === EINDE VERANDERING === */}
-
         </motion.div>
       </section>
 
-      {/* --- 2. WELKOM SEKSIE (Bly dieselfde) --- */}
+      {/* --- 2. WELKOM SEKSIE --- */}
       <motion.section
         className="bg-white py-16 sm:py-24"
         initial="initial"
@@ -190,8 +189,18 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
         </div>
       </motion.section>
 
-      {/* --- 3. VINNIGE SKAKELS SEKSIE (Bly dieselfde) --- */}
-      <section className="bg-zinc-50 py-16 sm:py-24">
+      {/* --- REGSTELLING 3: Roep die ingevoerde komponent --- */}
+      <section
+        className="bg-zinc-50 py-16 sm:py-24"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <KoshuisPakketAd />
+        </div>
+      </section>
+      {/* --- EINDE REGSTELLING 3 --- */}
+
+      {/* --- 3. VINNIGE SKAKELS SEKSIE --- */}
+      <section className="bg-white py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true, amount: 0.5 }} transition={{ duration: 0.5, delay: 0.0 }}>
@@ -219,9 +228,9 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
         </div>
       </section>
 
-      {/* --- 4. NUUTSTE NUUS SEKSIE (Bly dieselfde) --- */}
+      {/* --- 4. NUUTSTE NUUS SEKSIE --- */}
       {latestNews && latestNews.length > 0 && (
-        <section className="bg-white py-16 sm:py-24">
+        <section className="bg-zinc-50 py-16 sm:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true, amount: 0.5 }} transition={{ duration: 0.5 }}>
               <div className="flex items-center justify-between">
