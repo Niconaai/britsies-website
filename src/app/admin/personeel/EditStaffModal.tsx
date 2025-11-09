@@ -8,7 +8,10 @@ import { updateStaffMember } from './actions';
 import type { DbStaffMember, DbStaffDepartment } from '@/types/supabase';
 import FloatingLabelInputField from '@/components/ui/FloatingLabelInputField';
 import FloatingLabelSelectFieldCustom from '@/components/ui/FloatingLabelSelectFieldCustom';
-import ImageUploader from '@/app/admin/winkel/produkte/ImageUploader';
+
+// --- REGSTELLING: Voer ons nuwe 'StaffImageUploader' in ---
+import StaffImageUploader from './StaffImageUploader';
+// --- EINDE VAN REGSTELLING ---
 
 type EditStaffModalProps = {
   staffMember: DbStaffMember;
@@ -63,10 +66,7 @@ export default function EditStaffModal({ staffMember, departments, onClose }: Ed
     onClose();
   };
 
-  // --- HIER IS DIE REGSTELLING ---
-  // Voeg 'HTMLTextAreaElement' by die tipe
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-  // --- EINDE VAN REGSTELLING ---
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -104,21 +104,21 @@ export default function EditStaffModal({ staffMember, departments, onClose }: Ed
             label="Volle Naam"
             name="full_name"
             value={formData.full_name}
-            onChange={handleChange} // Sal nou werk
+            onChange={handleChange}
             required
           />
           <FloatingLabelInputField
             label="Titel (bv. Skoolhoof)"
             name="title"
             value={formData.title}
-            onChange={handleChange} // Sal nou werk
+            onChange={handleChange}
             required
           />
           <FloatingLabelSelectFieldCustom
             label="Departement"
             name="department_id"
             value={formData.department_id}
-            onChange={handleChange} // Hierdie het reeds gewerk
+            onChange={handleChange}
             options={departmentOptions}
           />
           <FloatingLabelInputField
@@ -126,12 +126,16 @@ export default function EditStaffModal({ staffMember, departments, onClose }: Ed
             name="sort_order"
             type="number"
             value={formData.sort_order}
-            onChange={handleChange} // Sal nou werk
+            onChange={handleChange}
           />
-          <ImageUploader
+
+          {/* --- REGSTELLING: Gebruik die korrekte oplaaier --- */}
+          <StaffImageUploader
             currentImageUrl={formData.image_url}
             onUploadComplete={handleImageUpload}
           />
+          {/* --- EINDE VAN REGSTELLING --- */}
+
           <div className="flex items-center">
             <input
               id="is_active_edit"

@@ -1,7 +1,8 @@
 // src/app/admin/personeel/StaffImageUploader.tsx
 'use client';
 
-import { useState } from 'react';
+// --- REGSTELLING 1: Voer 'useEffect' in ---
+import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import Image from 'next/image';
 
@@ -16,6 +17,13 @@ export default function StaffImageUploader({ currentImageUrl, onUploadComplete }
   const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl);
 
+  // --- REGSTELLING 2: Voeg 'useEffect' by om prop-veranderinge te 'watch' ---
+  // Hierdie sal loop wanneer die 'currentImageUrl' prop van die ouer-komponent verander.
+  useEffect(() => {
+    setPreviewUrl(currentImageUrl);
+  }, [currentImageUrl]);
+  // --- EINDE VAN REGSTELLING 2 ---
+
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -27,17 +35,15 @@ export default function StaffImageUploader({ currentImageUrl, onUploadComplete }
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
       
-      // --- REGSTELLING 1: Laai op na die korrekte 'staff-photos' emmer ---
       const filePath = `${fileName}`; 
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('staff-photos') // <-- GEBRUIK DIE KORREKTE EMMER
+        .from('staff-photos') 
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
-      // --- REGSTELLING 2: Kry die URL vanaf die korrekte emmer ---
       const { data: urlData } = supabase.storage
-        .from('staff-photos') // <-- GEBRUIK DIE KORREKTE EMMER
+        .from('staff-photos')
         .getPublicUrl(uploadData.path);
 
       if (!urlData.publicUrl) {
@@ -61,14 +67,13 @@ export default function StaffImageUploader({ currentImageUrl, onUploadComplete }
         Personeelfoto
       </label>
       
-      {/* --- REGSTELLING 3: Portret-aspek-verhouding --- */}
       <div className="w-48 h-64 relative rounded-md border border-zinc-300 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-700 flex items-center justify-center">
         {previewUrl ? (
           <Image
             src={previewUrl}
             alt="Personeel voorskou"
             layout="fill"
-            objectFit="cover" // Gebruik 'cover' om die boks te vul
+            objectFit="cover"
             className="rounded-md"
           />
         ) : (
@@ -87,7 +92,6 @@ export default function StaffImageUploader({ currentImageUrl, onUploadComplete }
           </div>
         )}
       </div>
-      {/* --- EINDE VAN REGSTELLING 3 --- */}
 
       <div>
         <input
