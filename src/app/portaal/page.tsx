@@ -60,7 +60,7 @@ export default async function ApplicationPage() {
                         My Aansoeke
                     </h1>
                     <Link 
-                        href="/aansoek/nuwe"
+                        href="/portaal/nuwe"
                         className="text-xs md:text-xl rounded-md bg-green-600 px-4 py-2 font-semibold text-white shadow-sm hover:bg-green-700"
                     >
                         + Begin Nuwe Aansoek

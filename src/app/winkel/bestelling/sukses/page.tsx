@@ -2,17 +2,20 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import Link from 'next/link';
-import Image from 'next/image'; // <-- Belangrik
-// VERWYDER: Resend en e-pos sjabloon imports
+import Image from 'next/image';
 import type { DbShopOrder, DbShopOrderItem, DbProfile } from "@/types/supabase";
-import PaymentVerifier from './PaymentVerifier'; // <-- VOER ONS NUWE KOMPONENT IN
+import PaymentVerifier from './PaymentVerifier';
+// --- BEGIN REGSTELLING ---
+// Voer die admin-kliënt handmatig in
+import { createClient as createAdminClient } from '@supabase/supabase-js';
+// --- EINDE REGSTELLING ---
 
 // Tipe vir ons data *binne* hierdie bladsy
 type OrderWithItems = DbShopOrder & {
   shop_order_items: DbShopOrderItem[];
 };
 
-// --- Hulpfunksies ---
+// ... (Hulpfunksies CheckCircleIcon en formatCurrency bly dieselfde) ...
 const CheckCircleIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-16 h-16 text-green-600">
     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -25,10 +28,6 @@ const formatCurrency = (amount: number | null | undefined) => {
     currency: 'ZAR',
   }).format(amount);
 };
-// --- Einde van hulpfunksies ---
-
-
-// --- E-POS STUUR FUNKSIE IS HEELTEMAL VERWYDER ---
 
 
 export default async function OrderSuccessPage({
@@ -39,14 +38,23 @@ export default async function OrderSuccessPage({
   
   const resolvedSearchParams = await searchParams;
   const orderId = resolvedSearchParams.order_id;
+  
+  // Standaard kliënt (vir gebruiker-sessie)
   const supabase = await createClient();
   
   if (!orderId) {
     return notFound();
   }
 
-  // Haal die bestelling en sy items.
-  const { data: order, error } = await supabase
+  // --- BEGIN REGSTELLING ---
+  // Skep 'n admin-kliënt wat RLS kan omseil om die bestelling te lees
+  const supabaseAdmin = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  // Gebruik die admin-kliënt om die bestelling te haal
+  const { data: order, error } = await supabaseAdmin
     .from('shop_orders')
     .select(`
       *,
@@ -54,8 +62,10 @@ export default async function OrderSuccessPage({
     `)
     .eq('id', orderId)
     .single<OrderWithItems>(); 
+  // --- EINDE REGSTELLING ---
 
   if (error || !order) {
+    // Hierdie is die fout wat jy gesien het
     console.error(`Sukses-bladsy: Kon nie bestelling ${orderId} kry nie.`, error);
     return notFound();
   }
@@ -64,28 +74,27 @@ export default async function OrderSuccessPage({
   const isPaid = order.status === 'processing' || order.status === 'ready_for_collection' || order.status === 'completed';
 
   if (!isPaid) {
-    // --- ROEP ONS NUWE KLIËNT-KOMPONENT ---
-    // Dit sal die 'fetch' hanteer en homself opdateer.
-    // Die 'order' prop bevat die 'yoco_charge_id' wat dit nodig het.
-    // Dit wys sy eie laai-boodskap.
+    // Roep ons Kliënt-komponent wat die API sal 'poll'
     return <PaymentVerifier order={order} />;
   }
 
   // --- As ons hier kom, IS die status "processing" ---
   
-  // Kry kliënt-inligting (bly dieselfde)
+  // Kry kliënt-inligting
   let customerEmail: string | null = null;
   let customerName: string | null = null;
 
   if (order.user_id) {
-    const { data: profile } = await supabase
+    // Gebruik die standaard (user) kliënt om die ingetekende gebruiker se info te kry
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    // Gebruik die admin-kliënt om die profiel te kry
+    const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('full_name, email')
       .eq('id', order.user_id)
       .single<Pick<DbProfile, 'full_name' | 'email'>>();
     
-    const { data: { user } } = await supabase.auth.getUser();
-
     customerName = profile?.full_name || 'Britsie Kliënt';
     customerEmail = user?.email || profile?.email || null;
   } else {
