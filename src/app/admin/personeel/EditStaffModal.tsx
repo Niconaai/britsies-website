@@ -5,33 +5,58 @@ import { useState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import Image from 'next/image';
 import { updateStaffMember } from './actions';
-import type { DbStaffMember, DbStaffDepartment } from '@/types/supabase';
+// --- REGSTELLING 1: Voer die korrekte tipe in ---
+import type { DbStaffMember, DbStaffDepartment, StaffMemberWithDept } from '@/types/supabase';
 import FloatingLabelInputField from '@/components/ui/FloatingLabelInputField';
-import FloatingLabelSelectFieldCustom from '@/components/ui/FloatingLabelSelectFieldCustom';
-
-// --- REGSTELLING: Voer ons nuwe 'StaffImageUploader' in ---
 import StaffImageUploader from './StaffImageUploader';
-// --- EINDE VAN REGSTELLING ---
+
+// ... (CheckboxGroup bly dieselfde) ...
+const CheckboxGroup = ({
+  label,
+  options,
+  selectedValues,
+  onChange,
+}: {
+  label: string;
+  options: { value: string; label: string }[];
+  selectedValues: string[];
+  onChange: (value: string, isChecked: boolean) => void;
+}) => (
+  <div className="rounded-md border border-zinc-300 p-4 dark:border-zinc-600">
+    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">{label}</label>
+    <div className="mt-2 grid grid-cols-2 gap-2">
+      {options.map((option) => (
+        <label key={option.value} className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            name="department_ids"
+            value={option.value}
+            checked={selectedValues.includes(option.value)}
+            onChange={(e) => onChange(option.value, e.target.checked)}
+            className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span className="text-sm text-zinc-900 dark:text-white">{option.label}</span>
+        </label>
+      ))}
+    </div>
+  </div>
+);
 
 type EditStaffModalProps = {
-  staffMember: DbStaffMember;
+  // --- REGSTELLING 2: Gebruik die korrekte, volledige tipe ---
+  staffMember: StaffMemberWithDept; 
   departments: DbStaffDepartment[];
+  // staffDepartmentIds: string[]; // <-- Verwyder hierdie oorbodige prop
   onClose: () => void;
 };
 
-// Knoppie- en Oorleg-komponente
+// ... (LoadingOverlay en SaveButton bly dieselfde) ...
 function LoadingOverlay() {
   const { pending } = useFormStatus();
   if (!pending) return null;
   return (
     <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/70 dark:bg-zinc-800/70">
-      <Image
-        src="/CircleLoader.gif"
-        alt="Besig..."
-        width={60}
-        height={60}
-        unoptimized={true}
-      />
+      <Image src="/CircleLoader.gif" alt="Besig..." width={60} height={60} unoptimized={true} />
     </div>
   );
 }
@@ -48,25 +73,39 @@ function SaveButton() {
     </button>
   );
 }
-// Einde van sub-komponente
 
-export default function EditStaffModal({ staffMember, departments, onClose }: EditStaffModalProps) {
+export default function EditStaffModal({ 
+  staffMember, 
+  departments, 
+  onClose 
+}: EditStaffModalProps) {
+  
   const [formData, setFormData] = useState({
     full_name: staffMember.full_name || '',
     title: staffMember.title || '',
-    department_id: staffMember.department_id || '',
     image_url: staffMember.image_url || '',
     sort_order: staffMember.sort_order || 0,
     is_active: staffMember.is_active ?? true,
   });
 
-  // Maak seker die formAction sluit die modaal wanneer dit klaar is
+  // --- REGSTELLING 3: Inisialiseer state direk vanaf die 'staffMember'-prop ---
+  const [selectedDepts, setSelectedDepts] = useState<string[]>(
+    staffMember.staff_departments?.map(d => d.id) || []
+  );
+
+  useEffect(() => {
+    document.body.classList.add('overflow-hidden');
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, []);
+
   const updateAction = async (payload: FormData) => {
     await updateStaffMember(payload);
     onClose();
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -78,18 +117,25 @@ export default function EditStaffModal({ staffMember, departments, onClose }: Ed
     setFormData(prev => ({ ...prev, image_url: url }));
   };
 
-  const departmentOptions = [
-    { value: "", label: "Geen Departement" },
-    ...departments.map(d => ({ value: d.id, label: d.name }))
-  ];
+  const handleDeptChange = (value: string, isChecked: boolean) => {
+    setSelectedDepts(prev => {
+      if (isChecked) {
+        return [...prev, value];
+      } else {
+        return prev.filter(id => id !== value);
+      }
+    });
+  };
+
+  const departmentOptions = departments.map(d => ({ value: d.id, label: d.name }));
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl dark:bg-zinc-800"
+        className="relative w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl dark:bg-zinc-800 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-lg font-semibold dark:text-white">Wysig Personeellid</h3>
@@ -114,13 +160,14 @@ export default function EditStaffModal({ staffMember, departments, onClose }: Ed
             onChange={handleChange}
             required
           />
-          <FloatingLabelSelectFieldCustom
-            label="Departement"
-            name="department_id"
-            value={formData.department_id}
-            onChange={handleChange}
+          
+          <CheckboxGroup
+            label="Departemente"
             options={departmentOptions}
+            selectedValues={selectedDepts}
+            onChange={handleDeptChange}
           />
+          
           <FloatingLabelInputField
             label="Rang (Sort Order)"
             name="sort_order"
@@ -128,14 +175,12 @@ export default function EditStaffModal({ staffMember, departments, onClose }: Ed
             value={formData.sort_order}
             onChange={handleChange}
           />
-
-          {/* --- REGSTELLING: Gebruik die korrekte oplaaier --- */}
+          
           <StaffImageUploader
             currentImageUrl={formData.image_url}
             onUploadComplete={handleImageUpload}
           />
-          {/* --- EINDE VAN REGSTELLING --- */}
-
+          
           <div className="flex items-center">
             <input
               id="is_active_edit"

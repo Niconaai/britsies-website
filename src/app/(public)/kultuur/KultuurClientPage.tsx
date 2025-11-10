@@ -1,12 +1,12 @@
-// src/app/(public)/koshuis/KoshuisClientPage.tsx
+// src/app/(public)/kultuur/KultuurClientPage.tsx
 'use client';
 
 import React from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import type { StaffMemberWithDept } from "@/types/supabase";
-import KoshuisPakketAd from "../KoshuisPakketAd";
+import type { DbCultureActivity } from "@/types/supabase";
+import type { OrganiserWithDetails } from "./page"; // Voer in vanaf ons page.tsx
 
 // Animasie-variant
 const fadeInUp = {
@@ -14,27 +14,60 @@ const fadeInUp = {
     animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-// 'n Sub-komponent om 'n personeellid-profielkaart te vertoon
-const StaffProfileCard = ({ person }: { person: StaffMemberWithDept }) => (
-    <div className="flex flex-col items-center text-center">
-        <div className="relative h-48 w-40 overflow-hidden rounded-lg shadow-md">
+// --- Sub-komponente vir hierdie bladsy ---
+
+// 1. Kaart vir 'n Kultuur-aktiwiteit
+const CultureActivityCard = ({ activity }: { activity: DbCultureActivity }) => (
+    <motion.div
+        variants={fadeInUp}
+        className="flex flex-col overflow-hidden rounded-lg bg-white shadow-lg transition-all duration-300 hover:shadow-xl"
+    >
+        <div className="relative h-48 w-full bg-zinc-100">
             <Image
-                src={person.image_url || '/wapen.png'}
-                alt={person.full_name}
+                src={activity.icon_url || '/wapen.png'}
+                alt={activity.name}
                 fill
-                className="object-cover"
+                className="object-contain p-6" // 'contain' vir ikone
             />
         </div>
-        <h3 className="mt-4 text-lg font-semibold text-rose-900">{person.full_name}</h3>
-        <p className="text-sm text-zinc-600">{person.title}</p>
-    </div>
+        <div className="flex-1 p-6">
+            <h3 className="text-xl font-bold text-rose-900">{activity.name}</h3>
+            <p className="mt-3 text-sm text-zinc-600">
+                {activity.description || 'Meer inligting binnekort beskikbaar.'}
+            </p>
+        </div>
+    </motion.div>
 );
 
-// Die hoof Kliënt-komponent
-export default function KoshuisClientPage({
-    koshuisPersoneel
+// 2. Kaart vir 'n Organiseerder
+const OrganiserCard = ({ person }: { person: OrganiserWithDetails }) => {
+    const name = person.staff_members?.full_name;
+    const title = '';//person.staff_members?.title;
+    const imageUrl = person.staff_members?.image_url || '/wapen.png'; 
+
+    return (
+        <div className="flex flex-col items-center text-center">
+            <div className="relative h-48 w-40 overflow-hidden rounded-lg shadow-md">
+                <Image
+                    src={imageUrl}
+                    alt={name || 'Personeelfoto'}
+                    fill
+                    className="object-cover"
+                />
+            </div>
+            <h3 className="mt-4 text-lg font-semibold text-rose-900">{title} {name}</h3>
+            <p className="text-sm text-zinc-600">{person.role} ({person.culture_activities?.name})</p>
+        </div>
+    );
+};
+
+// --- Die hoof Kliënt-komponent ---
+export default function KultuurClientPage({
+    activities,
+    organisers
 }: {
-    koshuisPersoneel: StaffMemberWithDept[];
+    activities: DbCultureActivity[];
+    organisers: OrganiserWithDetails[];
 }) {
 
     return (
@@ -48,8 +81,8 @@ export default function KoshuisClientPage({
                 transition={{ duration: 0.5 }}
             >
                 <Image
-                    src="/wapen.jpg" // Placeholder
-                    alt="Hoërskool Brits Koshuis"
+                    src="/wapen.jpg" // Placeholder: Ons kort 'n goeie kultuur-foto
+                    alt="Hoërskool Brits Kultuur"
                     fill
                     className="object-cover opacity-30"
                     priority
@@ -62,15 +95,15 @@ export default function KoshuisClientPage({
                     initial="initial"
                 >
                     <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}>
-                        WR Joyce Koshuis
+                        Kultuur
                     </h1>
                     <p className="mt-6 text-xl text-zinc-100" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>
-                        'n Tuiste weg van die huis.
+                        Ons Hartklop en Siel
                     </p>
                 </motion.div>
             </motion.section>
 
-            {/* --- 2. KOSHUIS-INLIGTING SEKSIE --- */}
+            {/* --- 2. KULTUUR-ETOS --- */}
             <motion.section
                 className="bg-white py-16 sm:py-24"
                 variants={fadeInUp}
@@ -81,43 +114,47 @@ export default function KoshuisClientPage({
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="prose prose-lg prose-zinc mx-auto max-w-3xl text-center prose-strong:text-rose-900 prose-h2:text-rose-900">
                         <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-rose-900">
-                            Welkom by WR Joyce Koshuis
+                            Ons Kulturele Doelwit
                         </h2>
                         <p className="mt-6 leading-8 text-zinc-700">
-                            Ons koshuis bied 'n veilige, ondersteunende en gedissiplineerde omgewing waar leerders kan floreer. Met moderne fasiliteite, gebalanseerde etes, en toegewyde personeel, verseker ons dat elke koshuisleerder soos deel van die familie voel.
+                            By Hoërskool Brits is kultuur die platform waar elke leerder 'n stem vind. Ons moedig kreatiwiteit, selfvertroue en spanwerk aan deur 'n wye verskeidenheid aktiwiteite wat beide die individu en die groep laat groei.
                         </p>
                     </div>
                 </div>
             </motion.section>
 
-            {/* --- 3. DIE ALLES-IN-EEN-PAKKET --- */}
-            <section
+            {/* --- 3. ONS KULTUUR-AKTIWITEITE --- */}
+            <motion.section
                 className="bg-zinc-50 py-16 sm:py-24"
+                variants={fadeInUp}
+                initial="initial"
+                whileInView="animate"
+                viewport={{ once: true, amount: 0.2 }}
             >
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <KoshuisPakketAd />
+                    <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl mb-16">
+                        Ons Kultuur-aanbod
+                    </h2>
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                        {activities.map((activity) => (
+                            <CultureActivityCard key={activity.id} activity={activity} />
+                        ))}
+                    </div>
                 </div>
-            </section>
+            </motion.section>
 
-            {/* --- 4. KOSHUISPERSONEEL SEKSIE --- */}
-            {koshuisPersoneel.length > 0 && (
+            {/* --- 4. ORGANISEERDERS --- */}
+            {organisers.length > 0 && (
                 <section className="bg-white py-16 sm:py-24">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                        <motion.div
-                            variants={fadeInUp}
-                            initial="initial"
-                            whileInView="animate"
-                            viewport={{ once: true, amount: 0.3 }}
-                        >
-                            <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
-                                Ontmoet die Koshuispersoneel
-                            </h2>
-                            <div className="mt-16 grid grid-cols-2 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
-                                {koshuisPersoneel.map((person) => (
-                                    <StaffProfileCard key={person.id} person={person} />
-                                ))}
-                            </div>
-                        </motion.div>
+                        <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl mb-16">
+                            Ons Kultuur-organiseerders
+                        </h2>
+                        <div className="grid grid-cols-2 gap-y-12 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                            {organisers.map((person) => (
+                                <OrganiserCard key={person.id} person={person} />
+                            ))}
+                        </div>
                     </div>
                 </section>
             )}
@@ -150,7 +187,6 @@ export default function KoshuisClientPage({
                     </div>
                 </motion.div>
             </section>
-
         </div>
     );
 }

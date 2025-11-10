@@ -1,7 +1,7 @@
 // src/app/admin/personeel/StaffManagementClient.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition, FormEvent } from 'react';
 import Image from 'next/image';
 import { 
   createDepartment, 
@@ -10,18 +10,46 @@ import {
   deleteStaffMember 
 } from './actions';
 import FloatingLabelInputField from '@/components/ui/FloatingLabelInputField';
-import FloatingLabelSelectFieldCustom from '@/components/ui/FloatingLabelSelectFieldCustom';
-
-// --- REGSTELLING 1: Voer die korrekte oplaaier in ---
-import StaffImageUploader from './StaffImageUploader'; 
+import StaffImageUploader from './StaffImageUploader';
 import EditStaffModal from './EditStaffModal';
 import type { 
   DbStaffDepartment,
-  StaffMemberWithDept,
+  StaffMemberWithDept, // <-- Die korrekte, volledige tipe
   DbStaffMember 
 } from '@/types/supabase';
 
-// 'n Eenvoudige 'Submit' knoppie
+// ... (CheckboxGroup en SubmitButton bly dieselfde) ...
+const CheckboxGroup = ({
+  label,
+  options,
+  selectedValues,
+  onChange,
+}: {
+  label: string;
+  options: { value: string; label: string }[];
+  selectedValues: string[];
+  onChange: (value: string, isChecked: boolean) => void;
+}) => (
+  <div className="rounded-md border border-zinc-300 p-4 dark:border-zinc-600">
+    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">{label}</label>
+    <div className="mt-2 grid grid-cols-2 gap-2">
+      {options.map((option) => (
+        <label key={option.value} className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            name="department_ids"
+            value={option.value}
+            checked={selectedValues.includes(option.value)}
+            onChange={(e) => onChange(option.value, e.target.checked)}
+            className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span className="text-sm text-zinc-900 dark:text-white">{option.label}</span>
+        </label>
+      ))}
+    </div>
+  </div>
+);
+
 const SubmitButton = ({ text, isLoading }: { text: string, isLoading: boolean }) => {
   return (
     <button
@@ -52,71 +80,68 @@ export default function StaffManagementClient({
   initialStaff: StaffMemberWithDept[];
 }) {
 
-  const [editingStaff, setEditingStaff] = useState<DbStaffMember | null>(null);
+  // --- REGSTELLING 1: Gebruik die korrekte, volledige tipe ---
+  const [editingStaff, setEditingStaff] = useState<StaffMemberWithDept | null>(null);
+  
+  const [isCreatingDept, setIsCreatingDept] = useTransition();
+  const [isCreatingStaff, setIsCreatingStaff] = useTransition();
 
-  // --- REGSTELLING 2: State vir laai-status ---
-  const [isCreatingDept, setIsCreatingDept] = useState(false);
-  const [isCreatingStaff, setIsCreatingStaff] = useState(false);
-
-  // --- Departement Vorm State ---
+  // ... (Al die 'useState' hake vir vorms bly dieselfde) ...
   const [deptName, setDeptName] = useState('');
   const [deptSort, setDeptSort] = useState(0);
-
-  // --- Personeel Vorm State ---
   const [staffName, setStaffName] = useState('');
   const [staffTitle, setStaffTitle] = useState('');
-  const [staffDept, setStaffDept] = useState('');
   const [staffSort, setStaffSort] = useState(0);
   const [staffImage, setStaffImage] = useState('');
   const [staffActive, setStaffActive] = useState(true);
+  const [staffDepts, setStaffDepts] = useState<string[]>([]);
   
   const departmentOptions = initialDepartments.map(d => ({ value: d.id, label: d.name }));
   
-  const departmentSelectOptions = [
-    { value: "", label: "Geen Departement" },
-    ...departmentOptions
-  ];
-
-  // --- REGSTELLING 3: Vorm-hantering en terugstel ---
-  const handleCreateDept = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleDeptChange = (value: string, isChecked: boolean) => {
+    setStaffDepts(prev => {
+      if (isChecked) {
+        return [...prev, value];
+      } else {
+        return prev.filter(id => id !== value);
+      }
+    });
+  };
+  
+  const handleCreateDept = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsCreatingDept(true);
-    
     const formData = new FormData(e.currentTarget);
-    await createDepartment(formData);
     
-    // Stel vorm terug
-    setDeptName('');
-    setDeptSort(0);
-    setIsCreatingDept(false);
+    setIsCreatingDept(async () => {
+      await createDepartment(formData);
+      setDeptName('');
+      setDeptSort(0);
+    });
   };
 
-  const handleCreateStaff = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCreateStaff = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsCreatingStaff(true);
-    
     const formData = new FormData(e.currentTarget);
-    formData.append('image_url', staffImage); // Voeg die prent-URL by
+    formData.append('image_url', staffImage);
     
-    await createStaffMember(formData);
-    
-    // Stel vorm terug
-    setStaffName('');
-    setStaffTitle('');
-    setStaffDept('');
-    setStaffSort(0);
-    setStaffImage('');
-    setStaffActive(true);
-    setIsCreatingStaff(false);
+    setIsCreatingStaff(async () => {
+      await createStaffMember(formData);
+      setStaffName('');
+      setStaffTitle('');
+      setStaffDepts([]);
+      setStaffSort(0);
+      setStaffImage('');
+      setStaffActive(true);
+    });
   };
-  // --- EINDE VAN REGSTELLING 3 ---
 
   return (
     <>
       {editingStaff && (
         <EditStaffModal
-          staffMember={editingStaff}
+          staffMember={editingStaff} // <-- REGSTELLING 2: Stuur die volle 'StaffMemberWithDept' objek
           departments={initialDepartments}
+          // staffDepartmentIds={...} // <-- REGSTELLING 3: Hierdie prop is nou oorbodig en verwyder
           onClose={() => setEditingStaff(null)}
         />
       )}
@@ -128,8 +153,8 @@ export default function StaffManagementClient({
           {/* Nuwe Personeellid Vorm */}
           <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
             <h3 className="text-lg font-semibold dark:text-white">Skep Nuwe Personeellid</h3>
-            {/* --- REGSTELLING 4: Gebruik onSubmit --- */}
             <form onSubmit={handleCreateStaff} className="mt-4 space-y-4">
+              <input type="hidden" name="image_url" value={staffImage} />
               <FloatingLabelInputField
                 label="Volle Naam"
                 name="full_name"
@@ -144,13 +169,14 @@ export default function StaffManagementClient({
                 onChange={(e) => setStaffTitle(e.target.value)}
                 required
               />
-              <FloatingLabelSelectFieldCustom
-                label="Departement"
-                name="department_id"
-                value={staffDept}
-                onChange={(e) => setStaffDept(e.target.value)}
-                options={departmentSelectOptions}
+              
+              <CheckboxGroup
+                label="Departemente"
+                options={departmentOptions}
+                selectedValues={staffDepts}
+                onChange={handleDeptChange}
               />
+              
               <FloatingLabelInputField
                 label="Rang (Sort Order)"
                 name="sort_order"
@@ -159,7 +185,6 @@ export default function StaffManagementClient({
                 onChange={(e) => setStaffSort(Number(e.target.value))}
               />
               
-              {/* --- REGSTELLING 5: Gebruik die nuwe oplaaier --- */}
               <StaffImageUploader 
                 currentImageUrl={staffImage} 
                 onUploadComplete={setStaffImage} 
@@ -194,14 +219,18 @@ export default function StaffManagementClient({
                     <div>
                       <p className="font-medium text-zinc-900 dark:text-white">{staff.full_name}</p>
                       <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                        {staff.title} ({staff.staff_departments?.name || 'Geen Dept.'})
+                        {staff.title} 
+                        ({staff.staff_departments && staff.staff_departments.length > 0 
+                          ? staff.staff_departments.map(d => d.name).join(', ') 
+                          : 'Geen Dept.'})
                       </p>
                     </div>
                   </div>
                   <div className="flex gap-2">
                     <button 
                       type="button"
-                      onClick={() => setEditingStaff(staff as DbStaffMember)}
+                      // --- REGSTELLING 4: Verwyder die slegte tipe-omskakeling ---
+                      onClick={() => setEditingStaff(staff)}
                       className="text-xs text-blue-600 hover:text-blue-800"
                     >
                       Wysig
@@ -217,12 +246,10 @@ export default function StaffManagementClient({
           </div>
         </div>
 
-        {/* --- KOLOM 2: Bestuur Departemente --- */}
+        {/* --- KOLOM 2: Bestuur Departemente (Onveranderd) --- */}
         <div className="lg:col-span-1 space-y-6">
-          {/* Nuwe Departement Vorm */}
           <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
             <h3 className="text-lg font-semibold dark:text-white">Skep Nuwe Departement</h3>
-            {/* --- REGSTELLING 6: Gebruik onSubmit --- */}
             <form onSubmit={handleCreateDept} className="mt-4 space-y-4">
               <FloatingLabelInputField
                 label="Departement Naam"
@@ -241,8 +268,6 @@ export default function StaffManagementClient({
               <SubmitButton text="Skep Departement" isLoading={isCreatingDept} />
             </form>
           </div>
-          
-          {/* Lys van Bestaande Departemente */}
           <div>
             <h3 className="text-lg font-semibold dark:text-white">Bestaande Departemente</h3>
             <ul className="mt-4 divide-y divide-zinc-200 dark:divide-zinc-700">
@@ -250,7 +275,6 @@ export default function StaffManagementClient({
                 <li key={dept.id} className="flex items-center justify-between py-2">
                   <span className="font-medium dark:text-zinc-300">{dept.name} (Rang: {dept.sort_order})</span>
                   <div className="flex gap-2">
-                    {/* TODO: Wysig-knoppie vir departemente */}
                     <form action={deleteDepartment}>
                       <input type="hidden" name="id" value={dept.id} />
                       <button type="submit" className="text-xs text-red-600 hover:text-red-800">Skrap</button>

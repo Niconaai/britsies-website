@@ -265,7 +265,7 @@ export type DbStaffDepartment = {
 export type DbStaffMember = {
   id: string;
   created_at: string;
-  department_id: string | null;
+  //department_id: string | null;
   full_name: string;
   title: string | null;
   image_url: string | null;
@@ -273,10 +273,17 @@ export type DbStaffMember = {
   is_active: boolean | null;
 };
 
+export type DbStaffMemberDepartment = {
+  staff_member_id: string;
+  department_id: string;
+};
+
 export type StaffMemberWithDept = DbStaffMember & {
   staff_departments: {
+    id: string;
     name: string;
-  } | null;
+    sort_order: number | null;
+  }[] | null;
 };
 // --- EINDE PERSONEEL MODULE TIPES ---
 
@@ -323,3 +330,24 @@ export type DbSportAchievement = {
   is_active: boolean | null;
 };
 // --- EINDE SPORT MODULE TIPES ---
+
+// --- BEGIN KULTUUR MODULE TIPES ---
+export type DbCultureActivity = {
+  id: string;
+  created_at: string;
+  name: string;
+  icon_url: string | null;
+  description: string | null;
+  sort_order: number | null;
+  is_active: boolean | null;
+};
+
+export type DbCultureOrganiser = {
+  id: string;
+  created_at: string;
+  activity_id: string;
+  staff_member_id: string;
+  role: string | null;
+  is_active: boolean | null;
+};
+// --- EINDE KULTUUR MODULE TIPES ---

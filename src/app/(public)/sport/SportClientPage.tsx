@@ -23,7 +23,7 @@ const SportTypeCard = ({ sport }: { sport: DbSportType }) => (
         variants={fadeInUp}
         className="flex flex-col overflow-hidden rounded-lg bg-white shadow-lg transition-all duration-300 hover:shadow-xl"
     >
-        <div className="relative h-48 w-full bg-zinc-100">
+        <div className="relative h-108 w-full bg-zinc-100">
             <Image
                 src={sport.icon_url || '/wapen.png'}
                 alt={sport.name}
@@ -41,12 +41,11 @@ const SportTypeCard = ({ sport }: { sport: DbSportType }) => (
     </motion.div>
 );
 
-// --- REGSTELLING: Hernoem na Organiseerder-kaart ---
 // 2. Kaart vir 'n Organiseerder
 const OrganiserCard = ({ person }: { person: OrganiserWithDetails }) => {
     // Gebruik personeel-data indien beskikbaar, anders val terug na eksterne naam
     const name = person.staff_members?.full_name || person.external_coach_name;
-    const title = person.staff_members?.title || person.role; // Gebruik personeel se titel (Mnr/Mev)
+    const title = '';//person.staff_members?.title || person.role; // Gebruik personeel se titel (Mnr/Mev)
     const imageUrl = person.staff_members?.image_url || '/wapen.png'; 
 
     return (
@@ -64,7 +63,6 @@ const OrganiserCard = ({ person }: { person: OrganiserWithDetails }) => {
         </div>
     );
 };
-// --- EINDE VAN REGSTELLING ---
 
 // 3. Modaal vir Prestasies
 const AchievementModal = ({ imageUrl, alt, onClose }: { imageUrl: string, alt: string, onClose: () => void }) => (
@@ -142,7 +140,7 @@ export default function SportClientPage({
                     initial="initial"
                 >
                     <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}>
-                        Sport by die Britsies
+                        Sport
                     </h1>
                     <p className="mt-6 text-xl text-zinc-100" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>
                         Waar Karakter op die Veld Gebou Word

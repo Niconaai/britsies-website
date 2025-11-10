@@ -4,6 +4,8 @@
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+// REGSTELLING: Ons benodig die admin-kliënt vir transaksie-tipe operasies
+import { createClient as createAdminClient } from '@supabase/supabase-js';
 
 // Hulpfunksie om admin-status te kontroleer
 async function checkAdminAuth() {
@@ -20,25 +22,26 @@ async function checkAdminAuth() {
   if (profile?.role !== 'admin') {
     throw new Error("Not authorized");
   }
-  return supabase;
+  // Belangrik: Ons het die Service Role-kliënt nodig vir multi-tabel skryf-aksies
+  const supabaseAdmin = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+  return supabaseAdmin;
 }
 
+// Hulpfunksie om paaie te herlaai
 const revalidate = () => {
   revalidatePath('/admin/personeel');
   revalidatePath('/oor-ons');
   revalidatePath('/akademie');
+  revalidatePath('/koshuis'); // Voeg koshuis ook by
 }
 
-// --- Departement Aksies ---
+// --- Departement Aksies (Bly onveranderd) ---
 
 export async function createDepartment(formData: FormData) {
-  let supabase;
-  try {
-    supabase = await checkAdminAuth();
-  } catch (error) {
-    return redirect('/login');
-  }
-
+  const supabase = await checkAdminAuth();
   const name = formData.get('name') as string;
   const sort_order = parseInt(formData.get('sort_order') as string, 10) || 0;
 
@@ -56,54 +59,17 @@ export async function createDepartment(formData: FormData) {
   revalidate();
 }
 
-export async function updateDepartment(formData: FormData) {
-  let supabase;
-  try {
-    supabase = await checkAdminAuth();
-  } catch (error) {
-    return redirect('/login');
-  }
-
-  const id = formData.get('id') as string;
-  const name = formData.get('name') as string;
-  const sort_order = parseInt(formData.get('sort_order') as string, 10) || 0;
-
-  if (!id || !name) {
-    return redirect('/admin/personeel?error=ID en Naam word vereis vir opdatering.');
-  }
-
-  const { error } = await supabase
-    .from('staff_departments')
-    .update({ name, sort_order })
-    .eq('id', id);
-
-  if (error) {
-    return redirect(`/admin/personeel?error=${encodeURIComponent(error.message)}`);
-  }
-  revalidate();
-}
-
 export async function deleteDepartment(formData: FormData) {
-  let supabase;
-  try {
-    supabase = await checkAdminAuth();
-  } catch (error) {
-    return redirect('/login');
-  }
-
+  const supabase = await checkAdminAuth();
   const id = formData.get('id') as string;
   if (!id) {
     return redirect('/admin/personeel?error=ID word vereis vir skrapping.');
   }
-
-  // Oordink: Wat gebeur met personeel in 'n departement wat geskrap word?
-  // Ons DB-skema (ON DELETE SET NULL) sal hul 'department_id' na 'null' stel.
-  // Dit is die korrekte gedrag.
 
   const { error } = await supabase
     .from('staff_departments')
     .delete()
-    .eq('id', id);
+    .eq('id', id); // Sal 'on delete cascade' in 'staff_member_departments' aktiveer
 
   if (error) {
     return redirect(`/admin/personeel?error=${encodeURIComponent(error.message)}`);
@@ -111,23 +77,19 @@ export async function deleteDepartment(formData: FormData) {
   revalidate();
 }
 
-// --- Personeellid Aksies ---
+// --- Personeellid Aksies (OPGEDATEER) ---
 
 export async function createStaffMember(formData: FormData) {
-  let supabase;
-  try {
-    supabase = await checkAdminAuth();
-  } catch (error) {
-    return redirect('/login');
-  }
+  const supabase = await checkAdminAuth(); // Gebruik nou die admin-kliënt
 
-  const department_id = formData.get('department_id') as string;
-  
+  // 1. Kry al die departement-ID's wat gekies is
+  const departmentIds = formData.getAll('department_ids') as string[];
+
+  // 2. Skep die personeellid-data
   const staffData = {
     full_name: formData.get('full_name') as string,
     title: formData.get('title') as string,
     image_url: formData.get('image_url') as string || null,
-    department_id: department_id === "" ? null : department_id,
     sort_order: parseInt(formData.get('sort_order') as string, 10) || 0,
     is_active: formData.get('is_active') === 'on',
   };
@@ -136,69 +98,115 @@ export async function createStaffMember(formData: FormData) {
     return redirect('/admin/personeel?error=Volle Naam en Titel word vereis.');
   }
 
-  const { error } = await supabase.from('staff_members').insert(staffData);
+  // 3. Voeg die personeellid by en kry hul nuwe ID terug
+  const { data: newStaffMember, error: staffError } = await supabase
+    .from('staff_members')
+    .insert(staffData)
+    .select('id')
+    .single();
 
-  if (error) {
-    return redirect(`/admin/personeel?error=${encodeURIComponent(error.message)}`);
+  if (staffError || !newStaffMember) {
+    return redirect(`/admin/personeel?error=${encodeURIComponent(staffError?.message || "Kon nie personeellid skep nie")}`);
   }
+
+  const newStaffId = newStaffMember.id;
+
+  // 4. Skep die koppel-inskrywings
+  if (departmentIds.length > 0) {
+    const linksToInsert = departmentIds.map(deptId => ({
+      staff_member_id: newStaffId,
+      department_id: deptId,
+    }));
+
+    const { error: linksError } = await supabase
+      .from('staff_member_departments')
+      .insert(linksToInsert);
+
+    if (linksError) {
+      // Probeer om die wees-personeellid te skrap vir opruiming
+      await supabase.from('staff_members').delete().eq('id', newStaffId);
+      return redirect(`/admin/personeel?error=${encodeURIComponent(linksError.message)}`);
+    }
+  }
+
   revalidate();
 }
 
 export async function updateStaffMember(formData: FormData) {
-  let supabase;
-  try {
-    supabase = await checkAdminAuth();
-  } catch (error) {
-    return redirect('/login');
-  }
+  const supabase = await checkAdminAuth(); // Gebruik nou die admin-kliënt
   
   const id = formData.get('id') as string;
-  const department_id = formData.get('department_id') as string;
-
   if (!id) {
     return redirect('/admin/personeel?error=Personeel ID word vermis.');
   }
-  
+
+  // 1. Kry al die nuwe departement-ID's
+  const departmentIds = formData.getAll('department_ids') as string[];
+
+  // 2. Skep die personeellid-data
   const staffData = {
     full_name: formData.get('full_name') as string,
     title: formData.get('title') as string,
     image_url: formData.get('image_url') as string || null,
-    department_id: department_id === "" ? null : department_id,
     sort_order: parseInt(formData.get('sort_order') as string, 10) || 0,
     is_active: formData.get('is_active') === 'on',
   };
 
   if (!staffData.full_name || !staffData.title) {
-    return redirect('/admin/personeel?error=Volle Naam en Titel word vereis.');
+    return redirect(`/admin/personeel?error=Volle Naam en Titel word vereis.`);
   }
 
-  const { error } = await supabase
+  // 3. Dateer die 'staff_members'-tabel op
+  const { error: staffError } = await supabase
     .from('staff_members')
     .update(staffData)
     .eq('id', id);
 
-  if (error) {
-    return redirect(`/admin/personeel?error=${encodeURIComponent(error.message)}`);
+  if (staffError) {
+    return redirect(`/admin/personeel?error=${encodeURIComponent(staffError.message)}`);
   }
+
+  // 4. Dateer die koppel-tabel op (Delete all, then Insert all)
+  
+  // 4a. Skrap alle bestaande koppelings
+  const { error: deleteError } = await supabase
+    .from('staff_member_departments')
+    .delete()
+    .eq('staff_member_id', id);
+
+  if (deleteError) {
+     return redirect(`/admin/personeel?error=Kon nie ou departemente skrap nie: ${encodeURIComponent(deleteError.message)}`);
+  }
+
+  // 4b. Voeg die nuwe koppelings by
+  if (departmentIds.length > 0) {
+    const linksToInsert = departmentIds.map(deptId => ({
+      staff_member_id: id,
+      department_id: deptId,
+    }));
+
+    const { error: linksError } = await supabase
+      .from('staff_member_departments')
+      .insert(linksToInsert);
+
+    if (linksError) {
+      return redirect(`/admin/personeel?error=Kon nie nuwe departemente koppel nie: ${encodeURIComponent(linksError.message)}`);
+    }
+  }
+
   revalidate();
 }
 
 export async function deleteStaffMember(formData: FormData) {
-  let supabase;
-  try {
-    supabase = await checkAdminAuth();
-  } catch (error) {
-    return redirect('/login');
-  }
-
+  const supabase = await checkAdminAuth();
   const id = formData.get('id') as string;
   if (!id) {
     return redirect('/admin/personeel?error=ID word vereis vir skrapping.');
   }
   
-  // TODO: Ons moet dalk ook die prent uit Supabase Storage skrap.
-  // Vir nou, skrap ons net die databasis-inskrywing.
-
+  // Ons hoef net die personeellid te skrap.
+  // Die `ON DELETE CASCADE` op die 'staff_member_departments'-tabel
+  // sal outomaties al die koppelings skrap.
   const { error } = await supabase
     .from('staff_members')
     .delete()

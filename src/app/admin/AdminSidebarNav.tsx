@@ -19,7 +19,8 @@ const applicationLinks = [
 const contentLinks = [
   { name: 'Nuus Bestuur (CMS)', href: '/admin/news' },
   { name: 'Personeelbestuur', href: '/admin/personeel' },
-  { name: 'Sportbestuur', href: '/admin/sport' }, // <-- NUWE SKAKEL
+  { name: 'Sportbestuur', href: '/admin/sport' },
+  { name: 'Kultuurbestuur', href: '/admin/kultuur' }, // <-- NUWE SKAKEL
 ];
 // --- EINDE VAN OPDATERING ---
 
@@ -76,7 +77,6 @@ export default function AdminSidebarNav() {
               </ul>
             </li>
             
-            {/* --- OPGEDATEER --- */}
             <li className="mt-6">
               <div className="text-xs font-semibold leading-6 text-zinc-400">
                 WEBWERF INHOUD
@@ -91,7 +91,6 @@ export default function AdminSidebarNav() {
                 ))}
               </ul>
             </li>
-            {/* --- EINDE VAN OPDATERING --- */}
 
             <li className="mt-6">
               <div className="text-xs font-semibold leading-6 text-zinc-400">

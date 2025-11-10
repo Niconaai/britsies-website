@@ -13,25 +13,30 @@ export const metadata: Metadata = {
 export default async function KoshuisPage() {
     const supabase = await createClient();
 
-    // 1. Gaan haal slegs koshuispersoneel
+    // --- REGSTELLING: Opgedateerde "Baie-tot-Baie" Navraag ---
+    // 1. Gaan haal slegs personeel wat 'n 'inner' join het op die departement-tabel
+    //    waar daardie departement se naam 'Koshuispersoneel' is.
     const { data: personeel, error } = await supabase
         .from('staff_members')
         .select(`
             *,
-            staff_departments ( name )
+            staff_departments!inner ( id, name )
         `)
         .eq('is_active', true)
-        .eq('staff_departments.name', 'Koshuispersoneel') // Filter op departement
+        .eq('staff_departments.name', 'Koshuispersoneel') // Hierdie filter werk nou korrek saam met '!inner'
         .order('sort_order');
+    // --- EINDE VAN REGSTELLING ---
 
     if (error) {
         console.error("Fout met laai van koshuispersoneel:", error);
     }
 
-    // 2. Stuur die data na die kliënt-komponent
+    // Ons hoef nie meer hier te filtreer nie, die databasis het dit reeds gedoen.
+    const koshuisPersoneel = (personeel as StaffMemberWithDept[]) || [];
+
     return (
         <KoshuisClientPage 
-            koshuisPersoneel={(personeel as StaffMemberWithDept[]) || []}
+            koshuisPersoneel={koshuisPersoneel}
         />
     );
 }
