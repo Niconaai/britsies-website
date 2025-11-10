@@ -104,7 +104,7 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
   return (
     <div className="flex flex-col">
       {/* --- 1. HERO SEKSIE --- */}
-      <section className="relative flex h-[60vh] min-h-[400px] w-full items-center justify-center bg-zinc-800 text-white overflow-hidden px-4">
+      <section className="relative flex h-[70vh] min-h-[400px] w-full items-center justify-center bg-zinc-800 text-white overflow-hidden px-4">
         <Image
           src={HERO_FALLBACK_IMAGE_URL}
           alt="Hoërskool Brits Kampus"

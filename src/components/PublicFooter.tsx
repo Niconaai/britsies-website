@@ -71,6 +71,7 @@ export default function PublicFooter() {
                             <FooterLink href="/winkel">Britsie Winkel</FooterLink>
                             <FooterLink href="/login">Admin</FooterLink>
                             <FooterLink href="https://kruinlegendes.co.za/">Die Kruin Legendes</FooterLink>
+                            <FooterLink href="#">Vakature</FooterLink>
                         </ul>
                     </div>
 

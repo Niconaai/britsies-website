@@ -50,7 +50,7 @@ const OrganiserCard = ({ person }: { person: OrganiserWithDetails }) => {
 
     return (
         <div className="flex flex-col items-center text-center">
-            <div className="relative h-48 w-40 overflow-hidden rounded-lg shadow-md">
+           <div className="relative h-76 w-54 md:h-88 md:w-66 overflow-hidden rounded-lg shadow-md">
                 <Image
                     src={imageUrl}
                     alt={name || 'Personeelfoto'}
@@ -234,7 +234,7 @@ export default function SportClientPage({
                         <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl mb-16">
                             Ons Sportorganiseerders
                         </h2>
-                        <div className="grid grid-cols-2 gap-y-12 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                        <div className="mt-16 grid grid-cols-2 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
                             {organisers.map((coach) => (
                                 <OrganiserCard key={coach.id} person={coach} />
                             ))}

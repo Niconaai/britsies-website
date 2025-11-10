@@ -16,7 +16,7 @@ const fadeInUp = {
 // 'n Sub-komponent om 'n personeellid-profielkaart te vertoon
 const StaffProfileCard = ({ person }: { person: StaffMemberWithDept }) => (
   <div className="flex flex-col items-center text-center">
-    <div className="relative h-48 w-40 overflow-hidden rounded-lg shadow-md">
+    <div className="relative h-76 w-54 md:h-88 md:w-66 overflow-hidden rounded-lg shadow-md">
       <Image
         src={person.image_url || '/wapen.png'}
         alt={person.full_name}
@@ -55,7 +55,7 @@ export default function OorOnsClientPage({
           className="object-cover opacity-30"
           priority
         />
-        <div className="absolute inset-0 bg-rose-900/40 z-5"></div>
+        <div className="absolute inset-0 bg-rose-900/0 z-5"></div>
         <motion.div
           className="relative z-20 mx-auto max-w-4xl text-center"
           variants={fadeInUp}
@@ -81,7 +81,7 @@ export default function OorOnsClientPage({
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="prose prose-lg prose-zinc mx-auto max-w-3xl text-center prose-strong:text-rose-900 prose-h2:text-rose-900">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-rose-900">
               Ons Visie & Missie
             </h2>
             <p className="mt-6 leading-8 text-zinc-700">
@@ -97,8 +97,6 @@ export default function OorOnsClientPage({
       {/* --- 3. LEIERSKAP SEKSIE --- */}
       <section className="bg-zinc-50 py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          
-          {/* Afdeling 3a: Skoolbestuur */}
           {bestuurPersoneel.length > 0 && (
             <motion.div
               variants={fadeInUp}
@@ -107,7 +105,7 @@ export default function OorOnsClientPage({
               viewport={{ once: true, amount: 0.3 }}
             >
               <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
-                Ontmoet die Skoolbestuur
+                Skoolbestuur
               </h2>
               <div className="mt-16 grid grid-cols-2 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
                 {bestuurPersoneel.map((person) => (
@@ -116,8 +114,6 @@ export default function OorOnsClientPage({
               </div>
             </motion.div>
           )}
-
-          {/* Afdeling 3b: Beheerliggaam */}
           {beheerliggaamPersoneel.length > 0 && (
             <motion.div
               className="mt-20"
@@ -127,7 +123,7 @@ export default function OorOnsClientPage({
               viewport={{ once: true, amount: 0.3 }}
             >
               <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
-                Ons Beheerliggaam
+                Beheerliggaam
               </h2>
               <div className="mt-16 grid grid-cols-2 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
                 {beheerliggaamPersoneel.map((person) => (
@@ -139,7 +135,7 @@ export default function OorOnsClientPage({
         </div>
       </section>
 
-      {/* --- 4. GESKIEDENIS SEKSIE (Opgedateer vir portret-prent) --- */}
+      {/* --- 4. GESKIEDENIS SEKSIE (REGSTELLING: Volle teks herstel) --- */}
       <motion.section
           className="bg-white py-16 sm:py-24"
           variants={fadeInUp}
@@ -161,14 +157,14 @@ export default function OorOnsClientPage({
                           />
                       </div>
                       <div className="prose prose-lg prose-zinc prose-h2:text-rose-900">
-                          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-rose-900">
                               Ons Ryke Geskiedenis
                           </h2>
                           <p className="mt-6 leading-8 text-zinc-700">
-                              Sedert 1910 het 'n tweemanskooltjie vir primêre onderwys naby Britsstasie bestaan...
+                              Sedert 1910 het 'n tweemanskooltjie vir primêre onderwys naby Britsstasie bestaan wat sodanig uitgebrei het dat daar in 1925 reeds 5 onderwysers en 175 leerders aan die skool verbonde was. In 1928, met die dorpstigting, het die skool 220 leerlinge en 6 onderwysers gehad en bekend gestaan as die Brits Goewermentskool.
                           </p>
                           <p className="mt-6 leading-8 text-zinc-700">
-                              In 1937 is toestemming van die T.O.D verkry om met die eerste matriekklas te begin...
+                              In 1937 is toestemming van die T.O.D verkry om met die eerste matriekklas te begin. Die verkryging van amptelike hoërskoolstatus vir die hoërafdeling van die Brits Goewermentskool was onderhewig aan 'n proeftydperk van 5 jaar. Die Hoërskool Brits het eers op 4 Augustus 1942 volwaardige hoërskoolstatus gekry. Mnr. T. le Roux was die hoof oor 17 personeellede en 329 leerlinge.In 1943 aanvaar hy 'n pos as inspekteur van skole. Hy word opgevolg deur Mnr. H. van Dalsen. Die primêre- en sekondêre afdeling sou voortaan as twee aparte skole funksioneer.
                           </p>
                       </div>
                   </div>
@@ -176,27 +172,60 @@ export default function OorOnsClientPage({
                   {/* Onderwerp 2: Skoolkode & Skoollied */}
                   <div className="prose prose-lg prose-zinc mx-auto max-w-3xl text-center prose-h2:text-rose-900">
                       <div>
-                          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-rose-900">
                               Skoolkode
                           </h2>
+                          {/* REGSTELLING: Volle teks met <p> etikette */}
                           <p className="mt-6 leading-8 text-zinc-700">
-                              Ek dank God dat Hy my lewe en gesondheid gee...
+                            Ek dank God dat Hy my lewe en gesondheid gee. Ek sal my ouers, onder wie se beskerming ek verkeer, en wat vir my so baie opoffer, nie teleurstel nie.
                           </p>
-                          {/* ... res van skoolkode paragrawe ... */}
+                          <p className="mt-1 leading-8 text-zinc-700">
+                            Ek sal daarna strewe om skoon en edel te lewe, en vir myself sal ek hoë ideale stel.
+                          </p>
+                          <p className="mt-1 leading-8 text-zinc-700">
+                            Ek sal die goeie naam van my ouerhuis, en ook dié van my skool in ere hou.
+                          </p>
+                          <p className="mt-1 leading-8 text-zinc-700">
+                            Ek sal beleefd wees teenoor my ouers, my onderwysers en alle ander mense.
+                          </p>
+                          <p className="mt-1 leading-8 text-zinc-700">
+                            Ek sal daarna strewe om my taal en gedrag te beheer, in die klaskamer, op die sportvelde en veral in die publiek.
+                          </p>
+                          <p className="mt-1 leading-8 text-zinc-700">
+                            Ek sal die eiendom van die skool, asook die skoolgebou en tuinery beskerm, en waar ek in die koshuis is, ook dié van die koshuis.
+                          </p>
+                          <p className="mt-1 leading-8 text-zinc-700">
+                            Ek sal die voorreg wat ek het om te studeer, nie verwaarloos nie.
+                          </p>
+                          <p className="mt-1 leading-8 text-zinc-700">
+                            Ek sal daarna strewe om my werk, elke dag, na die beste van my vermoë te doen en ek sal sorg, dat my gedrag, selfs wanneer ek alleen is, oral en altyd vlekloos is.
+                          </p>
                       </div>
                       <div className="mt-16">
-                          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-rose-900">
                               Skoollied
                           </h2>
+                          {/* REGSTELLING: Volle teks met <p> etikette */}
                           <div className="mt-6 font-semibold leading-8 text-zinc-700">
-                              <p>Vrolik en hartelik sing ons nou saam...</p>
-                              <p className="mt-4">Kom seuns en dogters staan jul man...</p>
-                              <p className="mt-4">Almal Koersvas na die Kruin</p>
+                              <p>
+                                  Vrolik en hartelik sing ons nou saam<br />
+                                  In hierdie hoërskool bou ons 'n volk van naam<br />
+                                  Ons dank ons owerheid kragtig en koor<br />
+                                  Vir kanse veel en mooi - die Toekoms wink daarvoor.
+                              </p>
+                              <p className="mt-4">
+                                  Kom seuns en dogters staan jul man op sportveld<br />
+                                  Dat ander weet jul sal jul eer laat geld<br />
+                                  Doen nou 'n keuse van diens en trou
+                              </p>
+                              <p className="mt-4">
+                                  Almal Koersvas na die Kruin
+                              </p>
                           </div>
                       </div>
                   </div>
 
-                  {/* Onderwerp 3: Wapen Geskiedenis (Met Portret-boks) */}
+                  {/* Onderwerp 3: Wapen Geskiedenis */}
                   <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:items-center">
                       <div className="relative mx-auto w-64 h-96 overflow-hidden rounded-lg shadow-xl md:h-96">
                           <Image
@@ -207,17 +236,20 @@ export default function OorOnsClientPage({
                           />
                       </div>
                       <div className="prose prose-lg prose-zinc prose-h2:text-rose-900">
-                          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                              Oorspronklike Wapen
+                          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-rose-900">
+                              Geskiedenis van die oorspronklike wapen
                           </h2>
                           <p className="mt-6 leading-8 text-zinc-700">
-                              Daar is dadelik daadwerklike pogings aangewend om 'n gepaste wapen te kry... (1947).
+                              Daar is dadelik daadwerklike pogings aangewend om 'n gepaste wapen te kry. In die ontwerp moes besonderhede wat tipies van die omgewing is, ingewerk word - daarbenewens moes die ontwerp ook aansluit by die leuse: “MY DOODKRY IS MIN”.  Dit was die poging van Mej. S.M. Schiel, destydse onderwyseres in Natuurwetenskappe, wat met sukses bekroon is. (1947).
                           </p>
-                          <h2 className="mt-8 text-3xl font-bold tracking-tight sm:text-4xl">
-                              Oorspronklike Leuse
+                          <h2 className="mt-8 text-3xl font-bold tracking-tight sm:text-4xl text-rose-900">
+                              Geskiedenis van die oorspronklike leuse
                           </h2>
                           <p className="mt-6 leading-8 text-zinc-700">
-                              ...hy het gesê: “My doodkry is min!”
+                              Die doringbome wat vandag oral op die terrein rondstaan, was nie altyd daar nie. Mnr. Hubrecht van Dalsen, hoof 1943-1950, het daardie bome uit die klipkoppe, wat agter die skool staan, laat uithaal en oorplant. Terwyl hy eendag in 1947 so deur die venster kyk na 'n klein doringboompie  so swaarkry om sy stammetjie weer regop te buig, het hy gesê: “My doodkry is min!”
+                          </p>
+                          <p className="mt-6 leading-8 text-zinc-700">
+                              Net daar is besluit om dit die leuse van die skool te maak aangesien hierdie hoërskool reeds vanaf 1929 gespartel en gespook het op 'n bestaansreg.
                           </p>
                       </div>
                   </div>

@@ -17,7 +17,7 @@ const fadeInUp = {
 // 'n Sub-komponent om 'n personeellid-profielkaart te vertoon
 const StaffProfileCard = ({ person }: { person: StaffMemberWithDept }) => (
     <div className="flex flex-col items-center text-center">
-        <div className="relative h-48 w-40 overflow-hidden rounded-lg shadow-md">
+        <div className="relative h-76 w-54 md:h-88 md:w-66 overflow-hidden rounded-lg shadow-md">
             <Image
                 src={person.image_url || '/wapen.png'}
                 alt={person.full_name}
