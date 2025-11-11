@@ -56,6 +56,7 @@ const OrganiserCard = ({ person }: { person: OrganiserWithDetails }) => {
                     alt={name || 'Personeelfoto'}
                     fill
                     className="object-cover"
+                    sizes="512px"
                 />
             </div>
             <h3 className="mt-4 text-lg font-semibold text-rose-900">{title} {name}</h3>

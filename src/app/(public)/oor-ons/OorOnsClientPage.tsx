@@ -50,7 +50,6 @@ export default function OorOnsClientPage({
   const ctaRef = useRef(null);
 
   // Skep 'n 'isInView' hook vir elke ref.
-  // Ons gebruik 'amount: 0.2' (20%) - dit is baie veiliger vir fone.
   const isVisieInView = useInView(visieRef, { once: true, amount: 0.05 });
   const isBestuurInView = useInView(bestuurRef, { once: true, amount: 0.05 });
   const isBeheerliggaamInView = useInView(beheerliggaamRef, { once: true, amount: 0.05 });

@@ -23,6 +23,7 @@ const StaffProfileCard = ({ person }: { person: StaffMemberWithDept }) => (
                 alt={person.full_name}
                 fill
                 className="object-cover"
+                sizes="512px"
             />
         </div>
         <h3 className="mt-4 text-lg font-semibold text-rose-900">{person.full_name}</h3>

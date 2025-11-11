@@ -28,6 +28,7 @@ const CultureActivityCard = ({ activity }: { activity: DbCultureActivity }) => (
                 alt={activity.name}
                 fill
                 className="object-contain p-6" // 'contain' vir ikone
+                sizes="512px"
             />
         </div>
         <div className="flex-1 p-6">
@@ -53,6 +54,7 @@ const OrganiserCard = ({ person }: { person: OrganiserWithDetails }) => {
                     alt={name || 'Personeelfoto'}
                     fill
                     className="object-cover"
+                    sizes="512px"
                 />
             </div>
             <h3 className="mt-4 text-lg font-semibold text-rose-900">{title} {name}</h3>
