@@ -112,7 +112,7 @@ export default function KoshuisClientPage({
                             <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
                                 Ontmoet die Koshuispersoneel
                             </h2>
-                            <div className="mt-16 grid grid-cols-2 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
+                            <div className="mt-16 grid grid-cols-1 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                                 {koshuisPersoneel.map((person) => (
                                     <StaffProfileCard key={person.id} person={person} />
                                 ))}

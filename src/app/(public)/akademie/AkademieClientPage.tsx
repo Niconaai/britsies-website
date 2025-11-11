@@ -281,7 +281,7 @@ export default function AkademieClientPage({
                                 <h3 className="text-2xl font-semibold text-rose-800 border-b-2 border-amber-400 pb-2 mb-10">
                                     {deptNaam}
                                 </h3>
-                                <div className="mt-16 grid grid-cols-1 gap-y-12 sm:grid-cols-2 xl:grid-cols-4">
+                                <div className="mt-16 grid grid-cols-1 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                                     {personeelPerDepartement[deptNaam].map((person) => (
                                         <StaffProfileCard key={person.id} person={person} />
                                     ))}

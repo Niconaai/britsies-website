@@ -201,7 +201,7 @@ export default function SportClientPage({
                         <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl mb-16">
                             Onlangse Prestasies
                         </h2>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             {achievements.map((item) => (
                                 <motion.div
                                     key={item.id}
@@ -234,7 +234,7 @@ export default function SportClientPage({
                         <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl mb-16">
                             Ons Sportorganiseerders
                         </h2>
-                        <div className="mt-16 grid grid-cols-2 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
+                        <div className="mt-16 grid grid-cols-1 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                             {organisers.map((coach) => (
                                 <OrganiserCard key={coach.id} person={coach} />
                             ))}

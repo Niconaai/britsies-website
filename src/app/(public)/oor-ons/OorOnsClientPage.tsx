@@ -107,7 +107,7 @@ export default function OorOnsClientPage({
               <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
                 Skoolbestuur
               </h2>
-              <div className="mt-16 grid grid-cols-2 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
+              <div className="mt-16 grid grid-cols-1 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
                 {bestuurPersoneel.map((person) => (
                   <StaffProfileCard key={person.id} person={person} />
                 ))}
@@ -125,7 +125,7 @@ export default function OorOnsClientPage({
               <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
                 Beheerliggaam
               </h2>
-              <div className="mt-16 grid grid-cols-2 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
+              <div className="mt-16 grid grid-cols-1 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
                 {beheerliggaamPersoneel.map((person) => (
                   <StaffProfileCard key={person.id} person={person} />
                 ))}
