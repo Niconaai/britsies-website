@@ -101,7 +101,7 @@ export default function OorOnsClientPage({
         className="bg-white py-16 sm:py-24"
         variants={fadeInUp}
         initial="initial" // <-- initial IS NODIG vir die animasie
-        animate={isVisieInView ? "animate" : "initial"} // <-- Handmatige beheer
+        animate={isVisieInView ? "animate" : undefined} // <-- Handmatige beheer
         // 'whileInView' en 'viewport' is verwyder
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -128,7 +128,7 @@ export default function OorOnsClientPage({
               ref={bestuurRef}
               variants={fadeInUp}
               initial="initial"
-              animate={isBestuurInView ? "animate" : "initial"}
+              animate={isBestuurInView ? "animate" : undefined}
             >
               <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
                 Skoolbestuur
@@ -147,7 +147,7 @@ export default function OorOnsClientPage({
               className="mt-20"
               variants={fadeInUp}
               initial="initial"
-              animate={isBeheerliggaamInView ? "animate" : "initial"}
+              animate={isBeheerliggaamInView ? "animate" : undefined}
             >
               <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
                 Beheerliggaam
@@ -169,7 +169,7 @@ export default function OorOnsClientPage({
           className="bg-white py-16 sm:py-24"
           variants={fadeInUp}
           initial="initial"
-          animate={isGeskiedenisInView ? "animate" : "initial"}
+          animate={isGeskiedenisInView ? "animate" : undefined}
       >
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="space-y-16 lg:space-y-24">
@@ -294,8 +294,8 @@ export default function OorOnsClientPage({
           ref={ctaRef}
           className="mx-auto max-w-4xl px-4 text-center"
           variants={fadeInUp}
-          initial="initial"
-          animate={isCtaInView ? "animate" : "initial"}
+          initial={false}
+          animate={isCtaInView ? "animate" : undefined}
         >
           <h2 className="text-3xl font-bold text-white sm:text-4xl">
             Gereed om 'n Britsie te word?
