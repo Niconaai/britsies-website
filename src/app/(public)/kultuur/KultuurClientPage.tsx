@@ -92,7 +92,7 @@ export default function KultuurClientPage({
                     className="relative z-20 mx-auto max-w-4xl text-center"
                     variants={fadeInUp}
                     animate="animate"
-                    initial="initial"
+                    //initial="initial"
                 >
                     <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}>
                         Kultuur
@@ -107,7 +107,7 @@ export default function KultuurClientPage({
             <motion.section
                 className="bg-white py-16 sm:py-24"
                 variants={fadeInUp}
-                initial="initial"
+                //initial="initial"
                 whileInView="animate"
                 viewport={{ once: true, amount: 0.3 }}
             >
@@ -127,7 +127,7 @@ export default function KultuurClientPage({
             <motion.section
                 className="bg-zinc-50 py-16 sm:py-24"
                 variants={fadeInUp}
-                initial="initial"
+                //initial="initial"
                 whileInView="animate"
                 viewport={{ once: true, amount: 0.2 }}
             >
@@ -164,7 +164,7 @@ export default function KultuurClientPage({
                 <motion.div
                     className="mx-auto max-w-4xl px-4 text-center"
                     variants={fadeInUp}
-                    initial="initial"
+                    //initial="initial"
                     whileInView="animate"
                     viewport={{ once: true, amount: 0.3 }}
                 >

@@ -25,8 +25,19 @@ const secondaryLinks = [
     { name: 'Raak Betrokke', href: '/raak-betrokke' },
 ];
 
-const NavLink = ({ href, children, isSecondary = false }: { href: string; children: React.ReactNode, isSecondary?: boolean }) => {
-  const pathname = usePathname();
+// --- REGSTELLING DEEL 1: NavLink ROEP NIE MEER 'usePathname' NIE ---
+// Dit ontvang 'pathname' nou as 'n prop.
+const NavLink = ({ 
+  href, 
+  children, 
+  pathname, // <-- Prop word hier ontvang
+  isSecondary = false 
+}: { 
+  href: string; 
+  children: React.ReactNode, 
+  pathname: string, // <-- Prop word hier ontvang
+  isSecondary?: boolean 
+}) => {
   const isActive = pathname === href;
 
   if (isSecondary) {
@@ -59,9 +70,14 @@ const NavLink = ({ href, children, isSecondary = false }: { href: string; childr
     </Link>
   );
 };
+// --- EINDE REGSTELLING DEEL 1 ---
 
 export default function PublicHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  // --- REGSTELLING DEEL 2: Roep 'usePathname' onvoorwaardelik aan die bokant ---
+  const pathname = usePathname();
+  // --- EINDE REGSTELLING DEEL 2 ---
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 shadow-sm backdrop-blur-md">
@@ -70,7 +86,12 @@ export default function PublicHeader() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-10 items-center justify-end gap-4">
                 {secondaryLinks.map((link) => (
-                    <NavLink key={link.name} href={link.href} isSecondary={true}>
+                    <NavLink 
+                      key={link.name} 
+                      href={link.href} 
+                      pathname={pathname} // <-- Stuur 'pathname' as 'n prop
+                      isSecondary={true}
+                    >
                         {link.name}
                     </NavLink>
                 ))}
@@ -104,7 +125,11 @@ export default function PublicHeader() {
           {/* Die 'py-2' op die NavLink gee genoeg spasie vir die 'translate-y' skuif */}
           <div className="hidden items-center gap-2 sm:flex">
             {navLinks.map((link) => (
-              <NavLink key={link.name} href={link.href}>
+              <NavLink 
+                key={link.name} 
+                href={link.href}
+                pathname={pathname} // <-- Stuur 'pathname' as 'n prop
+              >
                 {link.name}
               </NavLink>
             ))}
@@ -147,8 +172,9 @@ export default function PublicHeader() {
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
+                // --- REGSTELLING DEEL 3: Gebruik die 'pathname' veranderlike hier ---
                 className={`block rounded-md px-3 py-2 text-base font-medium text-center ${
-                    usePathname() === link.href 
+                    pathname === link.href // <-- Gebruik die 'pathname' veranderlike
                     ? 'bg-rose-900 text-white' 
                     : 'text-zinc-700 hover:bg-zinc-100'
                 }`}

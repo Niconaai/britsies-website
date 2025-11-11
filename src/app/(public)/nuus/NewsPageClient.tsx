@@ -103,7 +103,7 @@ export default function NewsPageClient({ newsPosts }: { newsPosts: NewsPostListI
               <motion.div
                 key={post.id}
                 variants={fadeInUp}
-                initial="initial"
+                //initial="initial"
                 animate="animate"
                 transition={{ duration: 0.5, delay: i * 0.1 }} // Stagger die kaarte
               >
@@ -116,7 +116,7 @@ export default function NewsPageClient({ newsPosts }: { newsPosts: NewsPostListI
           <motion.div 
             className="text-center"
             variants={fadeInUp}
-            initial="initial"
+            //initial="initial"
             animate="animate"
           >
             <h2 className="text-2xl font-semibold text-zinc-700">Geen Nuusberigte Gepubliseer</h2>

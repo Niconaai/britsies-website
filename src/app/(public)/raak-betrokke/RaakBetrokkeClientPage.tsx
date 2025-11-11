@@ -97,7 +97,7 @@ export default function RaakBetrokkeClientPage() {
             {/* --- 2. ONS MOMENTUM SEKSIE --- */}
             <motion.section
                 className="bg-white py-16 sm:py-24"
-                initial="initial"
+                //initial="initial"
                 whileInView="animate"
                 viewport={{ once: true, amount: 0.2 }}
             >
@@ -131,7 +131,7 @@ export default function RaakBetrokkeClientPage() {
             {/* --- 3. ONS VOLGENDE DOELWIT SEKSIE --- */}
             <motion.section
                 className="bg-zinc-50 py-16 sm:py-24"
-                initial="initial"
+                //initial="initial"
                 whileInView="animate"
                 viewport={{ once: true, amount: 0.2 }}
             >
@@ -160,7 +160,7 @@ export default function RaakBetrokkeClientPage() {
             {/* --- 4. RAAK BETROKKE (KRUIN LEGENDES) SEKSIE --- */}
             <motion.section
                 className="bg-white py-16 sm:py-24"
-                initial="initial"
+                //initial="initial"
                 whileInView="animate"
                 viewport={{ once: true, amount: 0.2 }}
             >

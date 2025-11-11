@@ -1,13 +1,15 @@
 // src/app/(public)/oor-ons/OorOnsClientPage.tsx
 'use client';
 
-import React from 'react';
+// --- REGSTELLING 1: VOEG 'useRef' EN 'useInView' BY ---
+import React, { useRef } from 'react';
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+// 'useInView' word bygevoeg
+import { motion, useInView } from "framer-motion";
 import type { StaffMemberWithDept } from "@/types/supabase";
 
-// Animasie-variant
+// Animasie-variant (Bly dieselfde)
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
@@ -22,6 +24,8 @@ const StaffProfileCard = ({ person }: { person: StaffMemberWithDept }) => (
         alt={person.full_name}
         fill
         className="object-cover"
+        // --- REGSTELLING 2: SIZES PROP VIR PERSONEEL ---
+        sizes="(max-width: 767px) 216px, 264px"
       />
     </div>
     <h3 className="mt-4 text-lg font-semibold text-rose-900">{person.full_name}</h3>
@@ -37,6 +41,23 @@ export default function OorOnsClientPage({
   bestuurPersoneel: StaffMemberWithDept[];
   beheerliggaamPersoneel: StaffMemberWithDept[];
 }) {
+
+  // --- REGSTELLING 3: SKEP REFS VIR ELKE ANIMASIE-SEKSIE ---
+  const visieRef = useRef(null);
+  const bestuurRef = useRef(null);
+  const beheerliggaamRef = useRef(null);
+  const geskiedenisRef = useRef(null);
+  const ctaRef = useRef(null);
+
+  // Skep 'n 'isInView' hook vir elke ref.
+  // Ons gebruik 'amount: 0.2' (20%) - dit is baie veiliger vir fone.
+  const isVisieInView = useInView(visieRef, { once: true, amount: 0.2 });
+  const isBestuurInView = useInView(bestuurRef, { once: true, amount: 0.2 });
+  const isBeheerliggaamInView = useInView(beheerliggaamRef, { once: true, amount: 0.2 });
+  const isGeskiedenisInView = useInView(geskiedenisRef, { once: true, amount: 0.1 }); // Selfs laer vir hierdie groot seksie
+  const isCtaInView = useInView(ctaRef, { once: true, amount: 0.2 });
+  // --- EINDE REGSTELLING 3 ---
+
 
   return (
     <div className="flex flex-col bg-white">
@@ -54,6 +75,8 @@ export default function OorOnsClientPage({
           fill
           className="object-cover opacity-30"
           priority
+          // --- REGSTELLING 2: SIZES PROP VIR HERO ---
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-rose-900/0 z-5"></div>
         <motion.div
@@ -73,11 +96,13 @@ export default function OorOnsClientPage({
 
       {/* --- 2. VISIE & MISSIE SEKSIE --- */}
       <motion.section
+        // --- REGSTELLING 4: VERVANG 'whileInView' MET 'ref' EN 'animate' ---
+        ref={visieRef}
         className="bg-white py-16 sm:py-24"
         variants={fadeInUp}
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: true, amount: 0.3 }}
+        initial="initial" // <-- initial IS NODIG vir die animasie
+        animate={isVisieInView ? "animate" : "initial"} // <-- Handmatige beheer
+        // 'whileInView' en 'viewport' is verwyder
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="prose prose-lg prose-zinc mx-auto max-w-3xl text-center prose-strong:text-rose-900 prose-h2:text-rose-900">
@@ -99,10 +124,11 @@ export default function OorOnsClientPage({
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {bestuurPersoneel.length > 0 && (
             <motion.div
+              // --- REGSTELLING 4: VERVANG 'whileInView' ---
+              ref={bestuurRef}
               variants={fadeInUp}
               initial="initial"
-              whileInView="animate"
-              viewport={{ once: true, amount: 0.3 }}
+              animate={isBestuurInView ? "animate" : "initial"}
             >
               <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
                 Skoolbestuur
@@ -116,11 +142,12 @@ export default function OorOnsClientPage({
           )}
           {beheerliggaamPersoneel.length > 0 && (
             <motion.div
+              // --- REGSTELLING 4: VERVANG 'whileInView' ---
+              ref={beheerliggaamRef}
               className="mt-20"
               variants={fadeInUp}
               initial="initial"
-              whileInView="animate"
-              viewport={{ once: true, amount: 0.3 }}
+              animate={isBeheerliggaamInView ? "animate" : "initial"}
             >
               <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
                 Beheerliggaam
@@ -135,13 +162,14 @@ export default function OorOnsClientPage({
         </div>
       </section>
 
-      {/* --- 4. GESKIEDENIS SEKSIE (REGSTELLING: Volle teks herstel) --- */}
+      {/* --- 4. GESKIEDENIS SEKSIE --- */}
       <motion.section
+          // --- REGSTELLING 4: VERVANG 'whileInView' ---
+          ref={geskiedenisRef}
           className="bg-white py-16 sm:py-24"
           variants={fadeInUp}
           initial="initial"
-          whileInView="animate"
-          viewport={{ once: true, amount: 0.3 }}
+          animate={isGeskiedenisInView ? "animate" : "initial"}
       >
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="space-y-16 lg:space-y-24">
@@ -154,6 +182,8 @@ export default function OorOnsClientPage({
                               alt="Historiese Foto van Skool"
                               fill
                               className="object-contain"
+                              // --- REGSTELLING 2: SIZES PROP ---
+                              sizes="(max-width: 767px) 100vw, 50vw"
                           />
                       </div>
                       <div className="prose prose-lg prose-zinc prose-h2:text-rose-900">
@@ -175,7 +205,6 @@ export default function OorOnsClientPage({
                           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-rose-900">
                               Skoolkode
                           </h2>
-                          {/* REGSTELLING: Volle teks met <p> etikette */}
                           <p className="mt-6 leading-8 text-zinc-700">
                             Ek dank God dat Hy my lewe en gesondheid gee. Ek sal my ouers, onder wie se beskerming ek verkeer, en wat vir my so baie opoffer, nie teleurstel nie.
                           </p>
@@ -205,7 +234,6 @@ export default function OorOnsClientPage({
                           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-rose-900">
                               Skoollied
                           </h2>
-                          {/* REGSTELLING: Volle teks met <p> etikette */}
                           <div className="mt-6 font-semibold leading-8 text-zinc-700">
                               <p>
                                   Vrolik en hartelik sing ons nou saam<br />
@@ -233,6 +261,8 @@ export default function OorOnsClientPage({
                               alt="Ou Wapen"
                               fill
                               className="object-contain"
+                              // --- REGSTELLING 2: SIZES PROP ---
+                              sizes="256px"
                           />
                       </div>
                       <div className="prose prose-lg prose-zinc prose-h2:text-rose-900">
@@ -260,11 +290,12 @@ export default function OorOnsClientPage({
       {/* --- 5. OPROEP TOT AKSIE (CTA) --- */}
       <section className="bg-rose-900 py-16 sm:py-20">
         <motion.div
+          // --- REGSTELLING 4: VERVANG 'whileInView' ---
+          ref={ctaRef}
           className="mx-auto max-w-4xl px-4 text-center"
           variants={fadeInUp}
           initial="initial"
-          whileInView="animate"
-          viewport={{ once: true, amount: 0.3 }}
+          animate={isCtaInView ? "animate" : "initial"}
         >
           <h2 className="text-3xl font-bold text-white sm:text-4xl">
             Gereed om 'n Britsie te word?
