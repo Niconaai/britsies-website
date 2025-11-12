@@ -54,26 +54,26 @@ export async function middleware(request: NextRequest) {
 
   let userEmail = 'No User Found';
 
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      userEmail = `User Found (${user.email})`;
+  // try {
+  //   const { data: { user } } = await supabase.auth.getUser();
+  //   if (user) {
+  //     userEmail = `User Found (${user.email})`;
 
       // Spesifieke admin-roete-beskerming
       if (!user.email?.endsWith('@hsbrits.co.za') && request.nextUrl.pathname.startsWith('/admin')) {
           console.log('Middleware: Nie-admin gebruiker probeer /admin toegang kry. Herlei na /login.');
           return NextResponse.redirect(new URL('/login?error=Nie gemagtig nie', request.url));
-      }
-    } else {
-        if (request.nextUrl.pathname.startsWith('/admin') && request.nextUrl.pathname !== '/admin/login') {
-             console.log('Middleware: Geen gebruiker, probeer admin-area kry. Herlei na /admin/login.');
-             return NextResponse.redirect(new URL('/admin/login', request.url));
-        }
-        if (request.nextUrl.pathname.startsWith('/portaal') && request.nextUrl.pathname !== '/portaal/begin') {
-             console.log('Middleware: Geen gebruiker, probeer portaal kry. Herlei na /portaal/begin.');
-             return NextResponse.redirect(new URL('/portaal/begin', request.url));
-        }
-    }
+      // }
+    // } else {
+    //     if (request.nextUrl.pathname.startsWith('/admin') && request.nextUrl.pathname !== '/admin/login') {
+    //          console.log('Middleware: Geen gebruiker, probeer admin-area kry. Herlei na /admin/login.');
+    //          return NextResponse.redirect(new URL('/admin/login', request.url));
+    //     }
+    //     if (request.nextUrl.pathname.startsWith('/portaal') && request.nextUrl.pathname !== '/portaal/begin') {
+    //          console.log('Middleware: Geen gebruiker, probeer portaal kry. Herlei na /portaal/begin.');
+    //          return NextResponse.redirect(new URL('/portaal/begin', request.url));
+    //     }
+    // }
   } catch (error) {
     if (
       error instanceof AuthApiError &&
