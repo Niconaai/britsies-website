@@ -60,6 +60,7 @@ export default function PublicFooter() {
                             <FooterLink href="/kalender">Kalender</FooterLink>
                             <FooterLink href="/raak-betrokke">Raak Betrokke</FooterLink>
                             <FooterLink href="/kontak">Kontak Ons</FooterLink>
+                            <FooterLink href="/privaatheid">Privaatheidsbeleid</FooterLink>
                         </ul>
                     </div>
 
