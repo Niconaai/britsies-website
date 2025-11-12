@@ -61,7 +61,7 @@ export default async function WinkelLayout({ children }: PropsWithChildren) {
               ) : (
                 // ***** REGSTELLING HIER *****
                 <Link
-                  href="/aansoek/begin?redirect_to=/winkel/katalogus" // <-- VOEG PARAMETER BY
+                  href="/portaal/begin?redirect_to=/winkel/katalogus" // <-- VOEG PARAMETER BY
                   className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
                 >
                   Teken In
