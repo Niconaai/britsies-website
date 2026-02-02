@@ -42,7 +42,7 @@ const fadeInUp = {
 };
 
 // 'n Sub-komponent om 'n personeellid-profielkaart te vertoon
-const StaffProfileCard = ({ person }: { person: StaffMemberWithDept }) => (
+const StaffProfileCard = ({ person, showSubjects = true }: { person: any; showSubjects?: boolean }) => (
     <div className="flex flex-col items-center text-center">
             <div className="relative h-76 w-54 md:h-88 md:w-66 overflow-hidden rounded-lg shadow-md">
                 <Image
@@ -56,6 +56,11 @@ const StaffProfileCard = ({ person }: { person: StaffMemberWithDept }) => (
             </div>
             <h3 className="mt-4 text-lg font-semibold text-rose-900">{person.full_name}</h3>
             <p className="text-sm text-zinc-600">{person.title}</p>
+            {showSubjects && person.subjects_data && person.subjects_data.length > 0 && (
+                <p className="mt-2 text-xs text-zinc-500">
+                    {person.subjects_data.map((s: any) => s.name).join(', ')}
+                </p>
+            )}
         </div>
 );
 
@@ -205,13 +210,40 @@ const PersoneelDepartementSeksie = ({ deptNaam, personeel }: {
 
 // --- Die hoof Kliënt-komponent ---
 export default function AkademieClientPage({
-    personeelPerDepartement
+    personeelPerDepartement,
+    leadershipStaff = [],
+    gradeClasses = [],
+    teachersWithoutClasses = [],
+    adminStaff = [],
+    studentStaff = [],
 }: {
-    personeelPerDepartement: Record<string, StaffMemberWithDept[]>;
+    personeelPerDepartement?: Record<string, StaffMemberWithDept[]>;
+    leadershipStaff?: any[];
+    gradeClasses?: any[];
+    teachersWithoutClasses?: any[];
+    adminStaff?: any[];
+    studentStaff?: any[];
 }) {
 
     // Kry die departement-name (bly dieselfde)
-    const departemente = Object.keys(personeelPerDepartement);
+    const departemente = personeelPerDepartement ? Object.keys(personeelPerDepartement) : [];
+    
+    // Group grade classes by grade level for display
+    const gradesByLevel: Record<number, any[]> = {};
+    gradeClasses.forEach(gc => {
+        if (!gradesByLevel[gc.grade_level]) {
+            gradesByLevel[gc.grade_level] = [];
+        }
+        gradesByLevel[gc.grade_level].push(gc);
+    });
+    
+    // Sort classes within each grade by class_section (1, 2, 3, 4)
+    Object.keys(gradesByLevel).forEach(level => {
+        gradesByLevel[parseInt(level)].sort((a, b) => a.class_section - b.class_section);
+    });
+    
+    // Sort grades in descending order (12, 11, 10, 9, 8)
+    const sortedGradeLevels = Object.keys(gradesByLevel).map(Number).sort((a, b) => b - a);
 
     // --- REGSTELLING 4: SKEP REFS VIR DIE STATIESE SEKSIES ---
     const visieRef = useRef(null);
@@ -263,6 +295,7 @@ export default function AkademieClientPage({
 
             {/* --- 2. AKADEMIESE VISIE --- */}
             <motion.section
+                id="vakke-en-inligting"
                 // --- REGSTELLING 5: PAS HOOKS TOE ---
                 ref={visieRef}
                 className="bg-white py-16 sm:py-24"
@@ -299,6 +332,7 @@ export default function AkademieClientPage({
 
             {/* --- 4. MATRIEKUITSLAE (NUWE KOMPONENT) --- */}
             <motion.section
+                id="vorige-uitslae"
                 // --- REGSTELLING 5: PAS HOOKS TOE ---
                 ref={uitslaeRef}
                 className="bg-white py-16 sm:py-24"
@@ -316,15 +350,103 @@ export default function AkademieClientPage({
             </motion.section>
             
             {/* --- 5. PERSONEEL SEKSIE --- */}
-            <section className="bg-zinc-50 py-16 sm:py-24">
+            <section id="personeel" className="bg-zinc-50 py-16 sm:py-24">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl mb-16">
                         Ontmoet Ons Akademiese Personeel
                     </h2>
                     
-                    <div className="space-y-16">
-                        {/* --- REGSTELLING 6: GEBRUIK DIE NUWE SUB-KOMPONENT --- */}
-                        {departemente.map((deptNaam) => (
+                    <div className="space-y-20">
+                        {/* Leadership Staff */}
+                        {leadershipStaff.length > 0 && (
+                            <PersoneelDepartementSeksie
+                                deptNaam="Leierskap"
+                                personeel={leadershipStaff}
+                            />
+                        )}
+
+                        {/* Grade Classes with Grade Heads and Guardians */}
+                        {sortedGradeLevels.map(gradeLevel => {
+                            const classes = gradesByLevel[gradeLevel];
+                            const gradeHead = classes[0]?.grade_head;
+
+                            return (
+                                <div key={gradeLevel}>
+                                    <h3 className="text-2xl font-semibold text-rose-800 border-b-2 border-amber-400 pb-2 mb-10">
+                                        Graad {gradeLevel}
+                                    </h3>
+
+                                    {/* Grade Head */}
+                                    {gradeHead && (
+                                        <div className="mb-8">
+                                            <h4 className="text-lg font-semibold text-rose-700 mb-4">Graadvoog</h4>
+                                            <div className="grid grid-cols-1 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                                                <StaffProfileCard person={gradeHead} />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Class Guardians - displayed by class order */}
+                                    <div>
+                                        <h4 className="text-lg font-semibold text-rose-700 mb-4">Voogonderwysers</h4>
+                                        <div className="grid grid-cols-1 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                                            {classes.map((gradeClass: any) => (
+                                                gradeClass.guardians?.map((guardian: any) => (
+                                                    <div key={`${gradeClass.id}-${guardian.id}`} className="flex flex-col items-center text-center">
+                                                        <div className="relative h-76 w-54 md:h-88 md:w-66 overflow-hidden rounded-lg shadow-md">
+                                                            <Image
+                                                                src={guardian.image_url || '/wapen.png'}
+                                                                alt={guardian.full_name}
+                                                                fill
+                                                                className="object-cover"
+                                                                sizes="(max-width: 767px) 216px, 264px"
+                                                            />
+                                                        </div>
+                                                        <h5 className="mt-4 text-lg font-semibold text-rose-900">{guardian.full_name}</h5>
+                                                        <p className="text-sm text-zinc-600">{guardian.title}</p>
+                                                        <p className="text-xs text-rose-700 font-semibold mt-1">
+                                                            {guardian.guardian_class_name}
+                                                        </p>
+                                                        {guardian.subjects_data && guardian.subjects_data.length > 0 && (
+                                                            <p className="mt-2 text-xs text-zinc-500">
+                                                                {guardian.subjects_data.map((s: any) => s.name).join(', ')}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                ))
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+
+                        {/* Teachers without classes */}
+                        {teachersWithoutClasses.length > 0 && (
+                            <PersoneelDepartementSeksie
+                                deptNaam="Onderwysers"
+                                personeel={teachersWithoutClasses}
+                            />
+                        )}
+
+                        {/* Admin Staff */}
+                        {adminStaff.length > 0 && (
+                            <PersoneelDepartementSeksie
+                                deptNaam="Administrasie"
+                                personeel={adminStaff}
+                            />
+                        )}
+
+                        {/* Student Staff */}
+                        {studentStaff.length > 0 && (
+                            <PersoneelDepartementSeksie
+                                deptNaam="Studente"
+                                personeel={studentStaff}
+                            />
+                        )}
+
+                        {/* Legacy: Old department structure (if provided) */}
+                        {personeelPerDepartement && departemente.map((deptNaam) => (
                            <PersoneelDepartementSeksie
                                 key={deptNaam}
                                 deptNaam={deptNaam}

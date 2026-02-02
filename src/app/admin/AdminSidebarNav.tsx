@@ -19,8 +19,10 @@ const applicationLinks = [
 const contentLinks = [
   { name: 'Nuus Bestuur (CMS)', href: '/admin/news' },
   { name: 'Personeelbestuur', href: '/admin/personeel' },
+  { name: 'Graadklasse', href: '/admin/grade-classes' },
+  { name: 'Vakke', href: '/admin/subjects' },
   { name: 'Sportbestuur', href: '/admin/sport' },
-  { name: 'Kultuurbestuur', href: '/admin/kultuur' }, // <-- NUWE SKAKEL
+  { name: 'Kultuurbestuur', href: '/admin/kultuur' },
 ];
 // --- EINDE VAN OPDATERING ---
 

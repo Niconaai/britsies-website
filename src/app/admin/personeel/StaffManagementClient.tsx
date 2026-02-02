@@ -15,17 +15,21 @@ import EditStaffModal from './EditStaffModal';
 import type { 
   DbStaffDepartment,
   StaffMemberWithDept, // <-- Die korrekte, volledige tipe
-  DbStaffMember 
+  DbStaffMember,
+  DbSubject,
+  DbGradeClass
 } from '@/types/supabase';
 
 // ... (CheckboxGroup en SubmitButton bly dieselfde) ...
 const CheckboxGroup = ({
   label,
+  name,
   options,
   selectedValues,
   onChange,
 }: {
   label: string;
+  name: string;
   options: { value: string; label: string }[];
   selectedValues: string[];
   onChange: (value: string, isChecked: boolean) => void;
@@ -37,7 +41,7 @@ const CheckboxGroup = ({
         <label key={option.value} className="flex items-center space-x-2">
           <input
             type="checkbox"
-            name="department_ids"
+            name={name}
             value={option.value}
             checked={selectedValues.includes(option.value)}
             onChange={(e) => onChange(option.value, e.target.checked)}
@@ -75,9 +79,13 @@ const SubmitButton = ({ text, isLoading }: { text: string, isLoading: boolean })
 export default function StaffManagementClient({
   initialDepartments,
   initialStaff,
+  initialSubjects,
+  initialGradeClasses,
 }: {
   initialDepartments: DbStaffDepartment[];
   initialStaff: StaffMemberWithDept[];
+  initialSubjects: DbSubject[];
+  initialGradeClasses: DbGradeClass[];
 }) {
 
   // --- REGSTELLING 1: Gebruik die korrekte, volledige tipe ---
@@ -95,11 +103,35 @@ export default function StaffManagementClient({
   const [staffImage, setStaffImage] = useState('');
   const [staffActive, setStaffActive] = useState(true);
   const [staffDepts, setStaffDepts] = useState<string[]>([]);
+  const [staffSubjects, setStaffSubjects] = useState<string[]>([]);
+  const [staffGuardianClasses, setStaffGuardianClasses] = useState<string[]>([]);
   
   const departmentOptions = initialDepartments.map(d => ({ value: d.id, label: d.name }));
+  const subjectOptions = initialSubjects.map(s => ({ value: s.id, label: s.name }));
+  const gradeClassOptions = initialGradeClasses.map(gc => ({ value: gc.id, label: gc.name }));
   
   const handleDeptChange = (value: string, isChecked: boolean) => {
     setStaffDepts(prev => {
+      if (isChecked) {
+        return [...prev, value];
+      } else {
+        return prev.filter(id => id !== value);
+      }
+    });
+  };
+
+  const handleSubjectChange = (value: string, isChecked: boolean) => {
+    setStaffSubjects(prev => {
+      if (isChecked) {
+        return [...prev, value];
+      } else {
+        return prev.filter(id => id !== value);
+      }
+    });
+  };
+
+  const handleGuardianClassChange = (value: string, isChecked: boolean) => {
+    setStaffGuardianClasses(prev => {
       if (isChecked) {
         return [...prev, value];
       } else {
@@ -129,6 +161,8 @@ export default function StaffManagementClient({
       setStaffName('');
       setStaffTitle('');
       setStaffDepts([]);
+      setStaffSubjects([]);
+      setStaffGuardianClasses([]);
       setStaffSort(0);
       setStaffImage('');
       setStaffActive(true);
@@ -141,7 +175,8 @@ export default function StaffManagementClient({
         <EditStaffModal
           staffMember={editingStaff} // <-- REGSTELLING 2: Stuur die volle 'StaffMemberWithDept' objek
           departments={initialDepartments}
-          // staffDepartmentIds={...} // <-- REGSTELLING 3: Hierdie prop is nou oorbodig en verwyder
+          subjects={initialSubjects}
+          gradeClasses={initialGradeClasses}
           onClose={() => setEditingStaff(null)}
         />
       )}
@@ -172,9 +207,26 @@ export default function StaffManagementClient({
               
               <CheckboxGroup
                 label="Departemente"
+                name="department_ids"
                 options={departmentOptions}
                 selectedValues={staffDepts}
                 onChange={handleDeptChange}
+              />
+
+              <CheckboxGroup
+                label="Vakke (wat onderrig word)"
+                name="subject_ids"
+                options={subjectOptions}
+                selectedValues={staffSubjects}
+                onChange={handleSubjectChange}
+              />
+
+              <CheckboxGroup
+                label="Voog Klasse"
+                name="guardian_class_ids"
+                options={gradeClassOptions}
+                selectedValues={staffGuardianClasses}
+                onChange={handleGuardianClassChange}
               />
               
               <FloatingLabelInputField

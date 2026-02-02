@@ -284,6 +284,12 @@ export type StaffMemberWithDept = DbStaffMember & {
     name: string;
     sort_order: number | null;
   }[] | null;
+  staff_subjects: {
+    subject_id: string;
+  }[] | null;
+  class_guardians: {
+    grade_class_id: string;
+  }[] | null;
 };
 // --- EINDE PERSONEEL MODULE TIPES ---
 
@@ -351,3 +357,55 @@ export type DbCultureOrganiser = {
   is_active: boolean | null;
 };
 // --- EINDE KULTUUR MODULE TIPES ---
+
+// --- BEGIN AKADEMIE MODULE TIPES ---
+export type DbSubject = {
+  id: string;
+  created_at: string;
+  name: string;
+  description: string | null;
+  sort_order: number | null;
+  is_active: boolean | null;
+  updated_at: string;
+};
+
+export type DbGradeClass = {
+  id: string;
+  created_at: string;
+  name: string; // e.g., "8-1", "9-2"
+  grade_level: number; // 8, 9, 10, 11, 12
+  class_section: number; // 1, 2, 3, 4
+  grade_head_id: string | null; // FK to staff_members
+  sort_order: number | null;
+  is_active: boolean | null;
+  updated_at: string;
+};
+
+export type DbStaffSubject = {
+  id: string;
+  staff_member_id: string;
+  subject_id: string;
+  created_at: string;
+};
+
+export type DbClassGuardian = {
+  id: string;
+  staff_member_id: string;
+  grade_class_id: string;
+  created_at: string;
+};
+
+// Enhanced type with all academic relationships
+export type StaffMemberWithAcademicInfo = DbStaffMember & {
+  staff_departments: Pick<DbStaffDepartment, 'id' | 'name' | 'sort_order'>[] | null;
+  subjects: DbSubject[] | null;
+  grade_head_for: DbGradeClass | null;
+  guardian_classes: DbGradeClass[] | null;
+};
+
+// Grade class with full details
+export type GradeClassWithDetails = DbGradeClass & {
+  grade_head: Pick<DbStaffMember, 'id' | 'full_name' | 'title' | 'image_url'> | null;
+  guardians: StaffMemberWithAcademicInfo[] | null;
+};
+// --- EINDE AKADEMIE MODULE TIPES ---

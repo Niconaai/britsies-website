@@ -6,18 +6,20 @@ import { useFormStatus } from 'react-dom';
 import Image from 'next/image';
 import { updateStaffMember } from './actions';
 // --- REGSTELLING 1: Voer die korrekte tipe in ---
-import type { DbStaffMember, DbStaffDepartment, StaffMemberWithDept } from '@/types/supabase';
+import type { DbStaffMember, DbStaffDepartment, StaffMemberWithDept, DbSubject, DbGradeClass } from '@/types/supabase';
 import FloatingLabelInputField from '@/components/ui/FloatingLabelInputField';
 import StaffImageUploader from './StaffImageUploader';
 
 // ... (CheckboxGroup bly dieselfde) ...
 const CheckboxGroup = ({
   label,
+  name,
   options,
   selectedValues,
   onChange,
 }: {
   label: string;
+  name: string;
   options: { value: string; label: string }[];
   selectedValues: string[];
   onChange: (value: string, isChecked: boolean) => void;
@@ -29,7 +31,7 @@ const CheckboxGroup = ({
         <label key={option.value} className="flex items-center space-x-2">
           <input
             type="checkbox"
-            name="department_ids"
+            name={name}
             value={option.value}
             checked={selectedValues.includes(option.value)}
             onChange={(e) => onChange(option.value, e.target.checked)}
@@ -46,7 +48,8 @@ type EditStaffModalProps = {
   // --- REGSTELLING 2: Gebruik die korrekte, volledige tipe ---
   staffMember: StaffMemberWithDept; 
   departments: DbStaffDepartment[];
-  // staffDepartmentIds: string[]; // <-- Verwyder hierdie oorbodige prop
+  subjects: DbSubject[];
+  gradeClasses: DbGradeClass[];
   onClose: () => void;
 };
 
@@ -76,7 +79,9 @@ function SaveButton() {
 
 export default function EditStaffModal({ 
   staffMember, 
-  departments, 
+  departments,
+  subjects,
+  gradeClasses,
   onClose 
 }: EditStaffModalProps) {
   
@@ -91,6 +96,12 @@ export default function EditStaffModal({
   // --- REGSTELLING 3: Inisialiseer state direk vanaf die 'staffMember'-prop ---
   const [selectedDepts, setSelectedDepts] = useState<string[]>(
     staffMember.staff_departments?.map(d => d.id) || []
+  );
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>(
+    staffMember.staff_subjects?.map(s => s.subject_id) || []
+  );
+  const [selectedGuardianClasses, setSelectedGuardianClasses] = useState<string[]>(
+    staffMember.class_guardians?.map(c => c.grade_class_id) || []
   );
 
   useEffect(() => {
@@ -127,7 +138,29 @@ export default function EditStaffModal({
     });
   };
 
+  const handleSubjectChange = (value: string, isChecked: boolean) => {
+    setSelectedSubjects(prev => {
+      if (isChecked) {
+        return [...prev, value];
+      } else {
+        return prev.filter(id => id !== value);
+      }
+    });
+  };
+
+  const handleGuardianClassChange = (value: string, isChecked: boolean) => {
+    setSelectedGuardianClasses(prev => {
+      if (isChecked) {
+        return [...prev, value];
+      } else {
+        return prev.filter(id => id !== value);
+      }
+    });
+  };
+
   const departmentOptions = departments.map(d => ({ value: d.id, label: d.name }));
+  const subjectOptions = subjects.map(s => ({ value: s.id, label: s.name }));
+  const gradeClassOptions = gradeClasses.map(gc => ({ value: gc.id, label: gc.name }));
 
   return (
     <div
@@ -163,9 +196,26 @@ export default function EditStaffModal({
           
           <CheckboxGroup
             label="Departemente"
+            name="department_ids"
             options={departmentOptions}
             selectedValues={selectedDepts}
             onChange={handleDeptChange}
+          />
+
+          <CheckboxGroup
+            label="Vakke (wat onderrig word)"
+            name="subject_ids"
+            options={subjectOptions}
+            selectedValues={selectedSubjects}
+            onChange={handleSubjectChange}
+          />
+
+          <CheckboxGroup
+            label="Voog Klasse"
+            name="guardian_class_ids"
+            options={gradeClassOptions}
+            selectedValues={selectedGuardianClasses}
+            onChange={handleGuardianClassChange}
           />
           
           <FloatingLabelInputField

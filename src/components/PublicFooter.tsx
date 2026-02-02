@@ -110,7 +110,7 @@ export default function PublicFooter() {
                         <p className="text-center text-xs text-zinc-400 mt-2">
                             Webwerf en Britsie-Aanlyn platform onderhou deur{' '}
                             <a
-                                href="https.nicolabsdigital.co.za"
+                                href="https://www.nicolabsdigital.co.za"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="hover:underline hover:text-white"

@@ -84,6 +84,8 @@ export async function createStaffMember(formData: FormData) {
 
   // 1. Kry al die departement-ID's wat gekies is
   const departmentIds = formData.getAll('department_ids') as string[];
+  const subjectIds = formData.getAll('subject_ids') as string[];
+  const guardianClassIds = formData.getAll('guardian_class_ids') as string[];
 
   // 2. Skep die personeellid-data
   const staffData = {
@@ -111,7 +113,7 @@ export async function createStaffMember(formData: FormData) {
 
   const newStaffId = newStaffMember.id;
 
-  // 4. Skep die koppel-inskrywings
+  // 4. Skep die departement-koppel-inskrywings
   if (departmentIds.length > 0) {
     const linksToInsert = departmentIds.map(deptId => ({
       staff_member_id: newStaffId,
@@ -129,6 +131,40 @@ export async function createStaffMember(formData: FormData) {
     }
   }
 
+  // 5. Skep die vak-koppel-inskrywings
+  if (subjectIds.length > 0) {
+    const subjectLinksToInsert = subjectIds.map(subjectId => ({
+      staff_member_id: newStaffId,
+      subject_id: subjectId,
+    }));
+
+    const { error: subjectLinksError } = await supabase
+      .from('staff_subjects')
+      .insert(subjectLinksToInsert);
+
+    if (subjectLinksError) {
+      await supabase.from('staff_members').delete().eq('id', newStaffId);
+      return redirect(`/admin/personeel?error=${encodeURIComponent(subjectLinksError.message)}`);
+    }
+  }
+
+  // 6. Skep die voog-klas-koppel-inskrywings
+  if (guardianClassIds.length > 0) {
+    const guardianLinksToInsert = guardianClassIds.map(classId => ({
+      staff_member_id: newStaffId,
+      grade_class_id: classId,
+    }));
+
+    const { error: guardianLinksError } = await supabase
+      .from('class_guardians')
+      .insert(guardianLinksToInsert);
+
+    if (guardianLinksError) {
+      await supabase.from('staff_members').delete().eq('id', newStaffId);
+      return redirect(`/admin/personeel?error=${encodeURIComponent(guardianLinksError.message)}`);
+    }
+  }
+
   revalidate();
 }
 
@@ -140,8 +176,10 @@ export async function updateStaffMember(formData: FormData) {
     return redirect('/admin/personeel?error=Personeel ID word vermis.');
   }
 
-  // 1. Kry al die nuwe departement-ID's
+  // 1. Kry al die nuwe ID's
   const departmentIds = formData.getAll('department_ids') as string[];
+  const subjectIds = formData.getAll('subject_ids') as string[];
+  const guardianClassIds = formData.getAll('guardian_class_ids') as string[];
 
   // 2. Skep die personeellid-data
   const staffData = {
@@ -166,19 +204,16 @@ export async function updateStaffMember(formData: FormData) {
     return redirect(`/admin/personeel?error=${encodeURIComponent(staffError.message)}`);
   }
 
-  // 4. Dateer die koppel-tabel op (Delete all, then Insert all)
-  
-  // 4a. Skrap alle bestaande koppelings
-  const { error: deleteError } = await supabase
+  // 4. Dateer die departement-koppel-tabel op (Delete all, then Insert all)
+  const { error: deleteDeptError } = await supabase
     .from('staff_member_departments')
     .delete()
     .eq('staff_member_id', id);
 
-  if (deleteError) {
-     return redirect(`/admin/personeel?error=Kon nie ou departemente skrap nie: ${encodeURIComponent(deleteError.message)}`);
+  if (deleteDeptError) {
+     return redirect(`/admin/personeel?error=Kon nie ou departemente skrap nie: ${encodeURIComponent(deleteDeptError.message)}`);
   }
 
-  // 4b. Voeg die nuwe koppelings by
   if (departmentIds.length > 0) {
     const linksToInsert = departmentIds.map(deptId => ({
       staff_member_id: id,
@@ -191,6 +226,56 @@ export async function updateStaffMember(formData: FormData) {
 
     if (linksError) {
       return redirect(`/admin/personeel?error=Kon nie nuwe departemente koppel nie: ${encodeURIComponent(linksError.message)}`);
+    }
+  }
+
+  // 5. Dateer die vak-koppel-tabel op
+  const { error: deleteSubjectError } = await supabase
+    .from('staff_subjects')
+    .delete()
+    .eq('staff_member_id', id);
+
+  if (deleteSubjectError) {
+    return redirect(`/admin/personeel?error=Kon nie ou vakke skrap nie: ${encodeURIComponent(deleteSubjectError.message)}`);
+  }
+
+  if (subjectIds.length > 0) {
+    const subjectLinksToInsert = subjectIds.map(subjectId => ({
+      staff_member_id: id,
+      subject_id: subjectId,
+    }));
+
+    const { error: subjectLinksError } = await supabase
+      .from('staff_subjects')
+      .insert(subjectLinksToInsert);
+
+    if (subjectLinksError) {
+      return redirect(`/admin/personeel?error=Kon nie nuwe vakke koppel nie: ${encodeURIComponent(subjectLinksError.message)}`);
+    }
+  }
+
+  // 6. Dateer die voog-klas-koppel-tabel op
+  const { error: deleteGuardianError } = await supabase
+    .from('class_guardians')
+    .delete()
+    .eq('staff_member_id', id);
+
+  if (deleteGuardianError) {
+    return redirect(`/admin/personeel?error=Kon nie ou voog klasse skrap nie: ${encodeURIComponent(deleteGuardianError.message)}`);
+  }
+
+  if (guardianClassIds.length > 0) {
+    const guardianLinksToInsert = guardianClassIds.map(classId => ({
+      staff_member_id: id,
+      grade_class_id: classId,
+    }));
+
+    const { error: guardianLinksError } = await supabase
+      .from('class_guardians')
+      .insert(guardianLinksToInsert);
+
+    if (guardianLinksError) {
+      return redirect(`/admin/personeel?error=Kon nie nuwe voog klasse koppel nie: ${encodeURIComponent(guardianLinksError.message)}`);
     }
   }
 
