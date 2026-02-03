@@ -24,14 +24,14 @@ const navLinks = [
   { name: 'Koshuis', href: '/koshuis' },
   { name: 'Nuus', href: '/nuus' },
   { name: 'Kalender', href: '/kalender' },
-  { name: 'Aansoeke', href: '/aansoek' },
+  //{ name: 'Aansoeke', href: '/aansoek' },
 ];
 
 // Sekondêre skakels
-const secondaryLinks = [
-    { name: 'Winkel', href: '/winkel' },
-    { name: 'Raak Betrokke', href: '/raak-betrokke' },
-];
+//const secondaryLinks = [
+    //{ name: 'Winkel', href: '/winkel' },
+    //{ name: 'Raak Betrokke', href: '/raak-betrokke' },
+//];
 
 // --- REGSTELLING DEEL 1: NavLink ROEP NIE MEER 'usePathname' NIE ---
 // Dit ontvang 'pathname' nou as 'n prop.
@@ -138,7 +138,7 @@ export default function PublicHeader() {
       <div className="bg-zinc-50 border-b border-zinc-200">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-10 items-center justify-end gap-4">
-                {secondaryLinks.map((link) => (
+                {/* {secondaryLinks.map((link) => (
                     <NavLink 
                       key={link.name} 
                       href={link.href} 
@@ -147,7 +147,7 @@ export default function PublicHeader() {
                     >
                         {link.name}
                     </NavLink>
-                ))}
+                ))}*/}
                 <Link
                     href="/login"
                     className="text-xs font-medium text-zinc-500 hover:text-rose-900"

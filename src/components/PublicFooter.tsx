@@ -68,9 +68,9 @@ export default function PublicFooter() {
                     <div className="mt-8 lg:mt-0">
                         <h4 className="text-sm font-bold uppercase tracking-wider text-amber-400">Skakels</h4>
                         <ul role="list" className="mt-4 space-y-3">
-                            <FooterLink href="/aansoek">Aanlyn Aansoek</FooterLink>
-                            <FooterLink href="/winkel">Britsie Winkel</FooterLink>
-                            <FooterLink href="/login">Admin</FooterLink>
+                            {/* <FooterLink href="/aansoek">Aanlyn Aansoek</FooterLink> */}
+                            {/* <FooterLink href="/winkel">Britsie Winkel</FooterLink> */}
+                            {/* <FooterLink href="/login">Admin</FooterLink> */}
                             <FooterLink href="https://kruinlegendes.co.za/">Die Kruin Legendes</FooterLink>
                             <FooterLink href="#">Vakature</FooterLink>
                         </ul>

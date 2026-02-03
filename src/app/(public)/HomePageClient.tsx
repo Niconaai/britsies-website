@@ -156,7 +156,7 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
               href="/aansoek"
               className="w-full rounded-md border border-transparent bg-rose-900 px-8 py-3 text-base font-medium text-white shadow-lg transition hover:bg-rose-800 hover:scale-105 sm:w-auto text-center"
             >
-              Doen Aansoek
+              Raak Betrokke
             </Link>
             <Link
               href="/oor-ons"
@@ -199,7 +199,7 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
       </section>
       {/* --- EINDE REGSTELLING 3 --- */}
 
-      {/* --- 3. VINNIGE SKAKELS SEKSIE --- */}
+      {/* --- 3. VINNIGE SKAKELS SEKSIE --- 
       <section className="bg-white py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -226,7 +226,7 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
             </motion.div>
           </div>
         </div>
-      </section>
+      </section>*/}
 
       {/* --- 4. NUUTSTE NUUS SEKSIE --- */}
       {latestNews && latestNews.length > 0 && (
