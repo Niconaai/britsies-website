@@ -18,14 +18,14 @@ const fadeInUp = {
 // 'n Sub-komponent om 'n personeellid-profielkaart te vertoon
 const StaffProfileCard = ({ person }: { person: StaffMemberWithDept }) => (
   <div className="flex flex-col items-center text-center">
-    <div className="relative h-76 w-54 md:h-88 md:w-66 overflow-hidden rounded-lg shadow-md">
+    <div className="relative h-56 w-40 md:h-64 md:w-48 overflow-hidden rounded-lg shadow-md">
       <Image
         src={person.image_url || '/wapen.png'}
         alt={person.full_name}
         fill
         className="object-cover"
         // --- REGSTELLING 2: SIZES PROP VIR PERSONEEL ---
-        sizes="(max-width: 767px) 216px, 264px"
+        sizes="(max-width: 767px) 160px, 192px"
       />
     </div>
     <h3 className="mt-4 text-lg font-semibold text-rose-900">{person.full_name}</h3>
@@ -95,6 +95,7 @@ export default function OorOnsClientPage({
 
       {/* --- 2. VISIE & MISSIE SEKSIE --- */}
       <motion.section
+        id="ons-visie-missie"
         // --- REGSTELLING 4: VERVANG 'whileInView' MET 'ref' EN 'animate' ---
         ref={visieRef}
         className="bg-white py-16 sm:py-24"
@@ -119,7 +120,7 @@ export default function OorOnsClientPage({
       </motion.section>
 
       {/* --- 3. LEIERSKAP SEKSIE --- */}
-      <section className="bg-zinc-50 py-16 sm:py-24">
+      <section id="beheerliggaam" className="bg-zinc-50 py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {bestuurPersoneel.length > 0 && (
             <motion.div
@@ -132,7 +133,7 @@ export default function OorOnsClientPage({
               <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
                 Skoolbestuur
               </h2>
-              <div className="mt-16 grid grid-cols-1 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="mt-16 grid grid-cols-1 gap-y-10 gap-x-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center">
                 {bestuurPersoneel.map((person) => (
                   <StaffProfileCard key={person.id} person={person} />
                 ))}
@@ -151,7 +152,7 @@ export default function OorOnsClientPage({
               <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
                 Beheerliggaam
               </h2>
-              <div className="mt-16 grid grid-cols-1 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="mt-16 grid grid-cols-1 gap-y-10 gap-x-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center">
                 {beheerliggaamPersoneel.map((person) => (
                   <StaffProfileCard key={person.id} person={person} />
                 ))}
@@ -163,6 +164,7 @@ export default function OorOnsClientPage({
 
       {/* --- 4. GESKIEDENIS SEKSIE --- */}
       <motion.section
+          id="geskiedenis"
           // --- REGSTELLING 4: VERVANG 'whileInView' ---
           ref={geskiedenisRef}
           className="bg-white py-16 sm:py-24"
@@ -301,10 +303,10 @@ export default function OorOnsClientPage({
           </h2>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
-              href="/aansoek"
+              href="/raak-betrokke"
               className="w-full rounded-md border border-transparent bg-white px-8 py-3 text-base font-medium text-rose-900 shadow-lg transition hover:bg-zinc-100 sm:w-auto"
             >
-              Doen Aansoek
+              Raak Betrokke
             </Link>
             <Link
               href="/kontak"

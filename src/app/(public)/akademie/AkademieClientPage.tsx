@@ -44,14 +44,14 @@ const fadeInUp = {
 // 'n Sub-komponent om 'n personeellid-profielkaart te vertoon
 const StaffProfileCard = ({ person, showSubjects = true }: { person: any; showSubjects?: boolean }) => (
     <div className="flex flex-col items-center text-center">
-            <div className="relative h-76 w-54 md:h-88 md:w-66 overflow-hidden rounded-lg shadow-md">
+            <div className="relative h-56 w-40 md:h-64 md:w-48 overflow-hidden rounded-lg shadow-md">
                 <Image
                     src={person.image_url || '/wapen.png'}
                     alt={person.full_name}
                     fill
                     className="object-cover"
                     // --- REGSTELLING 2: SIZES PROP (gebaseer op jou OorOns-lêer) ---
-                    sizes="(max-width: 767px) 216px, 264px"
+                    sizes="(max-width: 767px) 160px, 192px"
                 />
             </div>
             <h3 className="mt-4 text-lg font-semibold text-rose-900">{person.full_name}</h3>
@@ -197,7 +197,7 @@ const PersoneelDepartementSeksie = ({ deptNaam, personeel }: {
             <h3 className="text-2xl font-semibold text-rose-800 border-b-2 border-amber-400 pb-2 mb-10">
                 {deptNaam}
             </h3>
-            <div className="mt-16 grid grid-cols-1 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <div className="mt-16 grid grid-cols-1 gap-y-10 gap-x-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center">
                 {personeel.map((person) => (
                     <StaffProfileCard key={person.id} person={person} />
                 ))}
@@ -380,7 +380,7 @@ export default function AkademieClientPage({
                                     {gradeHead && (
                                         <div className="mb-8">
                                             <h4 className="text-lg font-semibold text-rose-700 mb-4">Graadvoog</h4>
-                                            <div className="grid grid-cols-1 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                                            <div className="flex justify-center">
                                                 <StaffProfileCard person={gradeHead} />
                                             </div>
                                         </div>
@@ -389,17 +389,17 @@ export default function AkademieClientPage({
                                     {/* Class Guardians - displayed by class order */}
                                     <div>
                                         <h4 className="text-lg font-semibold text-rose-700 mb-4">Voogonderwysers</h4>
-                                        <div className="grid grid-cols-1 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                                        <div className="grid grid-cols-1 gap-y-10 gap-x-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center">
                                             {classes.map((gradeClass: any) => (
                                                 gradeClass.guardians?.map((guardian: any) => (
                                                     <div key={`${gradeClass.id}-${guardian.id}`} className="flex flex-col items-center text-center">
-                                                        <div className="relative h-76 w-54 md:h-88 md:w-66 overflow-hidden rounded-lg shadow-md">
+                                                        <div className="relative h-56 w-40 md:h-64 md:w-48 overflow-hidden rounded-lg shadow-md">
                                                             <Image
                                                                 src={guardian.image_url || '/wapen.png'}
                                                                 alt={guardian.full_name}
                                                                 fill
                                                                 className="object-cover"
-                                                                sizes="(max-width: 767px) 216px, 264px"
+                                                                sizes="(max-width: 767px) 160px, 192px"
                                                             />
                                                         </div>
                                                         <h5 className="mt-4 text-lg font-semibold text-rose-900">{guardian.full_name}</h5>
@@ -473,10 +473,10 @@ export default function AkademieClientPage({
                     </h2>
                     <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                         <Link
-                            href="/aansoek"
+                            href="/raak-betrokke"
                             className="w-full rounded-md border border-transparent bg-white px-8 py-3 text-base font-medium text-rose-900 shadow-lg transition hover:bg-zinc-100 sm:w-auto"
                         >
-                            Doen Aansoek
+                            Raak Betrokke
                         </Link>
                         <Link
                             href="/kontak"

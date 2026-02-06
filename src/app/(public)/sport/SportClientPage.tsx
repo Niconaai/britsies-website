@@ -50,13 +50,13 @@ const OrganiserCard = ({ person }: { person: OrganiserWithDetails }) => {
 
     return (
         <div className="flex flex-col items-center text-center">
-           <div className="relative h-76 w-54 md:h-88 md:w-66 overflow-hidden rounded-lg shadow-md">
+           <div className="relative h-56 w-40 md:h-64 md:w-48 overflow-hidden rounded-lg shadow-md">
                 <Image
                     src={imageUrl}
                     alt={name || 'Personeelfoto'}
                     fill
                     className="object-cover"
-                    sizes="512px"
+                    sizes="(max-width: 767px) 160px, 192px"
                 />
             </div>
             <h3 className="mt-4 text-lg font-semibold text-rose-900">{title} {name}</h3>
@@ -202,7 +202,7 @@ export default function SportClientPage({
                         <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl mb-16">
                             Onlangse Prestasies
                         </h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 justify-items-center">
                             {achievements.map((item) => (
                                 <motion.div
                                     key={item.id}
@@ -235,7 +235,7 @@ export default function SportClientPage({
                         <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl mb-16">
                             Ons Sportorganiseerders
                         </h2>
-                        <div className="mt-16 grid grid-cols-1 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                        <div className="mt-16 grid grid-cols-1 gap-y-10 gap-x-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center">
                             {organisers.map((coach) => (
                                 <OrganiserCard key={coach.id} person={coach} />
                             ))}
@@ -258,10 +258,10 @@ export default function SportClientPage({
                     </h2>
                     <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                         <Link
-                            href="/aansoek"
+                            href="/raak-betrokke"
                             className="w-full rounded-md border border-transparent bg-white px-8 py-3 text-base font-medium text-rose-900 shadow-lg transition hover:bg-zinc-100 sm:w-auto"
                         >
-                            Doen Aansoek
+                            Raak Betrokke
                         </Link>
                         <Link
                             href="/kontak"

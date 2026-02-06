@@ -153,7 +153,7 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
           </p>
           <div className="mt-10 flex w-full max-w-sm mx-auto flex-col items-center justify-center gap-4 sm:max-w-none sm:flex-row">
             <Link
-              href="/aansoek"
+              href="/raak-betrokke"
               className="w-full rounded-md border border-transparent bg-rose-900 px-8 py-3 text-base font-medium text-white shadow-lg transition hover:bg-rose-800 hover:scale-105 sm:w-auto text-center"
             >
               Raak Betrokke

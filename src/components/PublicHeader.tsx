@@ -9,7 +9,15 @@ import { usePathname } from 'next/navigation';
 // Jou voorgestelde navigasie, wat perfek is:
 const navLinks = [
   { name: 'Tuis', href: '/' },
-  { name: 'Oor Ons', href: '/oor-ons' },
+  { 
+    name: 'Oor Ons', 
+    href: '/oor-ons',
+    subLinks: [
+      { name: 'Ons Visie & Misie', href: '/oor-ons#ons-visie-missie' },
+      { name: 'Beheerliggaam', href: '/oor-ons#beheerliggaam' },
+      { name: 'Geskiedenis', href: '/oor-ons#geskiedenis' },
+    ]
+  },
   { 
     name: 'Akademie', 
     href: '/akademie',
@@ -70,7 +78,7 @@ const NavLink = ({
   if (subLinks.length > 0) {
     return (
       <div 
-        className="relative"
+        className="relative group"
         onMouseEnter={() => setIsDropdownOpen(true)}
         onMouseLeave={() => setIsDropdownOpen(false)}
       >
@@ -88,21 +96,23 @@ const NavLink = ({
         </Link>
         
         {/* Dropdown menu */}
-        {isDropdownOpen && (
-          <div className="absolute left-0 top-full mt-1 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
-            <div className="py-1">
+        <div className={`absolute left-0 top-full w-52 pt-2 transition-all duration-200 ease-in-out ${
+          isDropdownOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
+        }`}>
+          <div className="rounded-md bg-white shadow-xl ring-1 ring-zinc-900/5 overflow-hidden">
+            <div className="py-2">
               {subLinks.map((subLink) => (
                 <Link
                   key={subLink.name}
                   href={subLink.href}
-                  className="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100"
+                  className="block px-4 py-2.5 text-sm text-zinc-700 hover:bg-rose-50 hover:text-rose-900 transition-colors duration-150"
                 >
                   {subLink.name}
                 </Link>
               ))}
             </div>
           </div>
-        )}
+        </div>
       </div>
     );
   }
@@ -223,16 +233,16 @@ export default function PublicHeader() {
           <div className="space-y-1 px-2 pt-2 pb-3">
             {navLinks.map((link) => (
               <div key={link.name}>
-                <div className="flex items-center">
+                <div className="flex items-center justify-center">
                   <Link
                     href={link.href}
                     onClick={() => setIsMobileMenuOpen(false)}
                     // --- REGSTELLING DEEL 3: Gebruik die 'pathname' veranderlike hier ---
-                    className={`flex-1 block rounded-md px-3 py-2 text-base font-medium text-center ${
+                    className={`block rounded-md px-3 py-2 text-base font-medium text-center ${
                         pathname === link.href // <-- Gebruik die 'pathname' veranderlike
                         ? 'bg-rose-900 text-white' 
                         : 'text-zinc-700 hover:bg-zinc-100'
-                    }`}
+                    } ${link.subLinks && link.subLinks.length > 0 ? 'flex-1' : 'w-full'}`}
                   >
                     {link.name}
                   </Link>
@@ -241,7 +251,7 @@ export default function PublicHeader() {
                   {link.subLinks && link.subLinks.length > 0 && (
                     <button
                       onClick={() => setExpandedMobileMenu(expandedMobileMenu === link.name ? null : link.name)}
-                      className="px-3 py-2 text-zinc-700"
+                      className="px-3 py-2 text-zinc-700 shrink-0"
                     >
                       <svg
                         className={`h-5 w-5 transition-transform ${expandedMobileMenu === link.name ? 'rotate-180' : ''}`}
@@ -257,13 +267,13 @@ export default function PublicHeader() {
                 
                 {/* Show sublinks if expanded */}
                 {link.subLinks && link.subLinks.length > 0 && expandedMobileMenu === link.name && (
-                  <div className="ml-4 mt-1 space-y-1">
+                  <div className="mt-1 space-y-1">
                     {link.subLinks.map((subLink) => (
                       <Link
                         key={subLink.name}
                         href={subLink.href}
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="block rounded-md px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-50"
+                        className="block rounded-md px-3 py-2 text-sm text-center text-zinc-600 hover:bg-zinc-50"
                       >
                         {subLink.name}
                       </Link>
