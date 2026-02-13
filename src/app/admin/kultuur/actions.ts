@@ -93,17 +93,27 @@ export async function createCultureOrganiser(formData: FormData) {
   const supabase = await checkAdminAuth();
   
   const staff_member_id = formData.get('staff_member_id') as string;
-  const activity_id = formData.get('activity_id') as string;
+  const activity_ids = formData.get('activity_ids') as string;
 
-  if (!activity_id || !staff_member_id) {
-    return redirect('/admin/kultuur?error=Aktiwiteit en Personeellid word vereis');
+  if (!activity_ids || !staff_member_id) {
+    return redirect('/admin/kultuur?error=Ten minste een aktiwiteit en Personeellid word vereis');
   }
   
-  const { error } = await supabase.from('culture_organisers').insert({
-    activity_id: activity_id,
+  // Split comma-separated IDs into array
+  const activityIdArray = activity_ids.split(',').filter(id => id.trim());
+  
+  if (activityIdArray.length === 0) {
+    return redirect('/admin/kultuur?error=Ten minste een aktiwiteit word vereis');
+  }
+  
+  // Create one record for each activity
+  const organiserRecords = activityIdArray.map(activity_id => ({
+    activity_id: activity_id.trim(),
     staff_member_id: staff_member_id,
     role: formData.get('role') as string,
-  });
+  }));
+  
+  const { error } = await supabase.from('culture_organisers').insert(organiserRecords);
 
   if (error) {
     return redirect(`/admin/kultuur?error=${encodeURIComponent(error.message)}`);
@@ -135,6 +145,51 @@ export async function updateCultureOrganiser(formData: FormData) {
   if (error) {
     return redirect(`/admin/kultuur?error=${encodeURIComponent(error.message)}`);
   }
+  revalidate();
+}
+
+// New action to update organiser with multiple activities
+export async function updateCultureOrganiserMultiple(formData: FormData) {
+  let supabase;
+  try {
+    supabase = await checkAdminAuth();
+  } catch (error) {
+    return redirect('/login');
+  }
+
+  const staff_member_id = formData.get('staff_member_id') as string;
+  const activity_ids = formData.get('activity_ids') as string;
+  const role = formData.get('role') as string;
+  const is_active = formData.get('is_active') === 'on';
+  
+  if (!activity_ids || !staff_member_id) {
+    return redirect('/admin/kultuur?error=Ten minste een aktiwiteit en Personeellid word vereis vir opdatering.');
+  }
+
+  // Delete existing records for this organiser
+  const { error: deleteError } = await supabase
+    .from('culture_organisers')
+    .delete()
+    .eq('staff_member_id', staff_member_id);
+  
+  if (deleteError) {
+    return redirect(`/admin/kultuur?error=${encodeURIComponent(deleteError.message)}`);
+  }
+
+  // Create new records for each selected activity
+  const activityIdArray = activity_ids.split(',').filter(id => id.trim());
+  const organiserRecords = activityIdArray.map(activity_id => ({
+    activity_id: activity_id.trim(),
+    staff_member_id: staff_member_id,
+    role,
+    is_active,
+  }));
+  
+  const { error: insertError } = await supabase.from('culture_organisers').insert(organiserRecords);
+  if (insertError) {
+    return redirect(`/admin/kultuur?error=${encodeURIComponent(insertError.message)}`);
+  }
+
   revalidate();
 }
 

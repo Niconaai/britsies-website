@@ -72,7 +72,7 @@ export default function PublicFooter() {
                             {/* <FooterLink href="/winkel">Britsie Winkel</FooterLink> */}
                             {/* <FooterLink href="/login">Admin</FooterLink> */}
                             <FooterLink href="https://kruinlegendes.co.za/">Die Kruin Legendes</FooterLink>
-                            <FooterLink href="#">Vakature</FooterLink>
+                            <FooterLink href="/vakature">Vakature</FooterLink>
                         </ul>
                     </div>
 
@@ -108,7 +108,7 @@ export default function PublicFooter() {
                             &copy; {new Date().getFullYear()} Hoërskool Brits. Alle regte voorbehou.
                         </p>
                         <p className="text-center text-xs text-zinc-400 mt-2">
-                            Webwerf en Britsie-Aanlyn platform onderhou deur{' '}
+                            Webwerf en Britsie platform onderhou deur{' '}
                             <a
                                 href="https://www.nicolabsdigital.co.za"
                                 target="_blank"

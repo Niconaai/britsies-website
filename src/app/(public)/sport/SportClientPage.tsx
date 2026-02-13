@@ -32,7 +32,7 @@ const SportTypeCard = ({ sport }: { sport: DbSportType }) => (
             />
         </div>
         <div className="flex-1 p-6">
-            <h3 className="text-xl font-bold text-rose-900">{sport.name}</h3>
+            <h3 className="text-xl font-bold text-rose-900 text-center">{sport.name}</h3>
             <p className="mt-1 text-sm font-semibold text-amber-600">{sport.season}</p>
             <p className="mt-3 text-sm text-zinc-600">
                 {sport.description || 'Meer inligting binnekort beskikbaar.'}
@@ -60,7 +60,12 @@ const OrganiserCard = ({ person }: { person: OrganiserWithDetails }) => {
                 />
             </div>
             <h3 className="mt-4 text-lg font-semibold text-rose-900">{title} {name}</h3>
-            <p className="text-sm text-zinc-600">{person.role} ({person.sport_types?.name})</p>
+            <p className="text-sm text-zinc-600">{person.role}</p>
+            {person.sports && person.sports.length > 0 && (
+                <p className="mt-2 text-xs text-zinc-500">
+                    {person.sports.map((s) => s.name).join(', ')}
+                </p>
+            )}
         </div>
     );
 };
@@ -127,10 +132,10 @@ export default function SportClientPage({
                 transition={{ duration: 0.5 }}
             >
                 <Image
-                    src="/wapen.jpg" // Placeholder
+                    src="/Hero-Sport.jpeg" // Placeholder
                     alt="Hoërskool Brits Sport"
                     fill
-                    className="object-cover opacity-30"
+                    className="object-cover opacity-100"
                     priority
                 />
                 <div className="absolute inset-0 bg-rose-900/0 z-5"></div>
@@ -140,12 +145,12 @@ export default function SportClientPage({
                     animate="animate"
                     //initial="initial"
                 >
-                    <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}>
+                    {/* <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}>
                         Sport
                     </h1>
                     <p className="mt-6 text-xl text-zinc-100" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>
                         Waar Karakter op die Veld Gebou Word
-                    </p>
+                    </p> */}
                 </motion.div>
             </motion.section>
 
@@ -179,7 +184,7 @@ export default function SportClientPage({
             >
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl mb-16">
-                        Ons Sport-aanbod
+                        Leef die Sportgees
                     </h2>
                     <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                         {sportTypes.map((sport) => (
@@ -256,18 +261,28 @@ export default function SportClientPage({
                     <h2 className="text-3xl font-bold text-white sm:text-4xl">
                         Klaar om 'n Britsie te word?
                     </h2>
-                    <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                    <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:max-w-lg sm:mx-auto sm:w-full sm:flex-row">
                         <Link
                             href="/raak-betrokke"
-                            className="w-full rounded-md border border-transparent bg-white px-8 py-3 text-base font-medium text-rose-900 shadow-lg transition hover:bg-zinc-100 sm:w-auto"
+                            className="w-full rounded-md border border-transparent bg-white px-8 py-3 text-base font-medium text-rose-900 shadow-lg transition hover:bg-zinc-100"
                         >
                             Raak Betrokke
                         </Link>
                         <Link
                             href="/kontak"
-                            className="w-full rounded-md border border-white bg-white/10 px-8 py-3 text-base font-medium text-white backdrop-blur-sm transition hover:bg-white/20 sm:w-auto"
+                            className="w-full rounded-md border border-white bg-white/10 px-8 py-3 text-base font-medium text-white backdrop-blur-sm transition hover:bg-white/20"
                         >
                             Kontak Ons
+                        </Link>
+                    </div>
+                    <div className="mt-4 flex justify-center">
+                        <Link
+                            href="https://kruinlegendes.co.za/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full max-w-lg rounded-md border border-transparent bg-amber-500 px-8 py-3 text-base font-medium text-white shadow-lg transition hover:bg-amber-600 hover:scale-105 text-center"
+                        >
+                            Word 'n Kruin Legende
                         </Link>
                     </div>
                 </motion.div>

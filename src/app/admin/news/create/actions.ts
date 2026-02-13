@@ -8,30 +8,35 @@ import { redirect } from 'next/navigation';
 export async function createPost(formData: FormData) {
   const supabase = await createClient();
 
-  // 1. Kry die data vanaf die vorm
+  // Get basic form data
   const title = formData.get('title') as string;
   const slug = formData.get('slug') as string;
   const content = formData.get('content') as string;
   const is_published = formData.get('is_published') === 'on';
+  const publication_type = (formData.get('publication_type') as string) || 'news';
   
-  // === BEGIN VERANDERING ===
-  // Kry die JSON-string van die versteekte veld
+  // Get image URLs
   const imageUrlsString = formData.get('image_urls') as string;
-  
   let image_urls: string[] = [];
   try {
-    // "Parse" die string terug na 'n array
     if (imageUrlsString) {
       image_urls = JSON.parse(imageUrlsString);
     }
   } catch (e) {
     console.error("Kon nie image_urls parse nie:", e);
-    // Gaan voort sonder prente as dit misluk
   }
-  // === EINDE VERANDERING ===
 
+  // Get newsletter-specific fields
+  let edition_number = null;
+  let date_range = null;
+  
+  if (publication_type === 'newsletter') {
+    const editionNumberStr = formData.get('edition_number') as string;
+    edition_number = editionNumberStr ? parseInt(editionNumberStr, 10) : null;
+    date_range = formData.get('date_range') as string;
+  }
 
-  // 2. Gaan die 'slug' na vir uniekheid
+  // Check slug uniqueness
   if (slug) {
     const { data: existingPost, error: slugError } = await supabase
       .from('news_posts')
@@ -50,7 +55,7 @@ export async function createPost(formData: FormData) {
     return redirect('/admin/news/create?error=Slug word vereis');
   }
   
-  // 3. Voeg die nuwe berig in die databasis in
+  // Insert the new post
   const { data, error } = await supabase
     .from('news_posts')
     .insert([
@@ -59,10 +64,10 @@ export async function createPost(formData: FormData) {
         slug,
         content,
         is_published,
-        // === BEGIN VERANDERING ===
-        image_urls: image_urls, // Stoor die array
-        // 'image_url' word nie meer gebruik nie
-        // === EINDE VERANDERING ===
+        image_urls,
+        publication_type,
+        edition_number,
+        date_range,
         published_at: is_published ? new Date().toISOString() : null,
       },
     ])
@@ -73,9 +78,16 @@ export async function createPost(formData: FormData) {
     return redirect(`/admin/news/create?error=${encodeURIComponent(error.message)}`);
   }
 
-  // 4. Herlaai die paaie en stuur terug
+  // Revalidate paths
   revalidatePath('/admin/news');
   revalidatePath('/nuus');
-  revalidatePath(`/nuus/${slug}`);
+  
+  if (publication_type === 'newsletter') {
+    revalidatePath('/nuus/uitgawes');
+    revalidatePath(`/nuus/uitgawes/${slug}`);
+  } else {
+    revalidatePath(`/nuus/${slug}`);
+  }
+  
   redirect('/admin/news');
 }

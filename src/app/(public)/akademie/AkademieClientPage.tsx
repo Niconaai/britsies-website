@@ -12,21 +12,34 @@ import type { StaffMemberWithDept } from "@/types/supabase";
 // --- Data (bly dieselfde) ---
 const vakkeGraad8en9 = [
     "Afrikaans Huistaal", "Engels Eerste Addisionele Taal", "Wiskunde",
-    "Natuurwetenskap", "Sosiale Wetenskap (Geskiedenis & Geografie)", "Tegnologie",
-    "Kuns en Kultuur (Kuns & Musiek)", "Lewensoriëntering", "Ekonomiese- en Bestuurswetenskappe"
+     "Lewensoriëntering", "Natuurwetenskap", "Sosiale Wetenskap (Geskiedenis & Geografie)", "Tegnologie",
+    "Musiek of Drama", "Skeppende Kunste","Ekonomiese- en Bestuurswetenskappe", "Digitale Vaardighede", "Lees (Afrikaans en Engels)"
 ];
-const vakkeGraad10tot12 = [ "Afrikaans Huistaal (Verpligtend)", "Engels Eerste Addisionele Taal (Verpligtend)",
-    "Wiskunde, Tegniese Wiskunde of Wiskundige Geletterdheid (Verpligtend)","Besigheidstudies", "Rekeningkunde", 
-    "Fisiese Wetenskappe", "Lewenswetenskappe", "Ingenieursgrafika en -ontwerp (IGO)", "Verbruikerstudies", "Gasvryheidstudies", 
-    "Inligtingstegnologie (IT)", "Rekenaartoepassingstegnologie (RTT)", "Geografie", "Geskiedenis", "Musiek", "Drama",
-    "Tegniese Wetenskap", "Elektriese Tegnologie (Swaarstroom)", "Siviele Tegnologie",
-    "Alpha Wiskunde (Naskool)"
+const vakkeGraad10tot12 = [ 
+    "Afrikaans Huistaal (Verpligtend)", 
+    "Engels Eerste Addisionele Taal (Verpligtend)",
+    "Wiskunde of Wiskundige Geletterdheid (Verpligtend)", 
+    "Lewenswetenskappe", 
+    "Fisiese Wetenskappe", 
+    "Besigheidstudies", 
+    "Rekeningkunde", 
+    "Rekenaartoepassingstegnologie (RTT)", 
+    "Inligtingstegnologie (IT)", 
+    "Geografie", 
+    "Geskiedenis", 
+    "Toerisme",
+    "Gasvryheidstudies", 
+    "Verbruikerstudies", 
+    "Musiek", 
+    "Visuele Kunste", 
+    "Drama",
+    "Ingenieursgrafika en -ontwerp (IGO)", 
+    "Alpha Wiskunde (Ekstra Vak)"
 ];
 const vakVereistes = [
-    "Leerder MOET Wiskunde neem om Fisiese Wetenskappe, IT, of Rekeningkunde te kies.",
-    "Leerder MOET Tegniese Wiskunde neem om Tegniese Wetenskap, Elektries, of Siviel te kies.",
-    "Slegs EEN van die volgende mag geneem word: Wiskunde of Wiskundige Geletterdheid.",// Tegniese Wiskunde.",
-    "Slegs EEN van die volgende mag geneem word: Fisiese Wetenskappe of Tegniese Wetenskap."
+    "Leerder MOET 50% vir Wiskunde in Graad 9 behaal om Wiskunde in Graad 10 te kan neem.",
+    "Leerder MOET Wiskunde neem om Fisiese Wetenskappe, IT, of Rekeningkunde te neem.",
+    "Slegs EEN van die volgende mag geneem word: Wiskunde of Wiskundige Geletterdheid."
 ];
 const uitslaeData = [
     { year: 2024, imageUrl: "/matriek-uitslae-24.webp", alt: "Matriekuitslae 2024" },
@@ -269,10 +282,10 @@ export default function AkademieClientPage({
                 transition={{ duration: 0.5 }}
             >
                 <Image
-                    src="/wapen.jpg" // Placeholder
+                    src="/Hero-Akademie.jpeg" // Placeholder
                     alt="Hoërskool Brits Akademie"
                     fill
-                    className="object-cover opacity-30"
+                    className="object-cover opacity-100"
                     priority
                     // --- REGSTELLING 2: SIZES PROP ---
                     sizes="100vw"
@@ -284,12 +297,12 @@ export default function AkademieClientPage({
                     animate="animate"
                     initial="initial"
                 >
-                    <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}>
+                    {/* <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}>
                         Akademie
                     </h1>
                     <p className="mt-6 text-xl text-zinc-100" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>
                         Die Boustene van Uitnemendheid
-                    </p>
+                    </p> */}
                 </motion.div>
             </motion.section>
 
@@ -471,18 +484,28 @@ export default function AkademieClientPage({
                     <h2 className="text-3xl font-bold text-white sm:text-4xl">
                         Gereed om 'n Britsie te word?
                     </h2>
-                    <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                    <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:max-w-lg sm:mx-auto sm:w-full sm:flex-row">
                         <Link
                             href="/raak-betrokke"
-                            className="w-full rounded-md border border-transparent bg-white px-8 py-3 text-base font-medium text-rose-900 shadow-lg transition hover:bg-zinc-100 sm:w-auto"
+                            className="w-full rounded-md border border-transparent bg-white px-8 py-3 text-base font-medium text-rose-900 shadow-lg transition hover:bg-zinc-100"
                         >
                             Raak Betrokke
                         </Link>
                         <Link
                             href="/kontak"
-                            className="w-full rounded-md border border-white bg-white/10 px-8 py-3 text-base font-medium text-white backdrop-blur-sm transition hover:bg-white/20 sm:w-auto"
+                            className="w-full rounded-md border border-white bg-white/10 px-8 py-3 text-base font-medium text-white backdrop-blur-sm transition hover:bg-white/20"
                         >
                             Kontak Ons
+                        </Link>
+                    </div>
+                    <div className="mt-4 flex justify-center">
+                        <Link
+                            href="https://kruinlegendes.co.za/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full max-w-lg rounded-md border border-transparent bg-amber-500 px-8 py-3 text-base font-medium text-white shadow-lg transition hover:bg-amber-600 hover:scale-105 text-center"
+                        >
+                            Word 'n Kruin Legende
                         </Link>
                     </div>
                 </motion.div>

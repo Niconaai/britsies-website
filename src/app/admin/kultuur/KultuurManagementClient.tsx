@@ -84,7 +84,7 @@ export default function KultuurManagementClient({
   const [activityIconUrl, setActivityIconUrl] = useState('');
 
   // State vir Organiseerder-vorm
-  const [organiserActivity, setOrganiserActivity] = useState('');
+  const [organiserActivities, setOrganiserActivities] = useState<string[]>([]);
   const [organiserRole, setOrganiserRole] = useState('');
   const [organiserStaffId, setOrganiserStaffId] = useState('');
 
@@ -115,7 +115,7 @@ export default function KultuurManagementClient({
     startTransition(async () => {
       await createCultureOrganiser(formData);
       // Stel vorm terug
-      setOrganiserActivity('');
+      setOrganiserActivities([]);
       setOrganiserRole('');
       setOrganiserStaffId('');
     });
@@ -135,6 +135,7 @@ export default function KultuurManagementClient({
           organiser={editingOrganiser}
           activities={initialActivities}
           staffMembers={initialStaffMembers}
+          allOrganisers={initialOrganisers}
           onClose={() => setEditingOrganiser(null)}
         />
       )}
@@ -207,14 +208,29 @@ export default function KultuurManagementClient({
           <div className={activeTab === 'organisers' ? 'block' : 'hidden'}>
             <h3 className="text-lg font-semibold mb-4 dark:text-white">Bestuur Organiseerders</h3>
             <form onSubmit={handleCreateOrganiser} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-lg dark:border-zinc-700">
-              <FloatingLabelSelectFieldCustom
-                name="activity_id"
-                label="Kultuur-aktiwiteit"
-                value={organiserActivity}
-                onChange={(e) => setOrganiserActivity(e.target.value)}
-                options={activityOptions}
-                required
-              />
+              <div className="md:col-span-3">
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Kultuur-aktiwiteite (Kies een of meer)</label>
+                <input type="hidden" name="activity_ids" value={organiserActivities.join(',')} />
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 p-3 border rounded-md dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-900 max-h-40 overflow-y-auto">
+                  {activityOptions.map(opt => (
+                    <label key={opt.value} className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={organiserActivities.includes(opt.value)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setOrganiserActivities([...organiserActivities, opt.value]);
+                          } else {
+                            setOrganiserActivities(organiserActivities.filter(id => id !== opt.value));
+                          }
+                        }}
+                        className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-sm dark:text-zinc-300">{opt.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
               <FloatingLabelSelectFieldCustom
                 name="staff_member_id"
                 label="Personeellid"

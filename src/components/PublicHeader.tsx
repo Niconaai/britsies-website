@@ -14,8 +14,8 @@ const navLinks = [
     href: '/oor-ons',
     subLinks: [
       { name: 'Ons Visie & Misie', href: '/oor-ons#ons-visie-missie' },
-      { name: 'Beheerliggaam', href: '/oor-ons#beheerliggaam' },
       { name: 'Geskiedenis', href: '/oor-ons#geskiedenis' },
+      { name: 'Beheerliggaam', href: '/oor-ons#beheerliggaam' },
     ]
   },
   { 

@@ -1,4 +1,5 @@
 // src/app/winkel/page.tsx
+import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -9,6 +10,9 @@ export const metadata: Metadata = {
 };
 
 export default function WinkelWelkomPage() {
+  notFound();
+  
+  /* Temporarily disabled
   return (
     <div>
       <Link
@@ -51,4 +55,5 @@ export default function WinkelWelkomPage() {
       </div>
     </div>
   );
+  */
 }

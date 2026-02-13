@@ -13,6 +13,7 @@ type FloatingLabelSelectFieldCustomProps = {
   options: OptionType[]; // <-- Accepts an array of { value, label } objects
   required?: boolean;
   className?: string;
+  disabled?: boolean;
 };
 
 const FloatingLabelSelectFieldCustom = ({
@@ -23,6 +24,7 @@ const FloatingLabelSelectFieldCustom = ({
   options,
   required = false,
   className = "",
+  disabled = false,
 }: FloatingLabelSelectFieldCustomProps) => {
   return (
     <div className={`relative w-full ${className}`}>
@@ -32,10 +34,12 @@ const FloatingLabelSelectFieldCustom = ({
         value={value ?? ""}
         onChange={onChange}
         required={required}
+        disabled={disabled}
         className="peer w-full appearance-none rounded-sm border border-zinc-300 bg-transparent px-3.5 pt-4 pb-2 text-zinc-900 
                    invalid:border-zinc-300 dark:invalid:border-zinc-600
                    focus:border-zinc-800 focus:ring-1 focus:ring-zinc-800 focus:outline-none
-                   dark:border-zinc-600 dark:bg-zinc-700 dark:text-white dark:focus:border-white dark:focus:ring-white"
+                   dark:border-zinc-600 dark:bg-zinc-700 dark:text-white dark:focus:border-white dark:focus:ring-white
+                   disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <option value="" disabled hidden></option>
         

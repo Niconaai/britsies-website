@@ -1,10 +1,10 @@
 // src/app/admin/kultuur/EditOrganiserModal.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import Image from 'next/image';
-import { updateCultureOrganiser } from './actions';
+import { updateCultureOrganiserMultiple } from './actions';
 import type { DbCultureOrganiser, DbCultureActivity, DbStaffMember } from '@/types/supabase';
 import FloatingLabelInputField from '@/components/ui/FloatingLabelInputField';
 import FloatingLabelSelectFieldCustom from '@/components/ui/FloatingLabelSelectFieldCustom';
@@ -13,6 +13,7 @@ type EditModalProps = {
   organiser: DbCultureOrganiser;
   activities: DbCultureActivity[];
   staffMembers: Pick<DbStaffMember, 'id' | 'full_name'>[];
+  allOrganisers: DbCultureOrganiser[]; // All organiser records to find related activities
   onClose: () => void;
 };
 
@@ -41,17 +42,25 @@ function SaveButton() {
 }
 // Einde van sub-komponente
 
-export default function EditOrganiserModal({ organiser, activities, staffMembers, onClose }: EditModalProps) {
+export default function EditOrganiserModal({ organiser, activities, staffMembers, allOrganisers, onClose }: EditModalProps) {
+  
+  // Find all organiser records for this staff member
+  const relatedOrganisers = allOrganisers.filter(o => 
+    o.staff_member_id === organiser.staff_member_id
+  );
+  
+  // Get current activity IDs
+  const currentActivityIds = relatedOrganisers.map(o => o.activity_id);
   
   const [formData, setFormData] = useState({
-    activity_id: organiser.activity_id || '',
+    activity_ids: currentActivityIds,
     staff_member_id: organiser.staff_member_id || '',
     role: organiser.role || '',
     is_active: organiser.is_active ?? true,
   });
 
   const updateAction = async (payload: FormData) => {
-    await updateCultureOrganiser(payload);
+    await updateCultureOrganiserMultiple(payload);
     onClose();
   };
 
@@ -61,6 +70,17 @@ export default function EditOrganiserModal({ organiser, activities, staffMembers
       ...prev,
       [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }));
+  };
+  
+  const handleActivityToggle = (activityId: string) => {
+    setFormData(prev => {
+      const currentIds = prev.activity_ids;
+      if (currentIds.includes(activityId)) {
+        return { ...prev, activity_ids: currentIds.filter(id => id !== activityId) };
+      } else {
+        return { ...prev, activity_ids: [...currentIds, activityId] };
+      }
+    });
   };
 
   const staffOptions = staffMembers.map(s => ({ value: s.id, label: s.full_name }));
@@ -79,30 +99,42 @@ export default function EditOrganiserModal({ organiser, activities, staffMembers
         
         <form action={updateAction} className="relative mt-4 space-y-4">
           <LoadingOverlay />
-          <input type="hidden" name="id" value={organiser.id} />
+          <input type="hidden" name="staff_member_id" value={formData.staff_member_id} />
+          <input type="hidden" name="activity_ids" value={formData.activity_ids.join(',')} />
 
-          <FloatingLabelSelectFieldCustom
-            label="Kultuur-aktiwiteit"
-            name="activity_id"
-            value={formData.activity_id}
-            onChange={handleChange}
-            options={activityOptions}
-            required
-          />
-          <FloatingLabelSelectFieldCustom
-            label="Personeellid"
-            name="staff_member_id"
-            value={formData.staff_member_id}
-            onChange={handleChange}
-            options={staffOptions}
-            required
-          />
+          <div>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+              Kultuur-aktiwiteite (Kies een of meer)
+            </label>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 p-3 border rounded-md dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-900 max-h-60 overflow-y-auto">
+              {activityOptions.map(opt => (
+                <label key={opt.value} className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.activity_ids.includes(opt.value)}
+                    onChange={() => handleActivityToggle(opt.value)}
+                    className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-sm dark:text-zinc-300">{opt.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          
           <FloatingLabelInputField
             label="Rol (bv. Organiseerder)"
             name="role"
             value={formData.role}
             onChange={handleChange}
             required
+          />
+          <FloatingLabelSelectFieldCustom
+            label="Personeellid"
+            name="staff_member_display"
+            value={formData.staff_member_id}
+            onChange={handleChange}
+            options={staffOptions}
+            disabled
           />
           <div className="flex items-center">
             <input

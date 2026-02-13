@@ -57,6 +57,22 @@ export default function OorOnsClientPage({
   const isCtaInView = useInView(ctaRef, { once: true, amount: 0.05 });
   // --- EINDE REGSTELLING 3 ---
 
+  // Sort beheerliggaam by sort_order (Rang) and split into leadership (1-2) and rest
+  const sortedBeheerliggaam = [...beheerliggaamPersoneel].sort((a, b) => {
+    const orderA = a.sort_order ?? 999;
+    const orderB = b.sort_order ?? 999;
+    return orderA - orderB;
+  });
+  
+  const beheerliggaamLeadership = sortedBeheerliggaam.filter(p => (p.sort_order ?? 999) <= 2);
+  const beheerliggaamRest = sortedBeheerliggaam.filter(p => (p.sort_order ?? 999) > 2);
+
+  // Sort bestuur by sort_order as well
+  const sortedBestuur = [...bestuurPersoneel].sort((a, b) => {
+    const orderA = a.sort_order ?? 999;
+    const orderB = b.sort_order ?? 999;
+    return orderA - orderB;
+  });
 
   return (
     <div className="flex flex-col bg-white">
@@ -69,10 +85,10 @@ export default function OorOnsClientPage({
         transition={{ duration: 0.5 }}
       >
         <Image
-          src="/wapen.jpg" // Placeholder
+          src="/Hero-BritsErvaring.jpeg" // Placeholder
           alt="Hoërskool Brits Hoofgebou"
           fill
-          className="object-cover opacity-30"
+          className="object-cover opacity-100"
           priority
           // --- REGSTELLING 2: SIZES PROP VIR HERO ---
           sizes="100vw"
@@ -84,12 +100,12 @@ export default function OorOnsClientPage({
           animate="animate"
           initial="initial"
         >
-          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}>
+          {/* <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}>
             Oor Hoërskool Brits
           </h1>
           <p className="mt-6 text-xl text-zinc-100" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>
             Koersvas na die Kruin
-          </p>
+          </p> */}
         </motion.div>
       </motion.section>
 
@@ -107,8 +123,11 @@ export default function OorOnsClientPage({
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="prose prose-lg prose-zinc mx-auto max-w-3xl text-center prose-strong:text-rose-900 prose-h2:text-rose-900">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-rose-900">
-              Ons Visie & Missie
+              Waardes
             </h2>
+            <p className="mt-6 leading-8 text-zinc-700">
+              <strong>Hoërskool Brits</strong> is 'n trotse Afrikaanse skool en 'n plek waar tradisie en innovasie hand aan hand gaan, en waar elke lid van ons gemeenskap gekoester word as deel van die familie.
+            </p>
             <p className="mt-6 leading-8 text-zinc-700">
               <strong>Visie:</strong> Om 'n toonaangewende opvoedkundige instelling te wees wat leerders deur middel van Christelike waardes, uitnemende akademie, sport en kultuur toerus om koersvas hul volle potensiaal te bereik.
             </p>
@@ -119,50 +138,7 @@ export default function OorOnsClientPage({
         </div>
       </motion.section>
 
-      {/* --- 3. LEIERSKAP SEKSIE --- */}
-      <section id="beheerliggaam" className="bg-zinc-50 py-16 sm:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {bestuurPersoneel.length > 0 && (
-            <motion.div
-              // --- REGSTELLING 4: VERVANG 'whileInView' ---
-              ref={bestuurRef}
-              variants={fadeInUp}
-              initial="initial"
-              animate={isBestuurInView ? "animate" : undefined}
-            >
-              <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
-                Skoolbestuur
-              </h2>
-              <div className="mt-16 grid grid-cols-1 gap-y-10 gap-x-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center">
-                {bestuurPersoneel.map((person) => (
-                  <StaffProfileCard key={person.id} person={person} />
-                ))}
-              </div>
-            </motion.div>
-          )}
-          {beheerliggaamPersoneel.length > 0 && (
-            <motion.div
-              // --- REGSTELLING 4: VERVANG 'whileInView' ---
-              ref={beheerliggaamRef}
-              className="mt-20"
-              variants={fadeInUp}
-              initial="initial"
-              animate={isBeheerliggaamInView ? "animate" : undefined}
-            >
-              <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
-                Beheerliggaam
-              </h2>
-              <div className="mt-16 grid grid-cols-1 gap-y-10 gap-x-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center">
-                {beheerliggaamPersoneel.map((person) => (
-                  <StaffProfileCard key={person.id} person={person} />
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </div>
-      </section>
-
-      {/* --- 4. GESKIEDENIS SEKSIE --- */}
+      {/* --- 3. GESKIEDENIS SEKSIE --- */}
       <motion.section
           id="geskiedenis"
           // --- REGSTELLING 4: VERVANG 'whileInView' ---
@@ -288,6 +264,62 @@ export default function OorOnsClientPage({
           </div>
       </motion.section>
 
+      {/* --- 4. LEIERSKAP SEKSIE --- */}
+      <section id="beheerliggaam" className="bg-zinc-50 py-16 sm:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          {bestuurPersoneel.length > 0 && (
+            <motion.div
+              // --- REGSTELLING 4: VERVANG 'whileInView' ---
+              ref={bestuurRef}
+              variants={fadeInUp}
+              initial="initial"
+              animate={isBestuurInView ? "animate" : undefined}
+            >
+              <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
+                Skoolbestuur
+              </h2>
+              <div className="mt-16 grid grid-cols-1 gap-y-10 gap-x-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center">
+                {sortedBestuur.map((person) => (
+                  <StaffProfileCard key={person.id} person={person} />
+                ))}
+              </div>
+            </motion.div>
+          )}
+          {beheerliggaamPersoneel.length > 0 && (
+            <motion.div
+              // --- REGSTELLING 4: VERVANG 'whileInView' ---
+              ref={beheerliggaamRef}
+              className="mt-20"
+              variants={fadeInUp}
+              initial="initial"
+              animate={isBeheerliggaamInView ? "animate" : undefined}
+            >
+              <h2 className="text-center text-3xl font-bold tracking-tight text-rose-900 sm:text-4xl">
+                Beheerliggaam
+              </h2>
+              
+              {/* Leadership (Rang 1-2) on their own line */}
+              {beheerliggaamLeadership.length > 0 && (
+                <div className="mt-16 flex justify-center gap-x-8 flex-wrap gap-y-10">
+                  {beheerliggaamLeadership.map((person) => (
+                    <StaffProfileCard key={person.id} person={person} />
+                  ))}
+                </div>
+              )}
+              
+              {/* Rest of Beheerliggaam */}
+              {beheerliggaamRest.length > 0 && (
+                <div className={`${beheerliggaamLeadership.length > 0 ? 'mt-10' : 'mt-16'} grid grid-cols-1 gap-y-10 gap-x-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center`}>
+                  {beheerliggaamRest.map((person) => (
+                    <StaffProfileCard key={person.id} person={person} />
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </div>
+      </section>
+
       {/* --- 5. OPROEP TOT AKSIE (CTA) --- */}
       <section className="bg-rose-900 py-16 sm:py-20">
         <motion.div
@@ -301,18 +333,28 @@ export default function OorOnsClientPage({
           <h2 className="text-3xl font-bold text-white sm:text-4xl">
             Gereed om 'n Britsie te word?
           </h2>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:max-w-lg sm:mx-auto sm:w-full sm:flex-row">
             <Link
               href="/raak-betrokke"
-              className="w-full rounded-md border border-transparent bg-white px-8 py-3 text-base font-medium text-rose-900 shadow-lg transition hover:bg-zinc-100 sm:w-auto"
+              className="w-full rounded-md border border-transparent bg-white px-8 py-3 text-base font-medium text-rose-900 shadow-lg transition hover:bg-zinc-100"
             >
               Raak Betrokke
             </Link>
             <Link
               href="/kontak"
-              className="w-full rounded-md border border-white bg-white/10 px-8 py-3 text-base font-medium text-white backdrop-blur-sm transition hover:bg-white/20 sm:w-auto"
+              className="w-full rounded-md border border-white bg-white/10 px-8 py-3 text-base font-medium text-white backdrop-blur-sm transition hover:bg-white/20"
             >
               Kontak Ons
+            </Link>
+          </div>
+          <div className="mt-4 flex justify-center">
+            <Link
+              href="https://kruinlegendes.co.za/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full max-w-lg rounded-md border border-transparent bg-amber-500 px-8 py-3 text-base font-medium text-white shadow-lg transition hover:bg-amber-600 hover:scale-105 text-center"
+            >
+              Word 'n Kruin Legende
             </Link>
           </div>
         </motion.div>

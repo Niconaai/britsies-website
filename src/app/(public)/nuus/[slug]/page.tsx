@@ -4,22 +4,8 @@ import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import NewsPostClient from "./NewsPostClient";
 import type { Metadata } from "next";
+import type { DbNewsPost } from "@/types/supabase";
 
-// === BEGIN VERANDERING 1: Tipe-opdatering ===
-// Tipe vir 'n enkele berig
-export type SingleNewsPost = {
-  id: string;
-  title: string | null;
-  slug: string | null;
-  image_urls: string[] | null; // <-- REGSTELLING (was image_url)
-  content: string | null; 
-  published_at: string | null;
-  created_at: string;
-};
-// === EINDE VERANDERING 1 ===
-
-// --- GENEREER METADATA ---
-// (Hierdie funksie is reg, want dit het nie die prent-kolom gekies nie)
 export async function generateMetadata({
   params,
 }: {
@@ -52,7 +38,6 @@ export async function generateMetadata({
   };
 }
 
-// --- BLADSY-KOMPONENT ---
 export default async function SingleNewsPostPage({
   params,
 }: {
@@ -61,21 +46,17 @@ export default async function SingleNewsPostPage({
   const { slug } = await params;
   const supabase = await createClient();
 
-  // === BEGIN VERANDERING 2: Databasis-navraag ===
   const { data: post, error } = await supabase
     .from("news_posts")
-    // Kies die nuwe 'image_urls' (meervoud) kolom
     .select("id, title, slug, image_urls, content, published_at, created_at")
     .eq("slug", slug)
     .eq("is_published", true)
+    .eq("publication_type", "news")
     .single();
-  // === EINDE VERANDERING 2 ===
 
   if (error || !post) {
-    // Hierdie word nou (korrek) geroep as die berig nie bestaan nie,
-    // in plaas van te misluk as gevolg van 'n slegte kolomnaam.
     notFound();
   }
 
-  return <NewsPostClient post={post as SingleNewsPost} />;
+  return <NewsPostClient post={post as DbNewsPost} />;
 }

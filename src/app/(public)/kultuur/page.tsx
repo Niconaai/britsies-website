@@ -15,9 +15,12 @@ export const metadata: Metadata = {
 };
 
 // 'n Gekombineerde tipe vir ons organiseerder-navraag
-export type OrganiserWithDetails = DbCultureOrganiser & {
+export type OrganiserWithDetails = {
+  id: string;
+  staff_member_id: string;
+  role: string | null;
   staff_members: Pick<DbStaffMember, 'full_name' | 'image_url' | 'title'> | null;
-  culture_activities: Pick<DbCultureActivity, 'name'> | null;
+  activities: { name: string }[];
 };
 
 export default async function KultuurPage() {
@@ -51,11 +54,38 @@ export default async function KultuurPage() {
         );
     }
 
+    // Group organisers by staff member and aggregate their activities
+    const groupedOrganisers: OrganiserWithDetails[] = [];
+    const organiserMap = new Map<string, OrganiserWithDetails>();
+
+    (organisers || []).forEach((org: any) => {
+        const key = org.staff_member_id;
+        
+        if (organiserMap.has(key)) {
+            // Add activity to existing organiser
+            const existing = organiserMap.get(key)!;
+            if (org.culture_activities?.name) {
+                existing.activities.push({ name: org.culture_activities.name });
+            }
+        } else {
+            // Create new grouped organiser
+            organiserMap.set(key, {
+                id: org.id,
+                staff_member_id: org.staff_member_id,
+                role: org.role,
+                staff_members: org.staff_members,
+                activities: org.culture_activities?.name ? [{ name: org.culture_activities.name }] : []
+            });
+        }
+    });
+
+    groupedOrganisers.push(...organiserMap.values());
+
     // 2. Stuur die data na die kliënt-komponent
     return (
         <KultuurClientPage 
             activities={activities as DbCultureActivity[] || []}
-            organisers={organisers as OrganiserWithDetails[] || []}
+            organisers={groupedOrganisers}
         />
     );
 }

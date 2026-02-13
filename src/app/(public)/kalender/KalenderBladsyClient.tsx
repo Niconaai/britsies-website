@@ -189,6 +189,7 @@ export default function KalenderBladsyClient({
 
     return (
         <div className="bg-white shadow-xl rounded-lg max-w-4xl mx-auto p-6 md:p-12 ">
+            
             <motion.div
                 className="text-center"
                 initial={{ opacity: 0, y: -20 }}

@@ -48,7 +48,7 @@ export default function KoshuisPakketAd() {
           <ul role="list" className="mt-4 space-y-3">
             <li className="flex gap-x-3"><CheckIcon /> <span className="text-rose-100">Om 100% 'n volwaardige Britsie te wees!</span></li>
             <li className="flex gap-x-3"><CheckIcon /> <span className="text-rose-100">Skoolfonds</span></li>
-            <li className="flex gap-x-3"><CheckIcon /> <span className="text-rose-100">Koshuisinwoning (Jou eie kamer & gesonde etes)</span></li>
+            <li className="flex gap-x-3"><CheckIcon /> <span className="text-rose-100">Koshuisinwoning (Verblyf & Gesonde etes)</span></li>
             <li className="flex gap-x-3"><CheckIcon /> <span className="text-rose-100">Toegang tot alle sport-, kultuur-, en ander aktiwiteite.</span></li>
           </ul>
         </div>
@@ -61,12 +61,12 @@ export default function KoshuisPakketAd() {
           <hr className="my-6 w-full border-t border-rose-800/20" />
           <p className="text-sm font-semibold text-rose-900">Vir navrae kontak:</p>
           <p className="mt-1 text-lg font-bold text-rose-900">Mnr. Jakkie Louw</p>
-          <a 
-            href="tel:0829227456" 
-            className="mt-1 text-xl font-bold text-rose-900 transition-transform hover:scale-105"
+          <button 
+            onClick={() => window.location.href = "tel:0829227456"}
+            className="mt-1 text-xl font-bold text-rose-900 transition-transform hover:scale-105 outline-2 rounded-lg bg-white p-2"
           >
             082 922 7456
-          </a>
+          </button>
         </div>
       </div>
     </motion.div>

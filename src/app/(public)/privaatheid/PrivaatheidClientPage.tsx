@@ -61,7 +61,7 @@ export default function PrivaatheidClientPage() {
                     Inleiding
                 </h2>
                 <p className="text-lg leading-8 text-zinc-700 mb-4">
-                    <strong className="font-semibold text-zinc-900">[PLEKHOUER: Skool moet Amptelike Teks Verskaf]</strong>
+                    {/* <strong className="font-semibold text-zinc-900">[PLEKHOUER: Skool moet Amptelike Teks Verskaf]</strong> */}
                     <br />
                     Hoërskool Brits ("ons", "ons s'n", of "die Skool") is verbind tot die beskerming
                     van jou persoonlike inligting in ooreenstemming met die Wet op die Beskerming
@@ -76,7 +76,7 @@ export default function PrivaatheidClientPage() {
                     Ons samel inligting in wat nodig is vir die funksionering van die skool, insluitend:
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-lg leading-8 text-zinc-700 mb-4 pl-4">
-                    <li>
+                    {/* <li>
                         <strong className="font-semibold text-zinc-900">Aansoeke:</strong> Inligting oor leerders, ouers, en voogde soos
                         uiteengesit in die aanlyn aansoekvorm (name, ID-nommers, kontakbesonderhede,
                         akademiese geskiedenis, mediese inligting).
@@ -86,7 +86,7 @@ export default function PrivaatheidClientPage() {
                         (naam, e-posadres, telefoonnommer, adres vir rekords). Let wel: Ons stoor
                         geen kredietkaartbesonderhede nie; dit word veilig deur ons
                         betalingspoort (Yoco) hanteer.
-                    </li>
+                    </li> */}
                     <li>
                         <strong className="font-semibold text-zinc-900">Kontakvorms:</strong> Naam, e-posadres, en boodskap wat jy aan ons stuur.
                     </li>
@@ -96,13 +96,13 @@ export default function PrivaatheidClientPage() {
                     2. Hoe Gebruik Ons Jou Inligting?
                 </h2>
                 <p className="text-lg leading-8 text-zinc-700 mb-4">
-                    <strong className="font-semibold text-zinc-900">[PLEKHOUER: Skool moet Amptelike Teks Verskaf]</strong>
+                    {/* <strong className="font-semibold text-zinc-900">[PLEKHOUER: Skool moet Amptelike Teks Verskaf]</strong> */}
                     <br />
                     Jou inligting word slegs gebruik vir die doel waarvoor dit ingesamel is:
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-lg leading-8 text-zinc-700 mb-4 pl-4">
-                    <li>Om aansoeke vir toelating te verwerk en te assesseer.</li>
-                    <li>Om aanlyn winkelbestellings te administreer en te vervul.</li>
+                    {/* <li>Om aansoeke vir toelating te verwerk en te assesseer.</li>
+                    <li>Om aanlyn winkelbestellings te administreer en te vervul.</li> */}
                     <li>Om op jou navrae te reageer.</li>
                     <li>Vir interne rekordhouding en skooladministrasie.</li>
                 </ul>
@@ -113,8 +113,7 @@ export default function PrivaatheidClientPage() {
                 <p className="text-lg leading-8 text-zinc-700 mb-4">
                     Ons sal nie jou persoonlike inligting aan enige derde party verkoop, verhuur,
                     of versprei nie, behalwe soos vereis deur die wet of met jou uitdruklike
-                    toestemming. Inligting word slegs gedeel met diensverskaffers (soos Supabase
-                    vir databasis-berging en Yoco vir betalings) onder streng
+                    toestemming. Inligting word slegs gedeel met diensverskaffers onder streng
                     privaatheidsvoorwaardes.
                 </p>
 
@@ -123,7 +122,7 @@ export default function PrivaatheidClientPage() {
                 </h2>
                 <p className="text-lg leading-8 text-zinc-700 mb-4">
                     Alle data word geïnkripteer (encrypted) tydens oordrag (HTTPS) en gestoor
-                    in 'n veilige, wagwoord-beskermde databasis (Supabase). Toegang tot
+                    in 'n veilige, wagwoord-beskermde databasis. Toegang tot
                     persoonlike inligting word streng beperk tot gemagtigde skoolpersoneel.
                 </p>
 
@@ -131,7 +130,7 @@ export default function PrivaatheidClientPage() {
                     5. Jou Regte
                 </h2>
                 <p className="text-lg leading-8 text-zinc-700 mb-4">
-                    <strong className="font-semibold text-zinc-900">[PLEKHOUER: Skool moet Amptelike Teks Verskaf]</strong>
+                    {/* <strong className="font-semibold text-zinc-900">[PLEKHOUER: Skool moet Amptelike Teks Verskaf]</strong> */}
                     <br />
                     Jy het die reg om:
                 </p>

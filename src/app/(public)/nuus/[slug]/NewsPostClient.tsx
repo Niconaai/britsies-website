@@ -4,34 +4,26 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-// Maak seker die tipe word korrek ingevoer vanaf 'page.tsx'
-import type { SingleNewsPost } from "./page"; 
+import type { DbNewsPost } from "@/types/supabase";
 
-// Animasie-variant
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
 };
 
-export default function NewsPostClient({ post }: { post: SingleNewsPost }) {
-  
-  // Formateer die datum
+export default function NewsPostClient({ post }: { post: DbNewsPost }) {
   const publicationDate = new Date(post.published_at || post.created_at).toLocaleDateString('af-ZA', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
 
-  // === REGSTELLING 1: Lees van die nuwe 'image_urls' array ===
   const imageUrls = post.image_urls || [];
-  const featuredImage = imageUrls[0] || null; // Die eerste prent is die hoofprent
-  const galleryImages = imageUrls.slice(1); // Al die ander prente
+  const featuredImage = imageUrls[0] || null;
+  const galleryImages = imageUrls.slice(1);
 
   return (
     <article>
-      {/* Die ou "Hero" seksie is verwyder */}
-
-      {/* Artikel-inhoud */}
       <motion.div 
         className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:py-16"
         variants={fadeInUp}
@@ -39,7 +31,6 @@ export default function NewsPostClient({ post }: { post: SingleNewsPost }) {
         animate="animate"
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        {/* Opskrifte kom nou eerste */}
         <div className="mb-8 border-b border-zinc-200 pb-6">
           <p className="text-sm font-semibold text-rose-800">
             Gepubliseer op {publicationDate}
@@ -49,7 +40,6 @@ export default function NewsPostClient({ post }: { post: SingleNewsPost }) {
           </h1>
         </div>
 
-        {/* Hoofprent (Featured Image) */}
         {featuredImage && (
           <div className="relative mb-8 w-full aspect-video overflow-hidden rounded-lg shadow-lg">
             <Image
@@ -62,7 +52,6 @@ export default function NewsPostClient({ post }: { post: SingleNewsPost }) {
           </div>
         )}
 
-        {/* === REGSTELLING 2: Leesbare Skrifkleur === */}
         <div
           className="prose prose-lg max-w-none 
                      text-zinc-900 
@@ -72,7 +61,6 @@ export default function NewsPostClient({ post }: { post: SingleNewsPost }) {
           dangerouslySetInnerHTML={{ __html: post.content || "" }}
         />
 
-        {/* Prentgalery */}
         {galleryImages.length > 0 && (
           <div className="mt-12 border-t border-zinc-200 pt-8">
             <h3 className="text-2xl font-bold text-rose-900">
@@ -94,7 +82,6 @@ export default function NewsPostClient({ post }: { post: SingleNewsPost }) {
           </div>
         )}
 
-        {/* Terug-knoppie */}
         <div className="mt-12 border-t border-zinc-200 pt-8">
           <Link 
             href="/nuus" 

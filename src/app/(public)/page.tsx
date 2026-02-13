@@ -8,6 +8,8 @@ export type NewsPostFeedItem = {
   image_urls: string[] | null;
   published_at: string | null;
   created_at: string;
+  publication_type: string | null;
+  edition_number: number | null;
 };
 
 export default async function Home() {
@@ -15,8 +17,9 @@ export default async function Home() {
 
   const { data: latestNews, error: newsError } = await supabase
     .from('news_posts')
-    .select('title, slug, image_urls, published_at, created_at') 
+    .select('title, slug, image_urls, published_at, created_at, publication_type, edition_number') 
     .eq('is_published', true)
+    .in('publication_type', ['news', 'newsletter'])
     .order('published_at', { ascending: false })
     .limit(3);
 

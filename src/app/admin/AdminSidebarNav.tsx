@@ -23,6 +23,7 @@ const contentLinks = [
   { name: 'Vakke', href: '/admin/subjects' },
   { name: 'Sportbestuur', href: '/admin/sport' },
   { name: 'Kultuurbestuur', href: '/admin/kultuur' },
+  { name: 'Vakature', href: '/admin/vakature' },
 ];
 // --- EINDE VAN OPDATERING ---
 

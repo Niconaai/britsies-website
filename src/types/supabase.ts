@@ -409,3 +409,59 @@ export type GradeClassWithDetails = DbGradeClass & {
   guardians: StaffMemberWithAcademicInfo[] | null;
 };
 // --- EINDE AKADEMIE MODULE TIPES ---
+
+// --- BEGIN NUUS & NUUSBRIEF MODULE TIPES ---
+export type PublicationType = 'news' | 'newsletter' | 'newsletter_section';
+
+export type DbNewsPost = {
+  id: string;
+  created_at: string;
+  title: string | null;
+  slug: string | null;
+  content: string | null;
+  image_urls: string[] | null;
+  is_published: boolean | null;
+  published_at: string | null;
+  // Newsletter-specific fields
+  publication_type: PublicationType | null;
+  edition_number: number | null;
+  date_range: string | null;
+  section_order: number | null;
+  section_title: string | null;
+  parent_newsletter_id: string | null;
+};
+
+export type NewsPostListItem = {
+  id: string;
+  slug: string | null;
+  title: string | null;
+  image_urls: string[] | null;
+  content: string | null;
+  published_at: string | null;
+  created_at: string;
+  publication_type: PublicationType | null;
+};
+
+export type NewsletterSection = {
+  id: string;
+  title: string | null;
+  section_title: string | null;
+  slug: string | null;
+  content: string | null;
+  image_urls: string[] | null;
+  section_order: number | null;
+};
+
+export type NewsletterEdition = {
+  id: string;
+  title: string | null;
+  slug: string | null;
+  edition_number: number | null;
+  date_range: string | null;
+  published_at: string | null;
+  created_at: string;
+  is_published: boolean | null;
+  image_urls: string[] | null;
+  sections?: NewsletterSection[] | null;
+};
+// --- EINDE NUUS & NUUSBRIEF MODULE TIPES ---

@@ -16,9 +16,13 @@ export const metadata: Metadata = {
 };
 
 // Hierdie tipe is nou meer spesifiek vir 'Organiseerders'
-export type OrganiserWithDetails = DbSportCoach & {
-  staff_members: Pick<DbStaffMember, 'full_name' | 'image_url' | 'title'> | null; // Vra ook 'title'
-  sport_types: Pick<DbSportType, 'name'> | null;
+export type OrganiserWithDetails = {
+  id: string;
+  staff_member_id: string | null;
+  external_coach_name: string | null;
+  role: string | null;
+  staff_members: Pick<DbStaffMember, 'full_name' | 'image_url' | 'title'> | null;
+  sports: { name: string }[];
 };
 
 export default async function SportPage() {
@@ -61,11 +65,40 @@ export default async function SportPage() {
         );
     }
 
+    // Group organisers by staff member and aggregate their sports
+    const groupedOrganisers: OrganiserWithDetails[] = [];
+    const organiserMap = new Map<string, OrganiserWithDetails>();
+
+    (organisers || []).forEach((org: any) => {
+        // Create a unique key - use staff_member_id if available, otherwise external_coach_name
+        const key = org.staff_member_id || `external_${org.external_coach_name}`;
+        
+        if (organiserMap.has(key)) {
+            // Add sport to existing organiser
+            const existing = organiserMap.get(key)!;
+            if (org.sport_types?.name) {
+                existing.sports.push({ name: org.sport_types.name });
+            }
+        } else {
+            // Create new grouped organiser
+            organiserMap.set(key, {
+                id: org.id,
+                staff_member_id: org.staff_member_id,
+                external_coach_name: org.external_coach_name,
+                role: org.role,
+                staff_members: org.staff_members,
+                sports: org.sport_types?.name ? [{ name: org.sport_types.name }] : []
+            });
+        }
+    });
+
+    groupedOrganisers.push(...organiserMap.values());
+
     // 2. Stuur die data na die kliënt-komponent
     return (
         <SportClientPage 
             sportTypes={sportTypes as DbSportType[] || []}
-            organisers={organisers as OrganiserWithDetails[] || []} // Stuur nou 'organisers'
+            organisers={groupedOrganisers} // Stuur nou gegroepeerde 'organisers'
             achievements={achievements as DbSportAchievement[] || []}
         />
     );

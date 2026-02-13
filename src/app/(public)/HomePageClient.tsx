@@ -34,8 +34,11 @@ const NewsCard = ({ post }: { post: NewsPostFeedItem }) => {
     ? post.image_urls[0]
     : '/wapen.png'; 
 
+  const isNewsletter = post.publication_type === 'newsletter';
+  const linkHref = isNewsletter ? `/nuus/uitgawes/${post.slug}` : `/nuus/${post.slug}`;
+
   return (
-    <Link href={`/nuus/${post.slug}`} className="group block overflow-hidden rounded-lg bg-white shadow-md transition hover:shadow-lg">
+    <Link href={linkHref} className="group block overflow-hidden rounded-lg bg-white shadow-md transition hover:shadow-lg">
       <div className="relative h-48 w-full">
         <Image
           src={featuredImage}
@@ -46,13 +49,19 @@ const NewsCard = ({ post }: { post: NewsPostFeedItem }) => {
         <div className="absolute inset-0 bg-amber-500/10"></div>
       </div>
       <div className="p-6">
-        <p className="text-xs font-semibold uppercase tracking-wider text-amber-600">
-          {new Date(post.published_at || post.created_at).toLocaleDateString('af-ZA', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}
-        </p>
+        {isNewsletter ? (
+          <p className="text-xs font-semibold uppercase tracking-wider text-amber-600">
+            Nuusbrief #{post.edition_number}
+          </p>
+        ) : (
+          <p className="text-xs font-semibold uppercase tracking-wider text-amber-600">
+            {new Date(post.published_at || post.created_at).toLocaleDateString('af-ZA', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </p>
+        )}
         <h3 className="mt-2 text-lg font-bold text-rose-900 group-hover:text-rose-700">
           {post.title}
         </h3>
@@ -82,7 +91,8 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
     setIsDesktop(isDesktopQuery.matches);
     const hasVideoPlayed = sessionStorage.getItem('heroVideoPlayed');
 
-    if (isDesktopQuery.matches && !hasVideoPlayed) {
+    // Play video on all devices if not played yet
+    if (!hasVideoPlayed) {
       setShowVideo(true);
       setIsIntroActive(true);
     } else {
@@ -114,7 +124,7 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
         />
         <div className="absolute inset-0 bg-amber-600/20 z-5"></div>
 
-        {showVideo && isDesktop && (
+        {showVideo && (
           <video
             key="hero-video"
             playsInline
@@ -151,18 +161,28 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
             style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>
             Koersvas na die Kruin
           </p>
-          <div className="mt-10 flex w-full max-w-sm mx-auto flex-col items-center justify-center gap-4 sm:max-w-none sm:flex-row">
+          <div className="mt-10 flex w-full max-w-sm mx-auto flex-col items-center justify-center gap-4 sm:max-w-lg sm:flex-row">
             <Link
               href="/raak-betrokke"
-              className="w-full rounded-md border border-transparent bg-rose-900 px-8 py-3 text-base font-medium text-white shadow-lg transition hover:bg-rose-800 hover:scale-105 sm:w-auto text-center"
+              className="w-full rounded-md border border-transparent bg-rose-900 px-8 py-3 text-base font-medium text-white shadow-lg transition hover:bg-rose-800 hover:scale-105 text-center"
             >
               Raak Betrokke
             </Link>
             <Link
               href="/oor-ons"
-              className="w-full rounded-md border border-white bg-white/10 px-8 py-3 text-base font-medium text-white backdrop-blur-sm transition hover:bg-white/20 sm:w-auto text-center"
+              className="w-full rounded-md border border-white bg-white/10 px-8 py-3 text-base font-medium text-white backdrop-blur-sm transition hover:bg-white/20 text-center"
             >
               Meer Oor Ons
+            </Link>
+          </div>
+          <div className="mt-4 flex w-full max-w-sm mx-auto sm:max-w-lg">
+            <Link
+              href="https://kruinlegendes.co.za/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full rounded-md border border-transparent bg-amber-500 px-8 py-3 text-base font-medium text-white shadow-lg transition hover:bg-amber-600 hover:scale-105 text-center"
+            >
+              Word 'n Kruin Legende
             </Link>
           </div>
         </motion.div>

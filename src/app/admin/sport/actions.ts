@@ -72,22 +72,30 @@ export async function createSportCoach(formData: FormData) {
   const supabase = await checkAdminAuth();
   
   const staff_member_id = formData.get('staff_member_id') as string;
-  const sport_type_id = formData.get('sport_type_id') as string;
+  const sport_type_ids = formData.get('sport_type_ids') as string;
 
-  if (!sport_type_id) {
-    // --- REGSTELLING: Gebruik redirect ---
-    return redirect('/admin/sport?error=Sportsoort word vereis');
+  if (!sport_type_ids) {
+    return redirect('/admin/sport?error=Ten minste een sportsoort word vereis');
   }
   
-  const { error } = await supabase.from('sport_coaches').insert({
-    sport_type_id: sport_type_id,
+  // Split comma-separated IDs into array
+  const sportTypeIdArray = sport_type_ids.split(',').filter(id => id.trim());
+  
+  if (sportTypeIdArray.length === 0) {
+    return redirect('/admin/sport?error=Ten minste een sportsoort word vereis');
+  }
+  
+  // Create one record for each sport type
+  const coachRecords = sportTypeIdArray.map(sport_type_id => ({
+    sport_type_id: sport_type_id.trim(),
     staff_member_id: staff_member_id === "" ? null : staff_member_id,
     external_coach_name: formData.get('external_coach_name') as string || null,
     role: formData.get('role') as string,
-  });
+  }));
+  
+  const { error } = await supabase.from('sport_coaches').insert(coachRecords);
 
   if (error) {
-    // --- REGSTELLING: Gebruik redirect ---
     return redirect(`/admin/sport?error=${encodeURIComponent(error.message)}`);
   }
   revalidate();
@@ -205,6 +213,62 @@ export async function updateSportCoach(formData: FormData) {
   if (error) {
     return redirect(`/admin/sport?error=${encodeURIComponent(error.message)}`);
   }
+  revalidate();
+}
+
+// New action to update coach with multiple sports
+export async function updateSportCoachMultiple(formData: FormData) {
+  let supabase;
+  try {
+    supabase = await checkAdminAuth();
+  } catch (error) {
+    return redirect('/login');
+  }
+
+  const staff_member_id = formData.get('staff_member_id') as string;
+  const external_coach_name = formData.get('external_coach_name') as string;
+  const sport_type_ids = formData.get('sport_type_ids') as string;
+  const role = formData.get('role') as string;
+  const is_active = formData.get('is_active') === 'on';
+  
+  if (!sport_type_ids) {
+    return redirect('/admin/sport?error=Ten minste een sportsoort word vereis vir opdatering.');
+  }
+
+  // Determine which identifier to use
+  const identifier = staff_member_id || external_coach_name;
+  if (!identifier) {
+    return redirect('/admin/sport?error=Personeellid of eksterne naam word vereis.');
+  }
+
+  // Delete existing records for this coach
+  let deleteQuery;
+  if (staff_member_id) {
+    deleteQuery = supabase.from('sport_coaches').delete().eq('staff_member_id', staff_member_id);
+  } else {
+    deleteQuery = supabase.from('sport_coaches').delete().eq('external_coach_name', external_coach_name);
+  }
+  
+  const { error: deleteError } = await deleteQuery;
+  if (deleteError) {
+    return redirect(`/admin/sport?error=${encodeURIComponent(deleteError.message)}`);
+  }
+
+  // Create new records for each selected sport
+  const sportTypeIdArray = sport_type_ids.split(',').filter(id => id.trim());
+  const coachRecords = sportTypeIdArray.map(sport_type_id => ({
+    sport_type_id: sport_type_id.trim(),
+    staff_member_id: staff_member_id || null,
+    external_coach_name: external_coach_name || null,
+    role,
+    is_active,
+  }));
+  
+  const { error: insertError } = await supabase.from('sport_coaches').insert(coachRecords);
+  if (insertError) {
+    return redirect(`/admin/sport?error=${encodeURIComponent(insertError.message)}`);
+  }
+
   revalidate();
 }
 

@@ -94,7 +94,7 @@ export default function SportManagementClient({
   const [sportIconUrl, setSportIconUrl] = useState('');
 
   // State vir Afrigter-vorm
-  const [coachSportType, setCoachSportType] = useState('');
+  const [coachSportTypes, setCoachSportTypes] = useState<string[]>([]);
   const [coachRole, setCoachRole] = useState('');
   const [coachStaffId, setCoachStaffId] = useState('');
   const [coachExternalName, setCoachExternalName] = useState('');
@@ -131,7 +131,7 @@ export default function SportManagementClient({
     
     startTransition(async () => {
       await createSportCoach(formData);
-      setCoachSportType('');
+      setCoachSportTypes([]);
       setCoachRole('');
       setCoachStaffId('');
       setCoachExternalName('');
@@ -166,6 +166,7 @@ export default function SportManagementClient({
           coach={editingCoach}
           sportTypes={initialSportTypes}
           staffMembers={initialStaffMembers}
+          allCoaches={initialCoaches}
           onClose={() => setEditingCoach(null)}
         />
       )}
@@ -256,14 +257,29 @@ export default function SportManagementClient({
           <div className={activeTab === 'coaches' ? 'block' : 'hidden'}>
             <h3 className="text-lg font-semibold mb-4 dark:text-white">Bestuur Afrigters</h3>
             <form onSubmit={handleCreateCoach} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-lg dark:border-zinc-700">
-              <FloatingLabelSelectFieldCustom
-                name="sport_type_id"
-                label="Sportsoort"
-                value={coachSportType}
-                onChange={(e) => setCoachSportType(e.target.value)}
-                options={sportTypeOptions}
-                required
-              />
+              <div className="md:col-span-3">
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Sportsoorte (Kies een of meer)</label>
+                <input type="hidden" name="sport_type_ids" value={coachSportTypes.join(',')} />
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 p-3 border rounded-md dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-900 max-h-40 overflow-y-auto">
+                  {sportTypeOptions.map(opt => (
+                    <label key={opt.value} className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={coachSportTypes.includes(opt.value)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setCoachSportTypes([...coachSportTypes, opt.value]);
+                          } else {
+                            setCoachSportTypes(coachSportTypes.filter(id => id !== opt.value));
+                          }
+                        }}
+                        className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-sm dark:text-zinc-300">{opt.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
               <FloatingLabelInputField
                 name="role"
                 label="Rol (bv. Hoofafrigter)"

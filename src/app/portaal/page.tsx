@@ -1,6 +1,6 @@
 // src/app/aansoek/page.tsx
 import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import Link from "next/link"; 
 import ApplicationList from "./ApplicationList"; 
 import type { Metadata } from "next";
@@ -21,6 +21,9 @@ export type ApplicationWithLearner = {
 };
 
 export default async function ApplicationPage() {
+    notFound();
+    
+    /* Temporarily disabled
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -54,7 +57,6 @@ export default async function ApplicationPage() {
     return (
         <div className="min-h-screen bg-zinc-100 p-4 pt-10 dark:bg-zinc-900 md:p-10">
             <div className="mx-auto max-w-4xl">
-                {/* --- Dashboard Header --- */}
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-lg md:text-3xl font-bold text-zinc-900 dark:text-white">
                         My Aansoeke
@@ -67,7 +69,6 @@ export default async function ApplicationPage() {
                     </Link>
                 </div>
 
-                {/* --- Start Applications List --- */}
                 <div>
                     {appError && (
                         <p className="text-red-600">Fout met die laai van aansoeke: {appError.message}</p>
@@ -83,13 +84,12 @@ export default async function ApplicationPage() {
                         </div>
                     )}
 
-                    {/* Render the new client component ONLY if there are applications */}
                     {appList.length > 0 && (
                         <ApplicationList applications={appList} />
                     )}
                 </div>
-                {/* --- End Applications List --- */}
             </div>
         </div>
     );
+    */
 }
