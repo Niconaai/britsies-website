@@ -72,7 +72,7 @@ export default function PublicFooter() {
                             {/* <FooterLink href="/winkel">Britsie Winkel</FooterLink> */}
                             {/* <FooterLink href="/login">Admin</FooterLink> */}
                             <FooterLink href="https://kruinlegendes.co.za/">Die Kruin Legendes</FooterLink>
-                            <FooterLink href="/vakature">Vakature</FooterLink>
+                            <FooterLink href="/vakature">Vakature en Loopbane</FooterLink>
                         </ul>
                     </div>
 
@@ -81,7 +81,7 @@ export default function PublicFooter() {
                 {/* Onderste balk: Copyright en Sosiale media */}
                 <div className="mt-12 border-t border-rose-800 pt-8 md:flex md:items-center md:justify-between">
                     <div className="flex justify-center space-x-6 md:order-2">
-                        <a href="#" className="text-zinc-300 hover:text-white">
+                        <a href="https://www.facebook.com/hskoolbrits/" className="text-zinc-300 hover:text-white">
                             <span className="sr-only">Facebook</span>
                             <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path
