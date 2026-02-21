@@ -16,7 +16,7 @@ const fadeInUp = {
 };
 
 // 'n Sub-komponent om 'n personeellid-profielkaart te vertoon
-const StaffProfileCard = ({ person }: { person: StaffMemberWithDept }) => (
+const StaffProfileCard = ({ person, showTitle = true }: { person: StaffMemberWithDept; showTitle?: boolean }) => (
   <div className="flex flex-col items-center text-center">
     <div className="relative h-56 w-40 md:h-64 md:w-48 overflow-hidden rounded-lg shadow-md">
       <Image
@@ -29,7 +29,7 @@ const StaffProfileCard = ({ person }: { person: StaffMemberWithDept }) => (
       />
     </div>
     <h3 className="mt-4 text-lg font-semibold text-rose-900">{person.full_name}</h3>
-    <p className="text-sm text-zinc-600">{person.title}</p>
+    {showTitle && person.title && <p className="text-sm text-zinc-600">{person.title}</p>}
   </div>
 );
 
@@ -57,7 +57,10 @@ export default function OorOnsClientPage({
   const isCtaInView = useInView(ctaRef, { once: true, amount: 0.05 });
   // --- EINDE REGSTELLING 3 ---
 
-  // Sort beheerliggaam by sort_order (Rang) and split into leadership (1-2) and rest
+  // Sort beheerliggaam by sort_order and categorize into three groups:
+  // 1. Leadership (top rank, sort_order 1-2) - show with titles
+  // 2. Staff Representatives (in Beheerliggaam + other departments) - name only
+  // 3. Parent Representatives (only in Beheerliggaam, no other departments) - name only
   const sortedBeheerliggaam = [...beheerliggaamPersoneel].sort((a, b) => {
     const orderA = a.sort_order ?? 999;
     const orderB = b.sort_order ?? 999;
@@ -65,7 +68,18 @@ export default function OorOnsClientPage({
   });
   
   const beheerliggaamLeadership = sortedBeheerliggaam.filter(p => (p.sort_order ?? 999) <= 2);
-  const beheerliggaamRest = sortedBeheerliggaam.filter(p => (p.sort_order ?? 999) > 2);
+  
+  const beheerliggaamStaffReps = sortedBeheerliggaam.filter(p => {
+    const isNotLeadership = (p.sort_order ?? 999) > 2;
+    const hasOtherDepartments = p.staff_departments && p.staff_departments.length > 1;
+    return isNotLeadership && hasOtherDepartments;
+  });
+  
+  const beheerliggaamParentReps = sortedBeheerliggaam.filter(p => {
+    const isNotLeadership = (p.sort_order ?? 999) > 2;
+    const onlyInBeheerliggaam = p.staff_departments && p.staff_departments.length === 1;
+    return isNotLeadership && onlyInBeheerliggaam;
+  });
 
   // Sort bestuur by sort_order as well
   const sortedBestuur = [...bestuurPersoneel].sort((a, b) => {
@@ -298,21 +312,45 @@ export default function OorOnsClientPage({
                 Beheerliggaam
               </h2>
               
-              {/* Leadership (Rang 1-2) on their own line */}
+              {/* Leierskap - Top ranks with titles */}
               {beheerliggaamLeadership.length > 0 && (
-                <div className="mt-16 flex justify-center gap-x-8 flex-wrap gap-y-10">
-                  {beheerliggaamLeadership.map((person) => (
-                    <StaffProfileCard key={person.id} person={person} />
-                  ))}
+                <div className="mt-16">
+                  <h3 className="text-center text-2xl font-semibold text-rose-800 mb-8">
+                    Leierskap
+                  </h3>
+                  <div className="flex justify-center gap-x-8 flex-wrap gap-y-10">
+                    {beheerliggaamLeadership.map((person) => (
+                      <StaffProfileCard key={person.id} person={person} showTitle={true} />
+                    ))}
+                  </div>
                 </div>
               )}
               
-              {/* Rest of Beheerliggaam */}
-              {beheerliggaamRest.length > 0 && (
-                <div className={`${beheerliggaamLeadership.length > 0 ? 'mt-10' : 'mt-16'} grid grid-cols-1 gap-y-10 gap-x-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center`}>
-                  {beheerliggaamRest.map((person) => (
-                    <StaffProfileCard key={person.id} person={person} />
-                  ))}
+              {/* Personeel-verteenwoordigers - Also in Akademie, names only */}
+              {beheerliggaamStaffReps.length > 0 && (
+                <div className="mt-16">
+                  <h3 className="text-center text-2xl font-semibold text-rose-800 mb-8">
+                    Personeel-verteenwoordigers
+                  </h3>
+                  <div className="grid grid-cols-1 gap-y-10 gap-x-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center">
+                    {beheerliggaamStaffReps.map((person) => (
+                      <StaffProfileCard key={person.id} person={person} showTitle={false} />
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Ouerverteenwoordiging - Only in Beheerliggaam, names only */}
+              {beheerliggaamParentReps.length > 0 && (
+                <div className="mt-16">
+                  <h3 className="text-center text-2xl font-semibold text-rose-800 mb-8">
+                    Ouer-verteenwoordigers
+                  </h3>
+                  <div className="grid grid-cols-1 gap-y-10 gap-x-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-center">
+                    {beheerliggaamParentReps.map((person) => (
+                      <StaffProfileCard key={person.id} person={person} showTitle={false} />
+                    ))}
+                  </div>
                 </div>
               )}
             </motion.div>

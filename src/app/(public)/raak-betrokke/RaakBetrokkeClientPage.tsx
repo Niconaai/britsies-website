@@ -51,7 +51,7 @@ export default function RaakBetrokkeClientPage() {
 
     // Ons sal hierdie inhoud van die bemarker moet kry
     const momentumItems = [
-        { title: "Digitale Transformasie", description: "Ons het 'n nuwe webwerf, aanlyn aansoekportaal en winkel geloods.", image: "/wapen.png" },
+        { title: "Digitale Transformasie", description: "Ons het 'n nuwe webwerf, top netwerk-infrastruktuur en rekenaar-laboratoriums.", image: "/wapen.png" },
         { title: "Sport Opgraderings", description: "Tennisbaan opgraderings met pickle- en paddle-baan byvoegings.", image: "/tennisbane.jpeg" },
         { title: "Akademiese Vooruitgang", description: "Hoërskool Brits bied robotika aan as vak wat die nuwe generasie vroeg al blootstel aan die nuwe tegnologie.", image: "/wapen.png" },
         { title: "Fasiliteit Opgraderings", description: "Hoërskool Brits se kleedkamers op die sportterrein is wêreld-klas.", image: "/wapen.png" },

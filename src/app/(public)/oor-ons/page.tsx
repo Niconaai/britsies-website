@@ -13,16 +13,14 @@ export const metadata: Metadata = {
 export default async function OorOnsPage() {
     const supabase = await createClient();
 
-    // --- REGSTELLING: Opgedateerde "Baie-tot-Baie" Navraag ---
+    // Fetch all active staff with ALL their departments
     const { data: personeel, error } = await supabase
         .from('staff_members')
         .select(`
             *,
-            staff_departments!inner ( id, name )
+            staff_departments ( id, name )
         `)
-        .eq('is_active', true)
-        // Haal enigiemand wat in EEN van hierdie twee departemente is
-        .in('staff_departments.name', ['Bestuur', 'Beheerliggaam']);
+        .eq('is_active', true);
 
     if (error) {
         console.error("Fout met laai van personeel vir /oor-ons:", error);
@@ -30,12 +28,17 @@ export default async function OorOnsPage() {
 
     const allePersoneel = (personeel as StaffMemberWithDept[]) || [];
 
-    // 2. Filtreer die personeel in hul groepe in
-    const bestuurPersoneel = allePersoneel.filter(
+    // Filter to only include people who have Bestuur or Beheerliggaam
+    const relevantPersoneel = allePersoneel.filter(p => 
+        p.staff_departments?.some(dept => dept.name === 'Bestuur' || dept.name === 'Beheerliggaam')
+    );
+
+    // Further filter into groups
+    const bestuurPersoneel = relevantPersoneel.filter(
         p => p.staff_departments?.some(dept => dept.name === 'Bestuur')
     );
     
-    const beheerliggaamPersoneel = allePersoneel.filter(
+    const beheerliggaamPersoneel = relevantPersoneel.filter(
         p => p.staff_departments?.some(dept => dept.name === 'Beheerliggaam')
     );
 
