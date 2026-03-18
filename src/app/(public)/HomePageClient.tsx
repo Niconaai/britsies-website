@@ -4,11 +4,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import type { NewsPostFeedItem } from "./page";
+import type { NewsPostFeedItem, FacebookPost } from "./page";
 import { useState, useEffect } from "react";
 
 // --- REGSTELLING 1: Voer die nuwe komponent in ---
 import KoshuisPakketAd from "./KoshuisPakketAd";
+import FacebookFeed from "./FacebookFeed";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const HERO_VIDEO_URL = `${SUPABASE_URL}/storage/v1/object/public/public-assets/hero-video.mp4`;
@@ -80,7 +81,7 @@ const fadeInUp = {
 // (Hulle is nou in hul eie lêer)
 
 // --- HOOF TUISBLAD KOMPONENT ---
-export default function HomePageClient({ latestNews }: { latestNews: NewsPostFeedItem[] }) {
+export default function HomePageClient({ latestNews, facebookPosts }: { latestNews: NewsPostFeedItem[], facebookPosts: FacebookPost[] }) {
 
   const [showVideo, setShowVideo] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
@@ -218,6 +219,11 @@ export default function HomePageClient({ latestNews }: { latestNews: NewsPostFee
         </div>
       </section>
       {/* --- EINDE REGSTELLING 3 --- */}
+
+      {/* --- FACEBOOK FEED SECTION --- 
+      <section className="bg-white py-16 sm:py-24">
+        <FacebookFeed posts={facebookPosts} />
+      </section>*/}
 
       {/* --- 3. VINNIGE SKAKELS SEKSIE --- 
       <section className="bg-white py-16 sm:py-24">

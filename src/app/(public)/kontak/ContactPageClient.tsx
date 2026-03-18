@@ -8,8 +8,8 @@ import ContactFormClient from './ContactFormClient';
 
 // Animasie-variant
 const fadeInUp = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
 // Ikoon-komponente vir die kontakbesonderhede
@@ -34,39 +34,39 @@ export default function ContactPageClient() {
   return (
     <div className="bg-white">
       {/* 1. Hero-banier */}
-      <motion.section 
-          className="relative flex h-[50vh] min-h-[300px] w-full items-center justify-center bg-zinc-800 text-white overflow-hidden px-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
+      <motion.section
+        className="relative flex h-[50vh] min-h-[300px] w-full items-center justify-center bg-zinc-800 text-white overflow-hidden px-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
       >
-          <Image
-              src="/wapen.jpg" 
-              alt="Hoërskool Brits"
-              fill
-              className="object-cover opacity-30"
-              priority
-          />
-          <div className="absolute inset-0 bg-rose-900/40 z-5"></div>
-          <motion.div
-              className="relative z-20 mx-auto max-w-4xl text-center"
-              variants={fadeInUp}
-              animate="animate"
-              initial="initial"
-          >
-              <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}>
-                  Kontak Ons
-              </h1>
-              <p className="mt-6 text-xl text-zinc-100" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>
-                  Ons is hier om te help. Kontak ons gerus met enige navrae.
-              </p>
-          </motion.div>
+        <Image
+          src="/wapen.jpg"
+          alt="Hoërskool Brits"
+          fill
+          className="object-cover opacity-30"
+          priority
+        />
+        <div className="absolute inset-0 bg-rose-900/40 z-5"></div>
+        <motion.div
+          className="relative z-20 mx-auto max-w-4xl text-center"
+          variants={fadeInUp}
+          animate="animate"
+          initial="initial"
+        >
+          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}>
+            Kontak Ons
+          </h1>
+          <p className="mt-6 text-xl text-zinc-100" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.8)' }}>
+            Ons is hier om te help. Kontak ons gerus met enige navrae.
+          </p>
+        </motion.div>
       </motion.section>
 
       {/* 2. Inhoud-afdeling */}
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-2">
-          
+
           {/* Kolom 1: Kontakvorm */}
           <div className="rounded-lg bg-zinc-50 p-6 shadow-lg">
             <h2 className="text-2xl font-bold text-rose-900">Stuur 'n Boodskap</h2>
@@ -111,13 +111,13 @@ export default function ContactPageClient() {
                 </div>
               </div>
             </div>
-            
+
             {/* --- REGSTELLING BEGIN --- */}
             <div>
               <h2 className="text-2xl font-bold text-rose-900">Vind Ons Hier</h2>
               <div className="mt-6 h-80 w-full overflow-hidden rounded-lg shadow-lg">
                 <iframe
-                  src="http://googleusercontent.com/maps/google.com/1"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4482.639329119893!2d27.78311657631425!3d-25.62639734069333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1ebe31cae7094f13%3A0xe6c6a3dc19588108!2sHo%C3%ABrskool%20Brits!5e1!3m2!1sen!2sza!4v1772027114341!5m2!1sen!2sza"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
@@ -125,6 +125,8 @@ export default function ContactPageClient() {
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
+
+    
               </div>
             </div>
             {/* --- REGSTELLING EINDE --- */}

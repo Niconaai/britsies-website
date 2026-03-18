@@ -198,6 +198,17 @@ export default function PublicHeader() {
               </NavLink>
             ))}
           </div>
+          {/* Aansoekvorm-knoppie: wys regs van die hoofmenubalk en laat dit uitstaan */}
+          <div className="hidden sm:flex items-center">
+            <a
+              href="/Aansoekvorm2026.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-4 inline-flex items-center rounded-md bg-amber-500 px-3 py-2 text-sm font-semibold text-black shadow-sm hover:bg-amber-600 transition-colors"
+            >
+              Aansoekvorm
+            </a>
+          </div>
           <div className="flex items-center sm:hidden">
             {/* Mobile menu button */}
             <button
@@ -231,6 +242,15 @@ export default function PublicHeader() {
       {isMobileMenuOpen && (
         <div className="sm:hidden border-t border-zinc-200" id="mobile-menu">
           <div className="space-y-1 px-2 pt-2 pb-3">
+            {/* Mobile: prominent Aansoekvorm-knoppie eerste */}
+            <a
+              href="/Aansoekvorm2026.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full rounded-md bg-amber-500 px-4 py-2 text-center text-sm font-semibold text-black shadow-sm hover:bg-amber-600"
+            >
+              Aansoekvorm
+            </a>
             {navLinks.map((link) => (
               <div key={link.name}>
                 <div className="flex items-center justify-center">

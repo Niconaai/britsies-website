@@ -12,6 +12,42 @@ export type NewsPostFeedItem = {
   edition_number: number | null;
 };
 
+export type FacebookPost = {
+  id: string;
+  message?: string;
+  full_picture?: string;
+  created_time: string;
+  permalink_url?: string;
+};
+
+async function getFacebookPosts(): Promise<FacebookPost[]> {
+  const pageId = '100064515071738'; // hskoolbrits page ID from the URL
+  const accessToken = process.env.FACEBOOK_ACCESS_TOKEN;
+  
+  if (!accessToken) {
+    console.warn('Facebook access token not configured');
+    return [];
+  }
+
+  try {
+    const response = await fetch(
+      `https://graph.facebook.com/v18.0/${pageId}/posts?fields=id,message,full_picture,created_time,permalink_url&limit=3&access_token=${accessToken}`,
+      { next: { revalidate: 3600 } } // Cache for 1 hour
+    );
+
+    if (!response.ok) {
+      console.error('Failed to fetch Facebook posts:', response.statusText);
+      return [];
+    }
+
+    const data = await response.json();
+    return data.data || [];
+  } catch (error) {
+    console.error('Error fetching Facebook posts:', error);
+    return [];
+  }
+}
+
 export default async function Home() {
   const supabase = await createClient();
 
@@ -27,7 +63,13 @@ export default async function Home() {
     console.error("Kon nie nuus laai nie:", newsError);
   }
 
+  // Fetch Facebook posts
+  const facebookPosts = await getFacebookPosts();
+
   return (
-    <HomePageClient latestNews={latestNews as NewsPostFeedItem[] || []} />
+    <HomePageClient 
+      latestNews={latestNews as NewsPostFeedItem[] || []} 
+      facebookPosts={facebookPosts}
+    />
   );
 }
