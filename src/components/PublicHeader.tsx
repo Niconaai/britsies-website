@@ -201,7 +201,7 @@ export default function PublicHeader() {
           {/* Aansoekvorm-knoppie: wys regs van die hoofmenubalk en laat dit uitstaan */}
           <div className="hidden sm:flex items-center">
             <a
-              href="/Aansoekvorm2026.pdf"
+              href="/Aansoekvorm2026_digitaal.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="ml-4 inline-flex items-center rounded-md bg-amber-500 px-3 py-2 text-sm font-semibold text-black shadow-sm hover:bg-amber-600 transition-colors"
