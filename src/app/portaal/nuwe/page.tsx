@@ -16,7 +16,7 @@ export default async function NewApplicationPage() {
 
     if (!user) {
         // Not logged in, send back to the start
-        redirect('/aansoek/begin');
+          redirect('/portaal/begin');
     }
 
     // User is authenticated, show them the blank form

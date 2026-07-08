@@ -9,11 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default function AansoekLandingPage() {
-    notFound();
-    
-    /* Temporarily disabled
     return (
         <AansoekLandingClient />
     );
-    */
 }

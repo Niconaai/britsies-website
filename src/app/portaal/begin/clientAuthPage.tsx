@@ -94,7 +94,7 @@ export default function ClientAuthPage({
         }
         const timer = setTimeout(() => {
             setIsVisible(false); 
-            const newUrl = redirectUrl ? `/aansoek/begin?redirect_to=${redirectUrl}` : '/aansoek/begin';
+            const newUrl = redirectUrl ? `/portaal/begin?redirect_to=${redirectUrl}` : '/portaal/begin';
             window.history.replaceState(null, '', newUrl);
         }, 8000); 
         return () => clearTimeout(timer); 

@@ -32,7 +32,7 @@ const navLinks = [
   { name: 'Koshuis', href: '/koshuis' },
   { name: 'Nuus', href: '/nuus' },
   { name: 'Kalender', href: '/kalender' },
-  //{ name: 'Aansoeke', href: '/aansoek' },
+  { name: 'Aansoeke', href: '/aansoek' },
 ];
 
 // Sekondêre skakels

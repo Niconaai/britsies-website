@@ -28,7 +28,7 @@ export default async function ApplicationAuthPage({
   const { data: { user } } = await supabase.auth.getUser();
 
   if (user) {
-    redirect('/aansoek');
+    redirect('/portaal');
   }
 
   const resolvedSearchParams = await searchParams;

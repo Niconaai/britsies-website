@@ -21,14 +21,11 @@ export type ApplicationWithLearner = {
 };
 
 export default async function ApplicationPage() {
-    notFound();
-    
-    /* Temporarily disabled
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-        redirect('/aansoek/begin');
+        redirect('/portaal/begin');
     }
 
     const { data: profile } = await supabase
@@ -91,5 +88,4 @@ export default async function ApplicationPage() {
             </div>
         </div>
     );
-    */
 }

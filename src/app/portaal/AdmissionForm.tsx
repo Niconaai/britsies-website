@@ -248,7 +248,7 @@ export default function AdmissionForm() {
 
             console.log("Submission successful:", result);
 
-            window.location.href = '/aansoek';
+            window.location.href = '/portaal';
 
         } catch (error) {
             console.error("Submission error:", error);
