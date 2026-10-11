@@ -56,7 +56,7 @@ export default function KoshuisPakketAd() {
         {/* Prys-kolom */}
         <div className="flex flex-col items-center justify-center bg-amber-400 p-8 md:p-12 text-center">
           <p className="text-2xl font-bold text-rose-900">Vir slegs</p>
-          <p className="my-2 text-5xl font-extrabold text-rose-900 sm:text-6xl">R3950-00</p>
+          <p className="my-2 text-5xl font-extrabold text-rose-900 sm:text-6xl">R4500-00</p>
           <p className="text-2xl font-bold text-rose-900">per maand</p>
           <hr className="my-6 w-full border-t border-rose-800/20" />
           <p className="text-sm font-semibold text-rose-900">Vir navrae kontak:</p>
